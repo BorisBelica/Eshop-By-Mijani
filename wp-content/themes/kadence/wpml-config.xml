@@ -1,0 +1,15 @@
+<wpml-config>   
+    <admin-texts>
+        <key name="theme_mods_kadence">
+            <key name="mobile_trigger_label" />
+            <key name="header_html_content" />
+            <key name="header_button_label" />
+            <key name="header_button_link" />
+            <key name="header_search_label" />
+            <key name="mobile_button_label" />
+            <key name="mobile_button_link" />
+            <key name="mobile_html_content" />
+            <key name="footer_html_content" />
+        </key>
+    </admin-texts>
+</wpml-config>
