@@ -11,7 +11,7 @@ class TabsComponent extends Component {
 		this.focusPanel = this.focusPanel.bind( this );
 		let defaultParams = {
 			'general': {
-				'label': 'Gerneral',
+				'label': 'General',
 				'target' : '',
 			},
 			'design': {
@@ -40,14 +40,15 @@ class TabsComponent extends Component {
 			container.classList.add( 'kadence-prevent-transition' );
 			otherContainer.classList.add( 'kadence-prevent-transition' );
 			setTimeout( function(){
-			self.props.customizer.section( secton_id ).focus();
+				self.props.customizer.section( secton_id ).focus();
 			}, 10);
 			setTimeout( function(){
 				container.classList.remove( 'kadence-prevent-transition' );
 				container.classList.remove( 'busy' );
+				container.style.top = null;
 				otherContainer.classList.remove( 'kadence-prevent-transition' );
 				otherContainer.classList.remove( 'busy' );
-			}, 200);
+			}, 300);
 		}
 	}
 	render() {

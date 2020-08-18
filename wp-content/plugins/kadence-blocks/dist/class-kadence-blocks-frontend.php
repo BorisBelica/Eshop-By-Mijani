@@ -58,6 +58,38 @@ class Kadence_Blocks_Frontend {
 		add_action( 'wp_enqueue_scripts', array( $this, 'frontend_inline_css' ), 20 );
 		add_action( 'wp_head', array( $this, 'frontend_gfonts' ), 90 );
 		add_action( 'wp_head', array( $this, 'faq_schema' ), 91 );
+		if ( ! is_admin() ) {
+			add_action( 'render_block', array( $this, 'conditionally_render_block' ), 6, 2 );
+		}
+	}
+	/**
+	 * Check for logged in, logged out visibility settings.
+	 *
+	 * @param mixed $block_content The block content.
+	 * @param array $block The block data.
+	 *
+	 * @return mixed Returns the block content.
+	 */
+	public function conditionally_render_block( $block_content, $block ) {
+		if ( 'kadence/rowlayout' === $block['blockName'] && isset( $block['attrs'] ) ) {
+			if ( isset( $block['attrs']['loggedIn'] ) && $block['attrs']['loggedIn'] && is_user_logged_in() ) {
+				if ( isset( $block['attrs']['loggedInUser'] ) && is_array( $block['attrs']['loggedInUser'] ) && ! empty( $block['attrs']['loggedInUser'] ) ) {
+					$user = wp_get_current_user();
+					foreach( $block['attrs']['loggedInUser'] as $key => $role ) {
+						if ( in_array( $role['value'], (array) $user->roles ) ) {
+							return '';
+						}
+					}
+				} else {
+					return '';
+				}
+			}
+			if ( isset( $block['attrs']['loggedOut'] ) && $block['attrs']['loggedOut'] && ! is_user_logged_in() ) {
+				return '';
+			}
+		}
+
+		return $block_content;
 	}
 	/**
 	 * On init startup.
@@ -982,6 +1014,9 @@ class Kadence_Blocks_Frontend {
 	 * @param number $alpha alpha number.
 	 */
 	public function hex2rgba( $hex, $alpha ) {
+		if ( empty( $hex ) ) {
+			return '';
+		}
 		$hex = str_replace( '#', '', $hex );
 
 		if ( strlen( $hex ) == 3 ) {
@@ -1041,6 +1076,9 @@ class Kadence_Blocks_Frontend {
 		}
 		if ( ! empty( $subsets ) ) {
 			$link .= '&amp;subset=' . implode( ',', $subsets );
+		}
+		if ( apply_filters( 'kadence_display_swap_google_fonts', true ) ) {
+			$link .= '&amp;display=swap';
 		}
 		echo '<link href="//fonts.googleapis.com/css?family=' . esc_attr( str_replace( '|', '%7C', $link ) ) . '" rel="stylesheet">';
 
@@ -1568,13 +1606,13 @@ class Kadence_Blocks_Frontend {
 			}
 			if ( isset( $style['requiredColor'] ) && ! empty( $style['requiredColor'] ) ) {
 				$css .= '.kadence-form-' . $unique_id . ' .kb-form .kadence-blocks-form-field label .required {';
-				$css .= 'color:' . $style['requiredColor'] . ';';
+				$css .= 'color:' . $this->kadence_color_output( $style['requiredColor'] ) . ';';
 				$css .= '}';
 			}
 			if ( ( isset( $style['color'] ) && ! empty( $style['color'] ) ) || ( isset( $style['background'] ) && ! empty( $style['background'] ) ) || ( isset( $style['border'] ) && ! empty( $style['border'] ) ) || ( isset( $style['backgroundType'] ) && 'gradient' === $style['backgroundType'] ) || ( isset( $style['boxShadow'] ) && is_array( $style['boxShadow'] ) && isset( $style['boxShadow'][0] ) && true === $style['boxShadow'][0] ) || ( isset( $style['borderRadius'] ) && is_numeric( $style['borderRadius'] ) ) || ( isset( $style['fontSize'] ) && is_array( $style['fontSize'] ) && is_numeric( $style['fontSize'][0] ) ) || ( isset( $style['lineHeight'] ) && is_array( $style['lineHeight'] ) && is_numeric( $style['lineHeight'][0] ) ) || ( isset( $style['borderWidth'] ) && is_array( $style['borderWidth'] ) && is_numeric( $style['borderWidth'][0] ) ) ) {
 				$css .= '.kadence-form-' . $unique_id . ' .kb-form .kadence-blocks-form-field .kb-text-style-field, .kadence-form-' . $unique_id . ' .kb-form .kadence-blocks-form-field .kb-select-style-field {';
 				if ( isset( $style['color'] ) && ! empty( $style['color'] ) ) {
-					$css .= 'color:' . $style['color'] . ';';
+					$css .= 'color:' . $this->kadence_color_output( $style['color'] ) . ';';
 				}
 				if ( isset( $style['borderRadius'] ) && is_numeric( $style['borderRadius'] ) ) {
 					$css .= 'border-radius:' . $style['borderRadius'] . 'px;';
@@ -1589,8 +1627,8 @@ class Kadence_Blocks_Frontend {
 					$css .= 'border-width:' . $style['borderWidth'][0] . 'px ' . $style['borderWidth'][1] . 'px ' . $style['borderWidth'][2] . 'px ' . $style['borderWidth'][3] . 'px;';
 				}
 				if ( isset( $style['backgroundType'] ) && 'gradient' === $style['backgroundType'] ) {
-					$bg1 = ( ! isset( $style['background'] ) || 'transparent' === $style['background'] ? 'rgba(255,255,255,0)' : $this->hex2rgba( $style['background'], ( isset( $style['backgroundOpacity'] ) && is_numeric( $style['backgroundOpacity'] ) ? $style['backgroundOpacity'] : 1 ) ) );
-					$bg2 = ( isset( $style['gradient'][0] ) && ! empty( $style['gradient'][0] ) ? $this->hex2rgba( $style['gradient'][0], ( isset( $style['gradient'][1] ) && is_numeric( $style['gradient'][1] ) ? $style['gradient'][1] : 1 ) ) : $this->hex2rgba( '#999999', ( isset( $style['gradient'][1] ) && is_numeric( $style['gradient'][1] ) ? $style['gradient'][1] : 1 ) ) );
+					$bg1 = ( ! isset( $style['background'] ) || 'transparent' === $style['background'] ? 'rgba(255,255,255,0)' : $this->kadence_color_output( $style['background'], ( isset( $style['backgroundOpacity'] ) && is_numeric( $style['backgroundOpacity'] ) ? $style['backgroundOpacity'] : 1 ) ) );
+					$bg2 = ( isset( $style['gradient'][0] ) && ! empty( $style['gradient'][0] ) ? $this->kadence_color_output( $style['gradient'][0], ( isset( $style['gradient'][1] ) && is_numeric( $style['gradient'][1] ) ? $style['gradient'][1] : 1 ) ) : $this->kadence_color_output( '#999999', ( isset( $style['gradient'][1] ) && is_numeric( $style['gradient'][1] ) ? $style['gradient'][1] : 1 ) ) );
 					if ( isset( $style['gradient'][4] ) && 'radial' === $style['gradient'][4] ) {
 						$css .= 'background:radial-gradient(at ' . ( isset( $style['gradient'][6] ) && ! empty( $style['gradient'][6] ) ? $style['gradient'][6] : 'center center' ) . ', ' . $bg1 . ' ' . ( isset( $style['gradient'][2] ) && is_numeric( $style['gradient'][2] ) ? $style['gradient'][2] : '0' ) . '%, ' . $bg2 . ' ' . ( isset( $style['gradient'][3] ) && is_numeric( $style['gradient'][3] ) ? $style['gradient'][3] : '100' ) . '%);';
 					} else if ( ! isset( $style['gradient'][4] ) || 'radial' !== $style['gradient'][4] ) {
@@ -1598,32 +1636,32 @@ class Kadence_Blocks_Frontend {
 					}
 				} else if ( isset( $style['background'] ) && ! empty( $style['background'] ) ) {
 					$alpha = ( isset( $style['backgroundOpacity'] ) && is_numeric( $style['backgroundOpacity'] ) ? $style['backgroundOpacity'] : 1 );
-					$css  .= 'background:' . $this->hex2rgba( $style['background'], $alpha ) . ';';
+					$css  .= 'background:' . $this->kadence_color_output( $style['background'], $alpha ) . ';';
 				}
 				if ( isset( $style['border'] ) && ! empty( $style['border'] ) ) {
 					$alpha = ( isset( $style['borderOpacity'] ) && is_numeric( $style['borderOpacity'] ) ? $style['borderOpacity'] : 1 );
-					$css  .= 'border-color:' . $this->hex2rgba( $style['border'], $alpha ) . ';';
+					$css  .= 'border-color:' . $this->kadence_color_output( $style['border'], $alpha ) . ';';
 				}
 				if ( isset( $style['boxShadow'] ) && is_array( $style['boxShadow'] ) && isset( $style['boxShadow'][0] ) && true === $style['boxShadow'][0] ) {
-					$css  .= 'box-shadow:' . ( isset( $style['boxShadow'][7] ) && true === $style['boxShadow'][7] ? 'inset ' : '' ) . ( isset( $style['boxShadow'][3] ) && is_numeric( $style['boxShadow'][3] ) ? $style['boxShadow'][3] : '1' ) . 'px ' . ( isset( $style['boxShadow'][4] ) && is_numeric( $style['boxShadow'][4] ) ? $style['boxShadow'][4] : '1' ) . 'px ' . ( isset( $style['boxShadow'][5] ) && is_numeric( $style['boxShadow'][5] ) ? $style['boxShadow'][5] : '2' ) . 'px ' . ( isset( $style['boxShadow'][6] ) && is_numeric( $style['boxShadow'][6] ) ? $style['boxShadow'][6] : '0' ) . 'px ' . $this->hex2rgba( ( isset( $style['boxShadow'][1] ) && ! empty( $style['boxShadow'][1] ) ? $style['boxShadow'][1] : '#000000' ), ( isset( $style['boxShadow'][2] ) && is_numeric( $style['boxShadow'][2] ) ? $style['boxShadow'][2] : 0.2 ) ) . ';';
+					$css  .= 'box-shadow:' . ( isset( $style['boxShadow'][7] ) && true === $style['boxShadow'][7] ? 'inset ' : '' ) . ( isset( $style['boxShadow'][3] ) && is_numeric( $style['boxShadow'][3] ) ? $style['boxShadow'][3] : '1' ) . 'px ' . ( isset( $style['boxShadow'][4] ) && is_numeric( $style['boxShadow'][4] ) ? $style['boxShadow'][4] : '1' ) . 'px ' . ( isset( $style['boxShadow'][5] ) && is_numeric( $style['boxShadow'][5] ) ? $style['boxShadow'][5] : '2' ) . 'px ' . ( isset( $style['boxShadow'][6] ) && is_numeric( $style['boxShadow'][6] ) ? $style['boxShadow'][6] : '0' ) . 'px ' . $this->kadence_color_output( ( isset( $style['boxShadow'][1] ) && ! empty( $style['boxShadow'][1] ) ? $style['boxShadow'][1] : '#000000' ), ( isset( $style['boxShadow'][2] ) && is_numeric( $style['boxShadow'][2] ) ? $style['boxShadow'][2] : 0.2 ) ) . ';';
 				}
 				$css .= '}';
 			}
 			if ( ( isset( $style['colorActive'] ) && ! empty( $style['colorActive'] ) ) || ( isset( $style['backgroundActive'] ) && ! empty( $style['backgroundActive'] ) ) || ( isset( $style['borderActive'] ) && ! empty( $style['borderActive'] ) ) || ( isset( $style['backgroundActiveType'] ) && 'gradient' === $style['backgroundActiveType'] ) || ( isset( $style['boxShadow'] ) && is_array( $style['boxShadow'] ) && isset( $style['boxShadow'][0] ) && true === $style['boxShadow'][0] ) ) {
 				$css .= '.kadence-form-' . $unique_id . ' .kb-form .kadence-blocks-form-field .kb-text-style-field:focus, .kadence-form-' . $unique_id . ' .kb-form .kadence-blocks-form-field .kb-select-style-field:focus {';
 				if ( isset( $style['colorActive'] ) && ! empty( $style['colorActive'] ) ) {
-					$css .= 'color:' . $style['colorActive'] . ';';
+					$css .= 'color:' . $this->kadence_color_output( $style['colorActive'] ) . ';';
 				}
 				if ( isset( $style['borderActive'] ) && ! empty( $style['borderActive'] ) ) {
 					$alpha = ( isset( $style['borderActiveOpacity'] ) && is_numeric( $style['borderActiveOpacity'] ) ? $style['borderActiveOpacity'] : 1 );
-					$css  .= 'border-color:' . $this->hex2rgba( $style['borderActive'], $alpha ) . ';';
+					$css  .= 'border-color:' . $this->kadence_color_output( $style['borderActive'], $alpha ) . ';';
 				}
 				if ( isset( $style['boxShadowActive'] ) && is_array( $style['boxShadowActive'] ) && isset( $style['boxShadowActive'][0] ) && true === $style['boxShadowActive'][0] ) {
-					$css  .= 'box-shadow:' . ( isset( $style['boxShadowActive'][7] ) && true === $style['boxShadowActive'][7] ? 'inset ' : '' ) . ( isset( $style['boxShadowActive'][3] ) && is_numeric( $style['boxShadowActive'][3] ) ? $style['boxShadowActive'][3] : '2' ) . 'px ' . ( isset( $style['boxShadowActive'][4] ) && is_numeric( $style['boxShadowActive'][4] ) ? $style['boxShadowActive'][4] : '2' ) . 'px ' . ( isset( $style['boxShadowActive'][5] ) && is_numeric( $style['boxShadowActive'][5] ) ? $style['boxShadowActive'][5] : '3' ) . 'px ' . ( isset( $style['boxShadowActive'][6] ) && is_numeric( $style['boxShadowActive'][6] ) ? $style['boxShadowActive'][6] : '0' ) . 'px ' . $this->hex2rgba( ( isset( $style['boxShadowActive'][1] ) && ! empty( $style['boxShadowActive'][1] ) ? $style['boxShadowActive'][1] : '#000000' ), ( isset( $style['boxShadowActive'][2] ) && is_numeric( $style['boxShadowActive'][2] ) ? $style['boxShadowActive'][2] : 0.4 ) ) . ';';
+					$css  .= 'box-shadow:' . ( isset( $style['boxShadowActive'][7] ) && true === $style['boxShadowActive'][7] ? 'inset ' : '' ) . ( isset( $style['boxShadowActive'][3] ) && is_numeric( $style['boxShadowActive'][3] ) ? $style['boxShadowActive'][3] : '2' ) . 'px ' . ( isset( $style['boxShadowActive'][4] ) && is_numeric( $style['boxShadowActive'][4] ) ? $style['boxShadowActive'][4] : '2' ) . 'px ' . ( isset( $style['boxShadowActive'][5] ) && is_numeric( $style['boxShadowActive'][5] ) ? $style['boxShadowActive'][5] : '3' ) . 'px ' . ( isset( $style['boxShadowActive'][6] ) && is_numeric( $style['boxShadowActive'][6] ) ? $style['boxShadowActive'][6] : '0' ) . 'px ' . $this->kadence_color_output( ( isset( $style['boxShadowActive'][1] ) && ! empty( $style['boxShadowActive'][1] ) ? $style['boxShadowActive'][1] : '#000000' ), ( isset( $style['boxShadowActive'][2] ) && is_numeric( $style['boxShadowActive'][2] ) ? $style['boxShadowActive'][2] : 0.4 ) ) . ';';
 				}
 				if ( isset( $style['backgroundActiveType'] ) && 'gradient' === $style['backgroundActiveType'] ) {
-					$bg1 = ( ! isset( $style['backgroundActive'] ) ? $this->hex2rgba( '#444444', ( isset( $style['backgroundActiveOpacity'] ) && is_numeric( $style['backgroundActiveOpacity'] ) ? $style['backgroundActiveOpacity'] : 1 ) ) : $this->hex2rgba( $style['backgroundActive'], ( isset( $style['backgroundActiveOpacity'] ) && is_numeric( $style['backgroundActiveOpacity'] ) ? $style['backgroundActiveOpacity'] : 1 ) ) );
-					$bg2 = ( isset( $style['gradientActive'][0] ) && ! empty( $style['gradientActive'][0] ) ? $this->hex2rgba( $style['gradientActive'][0], ( isset( $style['gradientActive'][1] ) && is_numeric( $style['gradientActive'][1] ) ? $style['gradientActive'][1] : 1 ) ) : $this->hex2rgba( '#999999', ( isset( $style['gradientActive'][1] ) && is_numeric( $style['gradientActive'][1] ) ? $style['gradientActive'][1] : 1 ) ) );
+					$bg1 = ( ! isset( $style['backgroundActive'] ) ? $this->kadence_color_output( '#444444', ( isset( $style['backgroundActiveOpacity'] ) && is_numeric( $style['backgroundActiveOpacity'] ) ? $style['backgroundActiveOpacity'] : 1 ) ) : $this->kadence_color_output( $style['backgroundActive'], ( isset( $style['backgroundActiveOpacity'] ) && is_numeric( $style['backgroundActiveOpacity'] ) ? $style['backgroundActiveOpacity'] : 1 ) ) );
+					$bg2 = ( isset( $style['gradientActive'][0] ) && ! empty( $style['gradientActive'][0] ) ? $this->kadence_color_output( $style['gradientActive'][0], ( isset( $style['gradientActive'][1] ) && is_numeric( $style['gradientActive'][1] ) ? $style['gradientActive'][1] : 1 ) ) : $this->kadence_color_output( '#999999', ( isset( $style['gradientActive'][1] ) && is_numeric( $style['gradientActive'][1] ) ? $style['gradientActive'][1] : 1 ) ) );
 					if ( isset( $style['gradientActive'][4] ) && 'radial' === $style['gradientActive'][4] ) {
 						$css .= 'background:radial-gradient(at ' . ( isset( $style['gradientActive'][6] ) && ! empty( $style['gradientActive'][6] ) ? $style['gradientActive'][6] : 'center center' ) . ', ' . $bg1 . ' ' . ( isset( $style['gradientActive'][2] ) && is_numeric( $style['gradientActive'][2] ) ? $style['gradientActive'][2] : '0' ) . '%, ' . $bg2 . ' ' . ( isset( $style['gradientActive'][3] ) && is_numeric( $style['gradientActive'][3] ) ? $style['gradientActive'][3] : '100' ) . '%);';
 					} else if ( ! isset( $style['gradientActive'][4] ) || 'radial' !== $style['gradientActive'][4] ) {
@@ -1631,7 +1669,7 @@ class Kadence_Blocks_Frontend {
 					}
 				} else if ( isset( $style['backgroundActive'] ) && ! empty( $style['backgroundActive'] ) ) {
 					$alpha = ( isset( $style['backgroundActiveOpacity'] ) && is_numeric( $style['backgroundActiveOpacity'] ) ? $style['backgroundActiveOpacity'] : 1 );
-					$css  .= 'background:' . $this->hex2rgba( $style['backgroundActive'], $alpha ) . ';';
+					$css  .= 'background:' . $this->kadence_color_output( $style['backgroundActive'], $alpha ) . ';';
 				}
 				$css .= '}';
 			}
@@ -1716,7 +1754,7 @@ class Kadence_Blocks_Frontend {
 			$label_font = $attr['labelFont'][ 0 ];
 			$css .= '.kadence-form-' . $unique_id . ' .kb-form .kadence-blocks-form-field label {';
 			if ( isset( $label_font['color'] ) && ! empty( $label_font['color'] ) ) {
-				$css .= 'color:' . $label_font['color'] . ';';
+				$css .= 'color:' . $this->kadence_color_output( $label_font['color'] ) . ';';
 			}
 			if ( isset( $label_font['size'] ) && is_array( $label_font['size'] ) && is_numeric( $label_font['size'][0] ) ) {
 				$css .= 'font-size:' . $label_font['size'][0] . ( ! isset( $label_font['sizeType'] ) ? 'px' : $label_font['sizeType'] ) . ';';
@@ -1796,7 +1834,7 @@ class Kadence_Blocks_Frontend {
 				$css .= 'width:' . $submit['fixedWidth'][0] . 'px;';
 			}
 			if ( isset( $submit['color'] ) && ! empty( $submit['color'] ) ) {
-				$css .= 'color:' . $submit['color'] . ';';
+				$css .= 'color:' . $this->kadence_color_output( $submit['color'] ) . ';';
 			}
 			if ( isset( $submit['borderRadius'] ) && is_numeric( $submit['borderRadius'] ) ) {
 				$css .= 'border-radius:' . $submit['borderRadius'] . 'px;';
@@ -1810,8 +1848,8 @@ class Kadence_Blocks_Frontend {
 				$bgtype = 'solid';
 			}
 			if ( isset( $submit['backgroundType'] ) && 'gradient' === $submit['backgroundType'] ) {
-				$bg1 = ( ! isset( $submit['background'] ) || 'transparent' === $submit['background'] ? 'rgba(255,255,255,0)' : $this->hex2rgba( $submit['background'], ( isset( $submit['backgroundOpacity'] ) && is_numeric( $submit['backgroundOpacity'] ) ? $submit['backgroundOpacity'] : 1 ) ) );
-				$bg2 = ( isset( $submit['gradient'][0] ) && ! empty( $submit['gradient'][0] ) ? $this->hex2rgba( $submit['gradient'][0], ( isset( $submit['gradient'][1] ) && is_numeric( $submit['gradient'][1] ) ? $submit['gradient'][1] : 1 ) ) : $this->hex2rgba( '#999999', ( isset( $submit['gradient'][1] ) && is_numeric( $submit['gradient'][1] ) ? $submit['gradient'][1] : 1 ) ) );
+				$bg1 = ( ! isset( $submit['background'] ) || 'transparent' === $submit['background'] ? 'rgba(255,255,255,0)' : $this->kadence_color_output( $submit['background'], ( isset( $submit['backgroundOpacity'] ) && is_numeric( $submit['backgroundOpacity'] ) ? $submit['backgroundOpacity'] : 1 ) ) );
+				$bg2 = ( isset( $submit['gradient'][0] ) && ! empty( $submit['gradient'][0] ) ? $this->kadence_color_output( $submit['gradient'][0], ( isset( $submit['gradient'][1] ) && is_numeric( $submit['gradient'][1] ) ? $submit['gradient'][1] : 1 ) ) : $this->kadence_color_output( '#999999', ( isset( $submit['gradient'][1] ) && is_numeric( $submit['gradient'][1] ) ? $submit['gradient'][1] : 1 ) ) );
 				if ( isset( $submit['gradient'][4] ) && 'radial' === $submit['gradient'][4] ) {
 					$css .= 'background:radial-gradient(at ' . ( isset( $submit['gradient'][6] ) && ! empty( $submit['gradient'][6] ) ? $submit['gradient'][6] : 'center center' ) . ', ' . $bg1 . ' ' . ( isset( $submit['gradient'][2] ) && is_numeric( $submit['gradient'][2] ) ? $submit['gradient'][2] : '0' ) . '%, ' . $bg2 . ' ' . ( isset( $submit['gradient'][3] ) && is_numeric( $submit['gradient'][3] ) ? $submit['gradient'][3] : '100' ) . '%);';
 				} else if ( ! isset( $submit['gradient'][4] ) || 'radial' !== $submit['gradient'][4] ) {
@@ -1819,45 +1857,45 @@ class Kadence_Blocks_Frontend {
 				}
 			} else if ( isset( $submit['background'] ) && ! empty( $submit['background'] ) ) {
 				$alpha = ( isset( $submit['backgroundOpacity'] ) && is_numeric( $submit['backgroundOpacity'] ) ? $submit['backgroundOpacity'] : 1 );
-				$css  .= 'background:' . $this->hex2rgba( $submit['background'], $alpha ) . ';';
+				$css  .= 'background:' . $this->kadence_color_output( $submit['background'], $alpha ) . ';';
 			}
 			if ( isset( $submit['border'] ) && ! empty( $submit['border'] ) ) {
 				$alpha = ( isset( $submit['borderOpacity'] ) && is_numeric( $submit['borderOpacity'] ) ? $submit['borderOpacity'] : 1 );
-				$css  .= 'border-color:' . $this->hex2rgba( $submit['border'], $alpha ) . ';';
+				$css  .= 'border-color:' . $this->kadence_color_output( $submit['border'], $alpha ) . ';';
 			}
 			if ( isset( $submit['boxShadow'] ) && is_array( $submit['boxShadow'] ) && isset( $submit['boxShadow'][0] ) && true === $submit['boxShadow'][0] ) {
-				$css  .= 'box-shadow:' . ( isset( $submit['boxShadow'][7] ) && true === $submit['boxShadow'][7] ? 'inset ' : '' ) . ( isset( $submit['boxShadow'][3] ) && is_numeric( $submit['boxShadow'][3] ) ? $submit['boxShadow'][3] : '1' ) . 'px ' . ( isset( $submit['boxShadow'][4] ) && is_numeric( $submit['boxShadow'][4] ) ? $submit['boxShadow'][4] : '1' ) . 'px ' . ( isset( $submit['boxShadow'][5] ) && is_numeric( $submit['boxShadow'][5] ) ? $submit['boxShadow'][5] : '2' ) . 'px ' . ( isset( $submit['boxShadow'][6] ) && is_numeric( $submit['boxShadow'][6] ) ? $submit['boxShadow'][6] : '0' ) . 'px ' . $this->hex2rgba( ( isset( $submit['boxShadow'][1] ) && ! empty( $submit['boxShadow'][1] ) ? $submit['boxShadow'][1] : '#000000' ), ( isset( $submit['boxShadow'][2] ) && is_numeric( $submit['boxShadow'][2] ) ? $submit['boxShadow'][2] : 0.2 ) ) . ';';
+				$css  .= 'box-shadow:' . ( isset( $submit['boxShadow'][7] ) && true === $submit['boxShadow'][7] ? 'inset ' : '' ) . ( isset( $submit['boxShadow'][3] ) && is_numeric( $submit['boxShadow'][3] ) ? $submit['boxShadow'][3] : '1' ) . 'px ' . ( isset( $submit['boxShadow'][4] ) && is_numeric( $submit['boxShadow'][4] ) ? $submit['boxShadow'][4] : '1' ) . 'px ' . ( isset( $submit['boxShadow'][5] ) && is_numeric( $submit['boxShadow'][5] ) ? $submit['boxShadow'][5] : '2' ) . 'px ' . ( isset( $submit['boxShadow'][6] ) && is_numeric( $submit['boxShadow'][6] ) ? $submit['boxShadow'][6] : '0' ) . 'px ' . $this->kadence_color_output( ( isset( $submit['boxShadow'][1] ) && ! empty( $submit['boxShadow'][1] ) ? $submit['boxShadow'][1] : '#000000' ), ( isset( $submit['boxShadow'][2] ) && is_numeric( $submit['boxShadow'][2] ) ? $submit['boxShadow'][2] : 0.2 ) ) . ';';
 			}
 			$css .= '}';
 			$css .= '.kadence-form-' . $unique_id . ' .kb-form .kadence-blocks-form-field .kb-forms-submit:hover, .kadence-form-' . $unique_id . ' .kb-form .kadence-blocks-form-field .kb-forms-submit:focus  {';
 			if ( isset( $submit['colorHover'] ) && ! empty( $submit['colorHover'] ) ) {
-				$css .= 'color:' . $submit['colorHover'] . ';';
+				$css .= 'color:' . $this->kadence_color_output( $submit['colorHover'] ) . ';';
 			}
 			if ( isset( $submit['borderHover'] ) && ! empty( $submit['borderHover'] ) ) {
 				$alpha = ( isset( $submit['borderHoverOpacity'] ) && is_numeric( $submit['borderHoverOpacity'] ) ? $submit['borderHoverOpacity'] : 1 );
-				$css .= 'border-color:' . $this->hex2rgba( $submit['borderHover'], $alpha ) . ';';
+				$css .= 'border-color:' . $this->kadence_color_output( $submit['borderHover'], $alpha ) . ';';
 			}
 			if ( isset( $submit['boxShadowHover'] ) && is_array( $submit['boxShadowHover'] ) && isset( $submit['boxShadowHover'][0] ) && true === $submit['boxShadowHover'][0] && isset( $submit['boxShadowHover'][7] ) && true !== $submit['boxShadowHover'][7] ) {
-				$css  .= 'box-shadow:' . ( isset( $submit['boxShadowHover'][7] ) && true === $submit['boxShadowHover'][7] ? 'inset ' : '' ) . ( isset( $submit['boxShadowHover'][3] ) && is_numeric( $submit['boxShadowHover'][3] ) ? $submit['boxShadowHover'][3] : '2' ) . 'px ' . ( isset( $submit['boxShadowHover'][4] ) && is_numeric( $submit['boxShadowHover'][4] ) ? $submit['boxShadowHover'][4] : '2' ) . 'px ' . ( isset( $submit['boxShadowHover'][5] ) && is_numeric( $submit['boxShadowHover'][5] ) ? $submit['boxShadowHover'][5] : '3' ) . 'px ' . ( isset( $submit['boxShadowHover'][6] ) && is_numeric( $submit['boxShadowHover'][6] ) ? $submit['boxShadowHover'][6] : '0' ) . 'px ' . $this->hex2rgba( ( isset( $submit['boxShadowHover'][1] ) && ! empty( $submit['boxShadowHover'][1] ) ? $submit['boxShadowHover'][1] : '#000000' ), ( isset( $submit['boxShadowHover'][2] ) && is_numeric( $submit['boxShadowHover'][2] ) ? $submit['boxShadowHover'][2] : 0.4 ) ) . ';';
+				$css  .= 'box-shadow:' . ( isset( $submit['boxShadowHover'][7] ) && true === $submit['boxShadowHover'][7] ? 'inset ' : '' ) . ( isset( $submit['boxShadowHover'][3] ) && is_numeric( $submit['boxShadowHover'][3] ) ? $submit['boxShadowHover'][3] : '2' ) . 'px ' . ( isset( $submit['boxShadowHover'][4] ) && is_numeric( $submit['boxShadowHover'][4] ) ? $submit['boxShadowHover'][4] : '2' ) . 'px ' . ( isset( $submit['boxShadowHover'][5] ) && is_numeric( $submit['boxShadowHover'][5] ) ? $submit['boxShadowHover'][5] : '3' ) . 'px ' . ( isset( $submit['boxShadowHover'][6] ) && is_numeric( $submit['boxShadowHover'][6] ) ? $submit['boxShadowHover'][6] : '0' ) . 'px ' . $this->kadence_color_output( ( isset( $submit['boxShadowHover'][1] ) && ! empty( $submit['boxShadowHover'][1] ) ? $submit['boxShadowHover'][1] : '#000000' ), ( isset( $submit['boxShadowHover'][2] ) && is_numeric( $submit['boxShadowHover'][2] ) ? $submit['boxShadowHover'][2] : 0.4 ) ) . ';';
 			}
 			if ( 'gradient' !== $bgtype ) {
 				if ( isset( $submit['backgroundHover'] ) && ! empty( $submit['backgroundHover'] ) ) {
 					$alpha = ( isset( $submit['backgroundHoverOpacity'] ) && is_numeric( $submit['backgroundHoverOpacity'] ) ? $submit['backgroundHoverOpacity'] : 1 );
-					$css  .= 'background:' . $this->hex2rgba( $submit['backgroundHover'], $alpha ) . ';';
+					$css  .= 'background:' . $this->kadence_color_output( $submit['backgroundHover'], $alpha ) . ';';
 				} else {
 					$alpha = ( isset( $submit['backgroundHoverOpacity'] ) && is_numeric( $submit['backgroundHoverOpacity'] ) ? $submit['backgroundHoverOpacity'] : 1 );
-					$css  .= 'background:' . $this->hex2rgba( '#444444', $alpha ) . ';';
+					$css  .= 'background:' . $this->kadence_color_output( '#444444', $alpha ) . ';';
 				}
 				if ( isset( $submit['boxShadowHover'] ) && is_array( $submit['boxShadowHover'] ) && isset( $submit['boxShadowHover'][0] ) && true === $submit['boxShadowHover'][0] && isset( $submit['boxShadowHover'][7] ) && true === $submit['boxShadowHover'][7] ) {
-					$css  .= 'box-shadow:' . ( isset( $submit['boxShadowHover'][7] ) && true === $submit['boxShadowHover'][7] ? 'inset ' : '' ) . ( isset( $submit['boxShadowHover'][3] ) && is_numeric( $submit['boxShadowHover'][3] ) ? $submit['boxShadowHover'][3] : '2' ) . 'px ' . ( isset( $submit['boxShadowHover'][4] ) && is_numeric( $submit['boxShadowHover'][4] ) ? $submit['boxShadowHover'][4] : '2' ) . 'px ' . ( isset( $submit['boxShadowHover'][5] ) && is_numeric( $submit['boxShadowHover'][5] ) ? $submit['boxShadowHover'][5] : '3' ) . 'px ' . ( isset( $submit['boxShadowHover'][6] ) && is_numeric( $submit['boxShadowHover'][6] ) ? $submit['boxShadowHover'][6] : '0' ) . 'px ' . $this->hex2rgba( ( isset( $submit['boxShadowHover'][1] ) && ! empty( $submit['boxShadowHover'][1] ) ? $submit['boxShadowHover'][1] : '#000000' ), ( isset( $submit['boxShadowHover'][2] ) && is_numeric( $submit['boxShadowHover'][2] ) ? $submit['boxShadowHover'][2] : 0.4 ) ) . ';';
+					$css  .= 'box-shadow:' . ( isset( $submit['boxShadowHover'][7] ) && true === $submit['boxShadowHover'][7] ? 'inset ' : '' ) . ( isset( $submit['boxShadowHover'][3] ) && is_numeric( $submit['boxShadowHover'][3] ) ? $submit['boxShadowHover'][3] : '2' ) . 'px ' . ( isset( $submit['boxShadowHover'][4] ) && is_numeric( $submit['boxShadowHover'][4] ) ? $submit['boxShadowHover'][4] : '2' ) . 'px ' . ( isset( $submit['boxShadowHover'][5] ) && is_numeric( $submit['boxShadowHover'][5] ) ? $submit['boxShadowHover'][5] : '3' ) . 'px ' . ( isset( $submit['boxShadowHover'][6] ) && is_numeric( $submit['boxShadowHover'][6] ) ? $submit['boxShadowHover'][6] : '0' ) . 'px ' . $this->kadence_color_output( ( isset( $submit['boxShadowHover'][1] ) && ! empty( $submit['boxShadowHover'][1] ) ? $submit['boxShadowHover'][1] : '#000000' ), ( isset( $submit['boxShadowHover'][2] ) && is_numeric( $submit['boxShadowHover'][2] ) ? $submit['boxShadowHover'][2] : 0.4 ) ) . ';';
 				}
 			}
 			$css .= '}';
 			if ( 'gradient' === $bgtype ) {
 				$css .= '.kadence-form-' . $unique_id . ' .kb-form .kadence-blocks-form-field .kb-forms-submit::before {';
 				if ( isset( $submit['backgroundHoverType'] ) && 'gradient' === $submit['backgroundHoverType'] ) {
-					$bg1 = ( ! isset( $submit['backgroundHover'] ) ? $this->hex2rgba( '#444444', ( isset( $submit['backgroundHoverOpacity'] ) && is_numeric( $submit['backgroundHoverOpacity'] ) ? $submit['backgroundHoverOpacity'] : 1 ) ) : $this->hex2rgba( $submit['backgroundHover'], ( isset( $submit['backgroundHoverOpacity'] ) && is_numeric( $submit['backgroundHoverOpacity'] ) ? $submit['backgroundHoverOpacity'] : 1 ) ) );
-					$bg2 = ( isset( $submit['gradientHover'][0] ) && ! empty( $submit['gradientHover'][0] ) ? $this->hex2rgba( $submit['gradientHover'][0], ( isset( $submit['gradientHover'][1] ) && is_numeric( $submit['gradientHover'][1] ) ? $submit['gradientHover'][1] : 1 ) ) : $this->hex2rgba( '#999999', ( isset( $submit['gradientHover'][1] ) && is_numeric( $submit['gradientHover'][1] ) ? $submit['gradientHover'][1] : 1 ) ) );
+					$bg1 = ( ! isset( $submit['backgroundHover'] ) ? $this->kadence_color_output( '#444444', ( isset( $submit['backgroundHoverOpacity'] ) && is_numeric( $submit['backgroundHoverOpacity'] ) ? $submit['backgroundHoverOpacity'] : 1 ) ) : $this->kadence_color_output( $submit['backgroundHover'], ( isset( $submit['backgroundHoverOpacity'] ) && is_numeric( $submit['backgroundHoverOpacity'] ) ? $submit['backgroundHoverOpacity'] : 1 ) ) );
+					$bg2 = ( isset( $submit['gradientHover'][0] ) && ! empty( $submit['gradientHover'][0] ) ? $this->kadence_color_output( $submit['gradientHover'][0], ( isset( $submit['gradientHover'][1] ) && is_numeric( $submit['gradientHover'][1] ) ? $submit['gradientHover'][1] : 1 ) ) : $this->kadence_color_output( '#999999', ( isset( $submit['gradientHover'][1] ) && is_numeric( $submit['gradientHover'][1] ) ? $submit['gradientHover'][1] : 1 ) ) );
 					if ( isset( $submit['gradientHover'][4] ) && 'radial' === $submit['gradientHover'][4] ) {
 						$css .= 'background:radial-gradient(at ' . ( isset( $submit['gradientHover'][6] ) && ! empty( $submit['gradientHover'][6] ) ? $submit['gradientHover'][6] : 'center center' ) . ', ' . $bg1 . ' ' . ( isset( $submit['gradientHover'][2] ) && is_numeric( $submit['gradientHover'][2] ) ? $submit['gradientHover'][2] : '0' ) . '%, ' . $bg2 . ' ' . ( isset( $submit['gradientHover'][3] ) && is_numeric( $submit['gradientHover'][3] ) ? $submit['gradientHover'][3] : '100' ) . '%);';
 					} else if ( ! isset( $submit['gradientHover'][4] ) || 'radial' !== $submit['gradientHover'][4] ) {
@@ -1865,17 +1903,17 @@ class Kadence_Blocks_Frontend {
 					}
 				} else if ( isset( $submit['backgroundHover'] ) && ! empty( $submit['backgroundHover'] ) ) {
 					$alpha = ( isset( $submit['backgroundHoverOpacity'] ) && is_numeric( $submit['backgroundHoverOpacity'] ) ? $submit['backgroundHoverOpacity'] : 1 );
-					$css  .= 'background:' . $this->hex2rgba( $submit['backgroundHover'], $alpha ) . ';';
+					$css  .= 'background:' . $this->kadence_color_output( $submit['backgroundHover'], $alpha ) . ';';
 				}
 				if ( isset( $submit['boxShadowHover'] ) && is_array( $submit['boxShadowHover'] ) && isset( $submit['boxShadowHover'][0] ) && true === $submit['boxShadowHover'][0] && isset( $submit['boxShadowHover'][7] ) && true === $submit['boxShadowHover'][7] ) {
-					$css  .= 'box-shadow:' . ( isset( $submit['boxShadowHover'][7] ) && true === $submit['boxShadowHover'][7] ? 'inset ' : '' ) . ( isset( $submit['boxShadowHover'][3] ) && is_numeric( $submit['boxShadowHover'][3] ) ? $submit['boxShadowHover'][3] : '2' ) . 'px ' . ( isset( $submit['boxShadowHover'][4] ) && is_numeric( $submit['boxShadowHover'][4] ) ? $submit['boxShadowHover'][4] : '2' ) . 'px ' . ( isset( $submit['boxShadowHover'][5] ) && is_numeric( $submit['boxShadowHover'][5] ) ? $submit['boxShadowHover'][5] : '3' ) . 'px ' . ( isset( $submit['boxShadowHover'][6] ) && is_numeric( $submit['boxShadowHover'][6] ) ? $submit['boxShadowHover'][6] : '0' ) . 'px ' . $this->hex2rgba( ( isset( $submit['boxShadowHover'][1] ) && ! empty( $submit['boxShadowHover'][1] ) ? $submit['boxShadowHover'][1] : '#000000' ), ( isset( $submit['boxShadowHover'][2] ) && is_numeric( $submit['boxShadowHover'][2] ) ? $submit['boxShadowHover'][2] : 0.4 ) ) . ';';
+					$css  .= 'box-shadow:' . ( isset( $submit['boxShadowHover'][7] ) && true === $submit['boxShadowHover'][7] ? 'inset ' : '' ) . ( isset( $submit['boxShadowHover'][3] ) && is_numeric( $submit['boxShadowHover'][3] ) ? $submit['boxShadowHover'][3] : '2' ) . 'px ' . ( isset( $submit['boxShadowHover'][4] ) && is_numeric( $submit['boxShadowHover'][4] ) ? $submit['boxShadowHover'][4] : '2' ) . 'px ' . ( isset( $submit['boxShadowHover'][5] ) && is_numeric( $submit['boxShadowHover'][5] ) ? $submit['boxShadowHover'][5] : '3' ) . 'px ' . ( isset( $submit['boxShadowHover'][6] ) && is_numeric( $submit['boxShadowHover'][6] ) ? $submit['boxShadowHover'][6] : '0' ) . 'px ' . $this->kadence_color_output( ( isset( $submit['boxShadowHover'][1] ) && ! empty( $submit['boxShadowHover'][1] ) ? $submit['boxShadowHover'][1] : '#000000' ), ( isset( $submit['boxShadowHover'][2] ) && is_numeric( $submit['boxShadowHover'][2] ) ? $submit['boxShadowHover'][2] : 0.4 ) ) . ';';
 					if ( isset( $submit['borderRadius'] ) && is_numeric( $submit['borderRadius'] ) ) {
 						$css  .= 'border-radius:' . $submit['borderRadius'] . 'px;';
 					}
 				}
 				$css .= '}';
 			}
-			if ( isset( $submit['size'] ) && 'custom' && $submit['size'] && isset( $submit['deskPadding'] ) && is_array( $submit['deskPadding'] ) && isset( $submit['deskPadding'][0] ) &&is_numeric( $submit['deskPadding'][0] ) ) {
+			if ( isset( $submit['size'] ) && 'custom' && $submit['size'] && isset( $submit['deskPadding'] ) && is_array( $submit['deskPadding'] ) && isset( $submit['deskPadding'][0] ) && is_numeric( $submit['deskPadding'][0] ) ) {
 				$css .= '.kadence-form-' . $unique_id . ' .kb-form .kadence-blocks-form-field .kb-forms-submit {';
 				if ( isset( $submit['deskPadding'][0] ) && is_numeric( $submit['deskPadding'][0] ) ) {
 					$css .= 'padding-top:' . $submit['deskPadding'][0] . 'px;';
@@ -2039,28 +2077,28 @@ class Kadence_Blocks_Frontend {
 			if ( ( isset( $message_font['colorSuccess'] ) && ! empty( $message_font['colorSuccess'] ) ) || ( isset( $message_font['backgroundSuccess'] ) && ! empty( $message_font['backgroundSuccess'] ) ) || ( isset( $message_font['backgroundSuccess'] ) && ! empty( $message_font['backgroundSuccess'] ) ) ) {
 				$css .= '.kadence-form-' . $unique_id . ' .kadence-blocks-form-success {';
 				if ( isset( $message_font['colorSuccess'] ) && ! empty( $message_font['colorSuccess'] ) ) {
-					$css .= 'color:' . $message_font['colorSuccess'] . ';';
+					$css .= 'color:' . $this->kadence_color_output( $message_font['colorSuccess'] ) . ';';
 				}
 				if ( isset( $message_font['borderSuccess'] ) && ! empty( $message_font['borderSuccess'] ) ) {
-					$css .= 'border-color:' . $message_font['borderSuccess'] . ';';
+					$css .= 'border-color:' . $this->kadence_color_output( $message_font['borderSuccess'] ) . ';';
 				}
 				if ( isset( $message_font['backgroundSuccess'] ) && ! empty( $message_font['backgroundSuccess'] ) ) {
 					$alpha = ( isset( $message_font['backgroundSuccessOpacity'] ) && is_numeric( $message_font['backgroundSuccessOpacity'] ) ? $message_font['backgroundSuccessOpacity'] : 1 );
-					$css  .= 'background:' . $this->hex2rgba( $message_font['backgroundSuccess'], $alpha ) . ';';
+					$css  .= 'background:' . $this->kadence_color_output( $message_font['backgroundSuccess'], $alpha ) . ';';
 				}
 				$css .= '}';
 			}
 			if ( ( isset( $message_font['colorError'] ) && ! empty( $message_font['colorError'] ) ) || ( isset( $message_font['backgroundError'] ) && ! empty( $message_font['backgroundError'] ) ) || ( isset( $message_font['backgroundError'] ) && ! empty( $message_font['backgroundError'] ) ) ) {
 				$css .= '.kadence-form-' . $unique_id . ' .kadence-blocks-form-warning {';
 				if ( isset( $message_font['colorError'] ) && ! empty( $message_font['colorError'] ) ) {
-					$css .= 'color:' . $message_font['colorError'] . ';';
+					$css .= 'color:' . $this->kadence_color_output( $message_font['colorError'] ) . ';';
 				}
 				if ( isset( $message_font['borderError'] ) && ! empty( $message_font['borderError'] ) ) {
-					$css .= 'border-color:' . $message_font['borderError'] . ';';
+					$css .= 'border-color:' . $this->kadence_color_output( $message_font['borderError'] ) . ';';
 				}
 				if ( isset( $message_font['backgroundError'] ) && ! empty( $message_font['backgroundError'] ) ) {
 					$alpha = ( isset( $message_font['backgroundErrorOpacity'] ) && is_numeric( $message_font['backgroundErrorOpacity'] ) ? $message_font['backgroundErrorOpacity'] : 1 );
-					$css  .= 'background:' . $this->hex2rgba( $message_font['backgroundError'], $alpha ) . ';';
+					$css  .= 'background:' . $this->kadence_color_output( $message_font['backgroundError'], $alpha ) . ';';
 				}
 				$css .= '}';
 			}
@@ -2159,13 +2197,13 @@ class Kadence_Blocks_Frontend {
 					if ( ( isset( $icon_value['hColor'] ) && ! empty( $icon_value['hColor'] ) ) || ( isset( $icon_value['hBackground'] ) && ! empty( $icon_value['hBackground'] ) ) || ( isset( $icon_value['hBorder'] ) && ! empty( $icon_value['hBorder'] ) ) ) {
 						$css .= '.kt-svg-icons' . $unique_id . ' .kt-svg-item-' . $icon_key . ':hover .kt-svg-icon {';
 						if ( isset( $icon_value['hColor'] ) && ! empty( $icon_value['hColor'] ) ) {
-							$css .= 'color:' . $icon_value['hColor'] . '!important;';
+							$css .= 'color:' . $this->kadence_color_output( $icon_value['hColor'] ) . '!important;';
 						}
 						if ( isset( $icon_value['hBackground'] ) && ! empty( $icon_value['hBackground'] ) ) {
-							$css .= 'background:' . $icon_value['hBackground'] . '!important;';
+							$css .= 'background:' . $this->kadence_color_output( $icon_value['hBackground'] ) . '!important;';
 						}
 						if ( isset( $icon_value['hBorder'] ) && ! empty( $icon_value['hBorder'] ) ) {
-							$css .= 'border-color:' . $icon_value['hBorder'] . '!important;';
+							$css .= 'border-color:' . $this->kadence_color_output( $icon_value['hBorder'] ) . '!important;';
 						}
 						$css .= '}';
 					}
@@ -2204,14 +2242,14 @@ class Kadence_Blocks_Frontend {
 			$css .= '#kt-info-box' . $unique_id . ' .kt-blocks-info-box-link-wrap {';
 			if ( isset( $attr['containerBorder'] ) && ! empty( $attr['containerBorder'] ) ) {
 				$alpha = ( isset( $attr['containerBorderOpacity'] ) && is_numeric( $attr['containerBorderOpacity'] ) ? $attr['containerBorderOpacity'] : 1 );
-				$css .= 'border-color:' . $this->hex2rgba( $attr['containerBorder'], $alpha ) . ';';
+				$css .= 'border-color:' . $this->kadence_color_output( $attr['containerBorder'], $alpha ) . ';';
 			}
 			if ( isset( $attr['containerBorderRadius'] ) && ! empty( $attr['containerBorderRadius'] ) ) {
 				$css .= 'border-radius:' . $attr['containerBorderRadius'] . 'px;';
 			}
 			if ( isset( $attr['containerBackground'] ) && ! empty( $attr['containerBackground'] ) ) {
 				$alpha = ( isset( $attr['containerBackgroundOpacity'] ) && is_numeric( $attr['containerBackgroundOpacity'] ) ? $attr['containerBackgroundOpacity'] : 1 );
-				$css .= 'background:' . $this->hex2rgba( $attr['containerBackground'], $alpha ) . ';';
+				$css .= 'background:' . $this->kadence_color_output( $attr['containerBackground'], $alpha ) . ';';
 			}
 			if ( isset( $attr['containerPadding'] ) && is_array( $attr['containerPadding'] ) ) {
 				$css .= 'padding:' . $attr['containerPadding'][ 0 ] . 'px ' . $attr['containerPadding'][ 1 ] . 'px ' . $attr['containerPadding'][ 2 ] . 'px ' . $attr['containerPadding'][ 3 ] . 'px;';
@@ -2246,8 +2284,8 @@ class Kadence_Blocks_Frontend {
 			$alpha = ( isset( $attr['containerHoverBorderOpacity'] ) && is_numeric( $attr['containerHoverBorderOpacity'] ) ? $attr['containerHoverBorderOpacity'] : 1 );
 			$bg_hover = ( isset( $attr['containerHoverBackground'] ) && ! empty( $attr['containerHoverBackground'] ) ? $attr['containerHoverBackground'] : '#f2f2f2' );
 			$bg_alpha = ( isset( $attr['containerHoverBackgroundOpacity'] ) && is_numeric( $attr['containerHoverBackgroundOpacity'] ) ? $attr['containerHoverBackgroundOpacity'] : 1 );
-			$css .= 'border-color:' . $this->hex2rgba( $border_hover, $alpha ) . ';';
-			$css .= 'background:' . $this->hex2rgba( $bg_hover, $bg_alpha ) . ';';
+			$css .= 'border-color:' . $this->kadence_color_output( $border_hover, $alpha ) . ';';
+			$css .= 'background:' . $this->kadence_color_output( $bg_hover, $bg_alpha ) . ';';
 		$css .= '}';
 		if ( isset( $attr['mediaIcon'] ) && is_array( $attr['mediaIcon'] ) && is_array( $attr['mediaIcon'][ 0 ] ) ) {
 			$media_icon = $attr['mediaIcon'][ 0 ];
@@ -2263,6 +2301,11 @@ class Kadence_Blocks_Frontend {
 			$media_image = $attr['mediaImage'][ 0 ];
 		} else {
 			$media_image = array();
+		}
+		if ( isset( $attr['mediaNumber'] ) && is_array( $attr['mediaNumber'] ) && is_array( $attr['mediaNumber'][ 0 ] ) ) {
+			$media_number = $attr['mediaNumber'][ 0 ];
+		} else {
+			$media_number = array();
 		}
 		if ( isset( $media_image['subtype'] ) && 'svg+xml' === $media_image['subtype'] ) {
 			if ( isset( $media_image['maxWidth'] ) && ! empty( $media_image['maxWidth'] ) ) {
@@ -2282,15 +2325,47 @@ class Kadence_Blocks_Frontend {
 				$css .= '}';
 			}
 		}
+		if ( isset( $media_icon['size'] ) && ! empty( $media_icon['size'] ) ) {
+			$css .= '#kt-info-box' . $unique_id . ' .kt-info-svg-icon, #kt-info-box' . $unique_id . ' .kt-blocks-info-box-number {';
+			$css .= 'font-size:' . $media_icon['size'] . 'px;';
+			$css .= '}';
+		}
+		if ( isset( $media_icon['tabletSize'] ) && is_numeric( $media_icon['tabletSize'] ) ) {
+			$css .= '@media (min-width: 767px) and (max-width: 1024px) {';
+			$css .= '#kt-info-box' . $unique_id . ' .kt-info-svg-icon, #kt-info-box' . $unique_id . ' .kt-blocks-info-box-number {';
+			$css .= 'font-size:' . $media_icon['tabletSize'] . 'px;';
+			$css .= '}';
+			$css .= '}';
+		}
+		if ( isset( $media_icon['mobileSize'] ) && is_numeric( $media_icon['mobileSize'] ) ) {
+			$css .= '@media (max-width: 767px) {';
+			$css .= '#kt-info-box' . $unique_id . ' .kt-info-svg-icon, #kt-info-box' . $unique_id . ' .kt-blocks-info-box-number {';
+			$css .= 'font-size:' . $media_icon['mobileSize'] . 'px;';
+			$css .= '}';
+			$css .= '}';
+		}
+		if ( ( isset( $media_number['family'] ) && ! empty( $media_number['family'] ) ) || ( isset( $media_number['style'] ) && ! empty( $media_number['style'] ) ) || ( isset( $media_number['weight'] ) && ! empty( $media_number['weight'] ) ) ) {
+			$css .= '#kt-info-box' . $unique_id . ' .kt-blocks-info-box-number {';
+			if ( isset( $media_number['family'] ) && ! empty( $media_number['family'] ) ) {
+				$css .= 'font-family:' . $media_number['family'] .  ';';
+			}
+			if ( isset( $media_number['style'] ) && ! empty( $media_number['style'] ) ) {
+				$css .= 'font-style:' . $media_number['style'] .  ';';
+			}
+			if ( isset( $media_number['weight'] ) && ! empty( $media_number['weight'] ) ) {
+				$css .= 'font-weight:' . $media_number['weight'] .  ';';
+			}
+			$css .= '}';
+		}
 		$css .= '#kt-info-box' . $unique_id . ' .kt-blocks-info-box-media {';
 		if ( isset( $media_icon['color'] ) && ! empty( $media_icon['color'] ) ) {
-			$css .= 'color:' . $media_icon['color'] . ';';
+			$css .= 'color:' . $this->kadence_color_output( $media_icon['color'] ) . ';';
 		}
 		if ( isset( $media_style['background'] ) && ! empty( $media_style['background'] ) ) {
-			$css .= 'background:' . $media_style['background'] . ';';
+			$css .= 'background:' . $this->kadence_color_output( $media_style['background'] ) . ';';
 		}
 		if ( isset( $media_style['border'] ) && ! empty( $media_style['border'] ) ) {
-			$css .= 'border-color:' . $media_style['border'] . ';';
+			$css .= 'border-color:' . $this->kadence_color_output( $media_style['border'] ) . ';';
 		}
 		if ( isset( $media_style['borderRadius'] ) && ! empty( $media_style['borderRadius'] ) ) {
 			$css .= 'border-radius:' . $media_style['borderRadius'] . 'px;';
@@ -2317,16 +2392,16 @@ class Kadence_Blocks_Frontend {
 		}
 		$css .= '#kt-info-box' . $unique_id . ' .kt-blocks-info-box-link-wrap:hover .kt-blocks-info-box-media {';
 		if ( isset( $media_icon['hoverColor'] ) && ! empty( $media_icon['hoverColor'] ) ) {
-			$css .= 'color:' . $media_icon['hoverColor'] . ';';
+			$css .= 'color:' . $this->kadence_color_output( $media_icon['hoverColor'] ) . ';';
 		}
 		if ( isset( $media_style['hoverBackground'] ) && ! empty( $media_style['hoverBackground'] ) ) {
-			$css .= 'background:' . $media_style['hoverBackground'] . ';';
+			$css .= 'background:' . $this->kadence_color_output( $media_style['hoverBackground'] ) . ';';
 		}
 		if ( isset( $media_style['hoverBorder'] ) && ! empty( $media_style['hoverBorder'] ) ) {
-			$css .= 'border-color:' . $media_style['hoverBorder'] . ';';
+			$css .= 'border-color:' . $this->kadence_color_output( $media_style['hoverBorder'] ) . ';';
 		}
 		$css .= '}';
-		if ( ( ( isset( $attr['mediaType'] ) && 'icon' === $attr['mediaType'] || ! isset( $attr['mediaType'] ) ) && isset( $media_icon['hoverAnimation'] ) && 'drawborder' === $media_icon['hoverAnimation'] ) || ( isset( $attr['mediaType'] ) && 'image' === $attr['mediaType'] && isset( $media_image['hoverAnimation'] ) && ( 'drawborder' === $media_image['hoverAnimation'] || 'grayscale-border-draw' === $media_image['hoverAnimation'] ) ) ) {
+		if ( ( ( isset( $attr['mediaType'] ) && 'icon' === $attr['mediaType'] || ! isset( $attr['mediaType'] ) ) && isset( $media_icon['hoverAnimation'] ) && 'drawborder' === $media_icon['hoverAnimation'] ) || ( isset( $attr['mediaType'] ) && 'number' === $attr['mediaType'] && isset( $media_number['hoverAnimation'] ) && 'drawborder' === $media_number['hoverAnimation'] ) || ( isset( $attr['mediaType'] ) && 'image' === $attr['mediaType'] && isset( $media_image['hoverAnimation'] ) && ( 'drawborder' === $media_image['hoverAnimation'] || 'grayscale-border-draw' === $media_image['hoverAnimation'] ) ) ) {
 			$css .= '#kt-info-box' . $unique_id . ' .kt-blocks-info-box-link-wrap .kt-blocks-info-box-media {';
 			$css .= 'border-width:0;';
 			if ( isset( $media_style['borderWidth'] ) && is_array( $media_style['borderWidth'] ) ) {
@@ -2348,22 +2423,22 @@ class Kadence_Blocks_Frontend {
 			$css .= '}';
 			if ( isset( $media_style['borderWidth'] ) && is_array( $media_style['borderWidth'] ) ) {
 				$css .= '#kt-info-box' . $unique_id . ' .kt-blocks-info-box-link-wrap:hover .kt-blocks-info-box-media:after {';
-					$css .= 'border-right-color:' . ( isset( $media_style['hoverBorder'] ) && ! empty( $media_style['hoverBorder'] ) ? $media_style['hoverBorder'] : '#444444' ) . ';';
+					$css .= 'border-right-color:' . ( isset( $media_style['hoverBorder'] ) && ! empty( $media_style['hoverBorder'] ) ? $this->kadence_color_output( $media_style['hoverBorder'] ) : '#444444' ) . ';';
 					$css .= 'border-right-width:' . $media_style['borderWidth'][ 0 ] . 'px;';
 					$css .= 'border-top-width:' . $media_style['borderWidth'][ 0 ] . 'px;';
 					$css .= 'border-bottom-width:' . $media_style['borderWidth'][ 0 ] . 'px;';
 				$css .= '}';
 			}
 			$css .= '#kt-info-box' . $unique_id . ' .kt-blocks-info-box-link-wrap:hover .kt-blocks-info-box-media:before {';
-				$css .= 'border-top-color:' . ( isset( $media_style['hoverBorder'] ) && ! empty( $media_style['hoverBorder'] ) ? $media_style['hoverBorder'] : '#444444' ) . ';';
-				$css .= 'border-right-color:' . ( isset( $media_style['hoverBorder'] ) && ! empty( $media_style['hoverBorder'] ) ? $media_style['hoverBorder'] : '#444444' ) . ';';
-				$css .= 'border-bottom-color:' . ( isset( $media_style['hoverBorder'] ) && ! empty( $media_style['hoverBorder'] ) ? $media_style['hoverBorder'] : '#444444' ) . ';';
+				$css .= 'border-top-color:' . ( isset( $media_style['hoverBorder'] ) && ! empty( $media_style['hoverBorder'] ) ? $this->kadence_color_output( $media_style['hoverBorder'] ) : '#444444' ) . ';';
+				$css .= 'border-right-color:' . ( isset( $media_style['hoverBorder'] ) && ! empty( $media_style['hoverBorder'] ) ? $this->kadence_color_output( $media_style['hoverBorder'] ) : '#444444' ) . ';';
+				$css .= 'border-bottom-color:' . ( isset( $media_style['hoverBorder'] ) && ! empty( $media_style['hoverBorder'] ) ? $this->kadence_color_output( $media_style['hoverBorder'] ) : '#444444' ) . ';';
 			$css .= '}';
 		}
 		if ( isset( $attr['titleColor'] ) || isset( $attr['titleFont'] ) ) {
 			$css .= '#kt-info-box' . $unique_id . ' .kt-blocks-info-box-title {';
 			if ( isset( $attr['titleColor'] ) && ! empty( $attr['titleColor'] ) ) {
-				$css .= 'color:' . $attr['titleColor'] . ';';
+				$css .= 'color:' . $this->kadence_color_output( $attr['titleColor'] ) . ';';
 			}
 			if ( isset( $attr['titleFont'] ) && is_array( $attr['titleFont'] ) && is_array( $attr['titleFont'][ 0 ] ) ) {
 				$title_font = $attr['titleFont'][ 0 ];
@@ -2399,7 +2474,7 @@ class Kadence_Blocks_Frontend {
 		}
 		if ( isset( $attr['titleHoverColor'] ) && ! empty( $attr['titleHoverColor'] ) ) {
 			$css .= '#kt-info-box' . $unique_id . ' .kt-blocks-info-box-link-wrap:hover .kt-blocks-info-box-title {';
-				$css .= 'color:' . $attr['titleHoverColor'] . ';';
+				$css .= 'color:' . $this->kadence_color_output( $attr['titleHoverColor'] ) . ';';
 			$css .= '}';
 		}
 		if ( isset( $attr['titleFont'] ) && is_array( $attr['titleFont'] ) && isset( $attr['titleFont'][0] ) && is_array( $attr['titleFont'][0] ) && ( ( isset( $attr['titleFont'][0]['size'] ) && is_array( $attr['titleFont'][0]['size'] ) && isset( $attr['titleFont'][0]['size'][1] ) && ! empty( $attr['titleFont'][0]['size'][1] ) ) || ( isset( $attr['titleFont'][0]['lineHeight'] ) && is_array( $attr['titleFont'][0]['lineHeight'] ) && isset( $attr['titleFont'][0]['lineHeight'][1] ) && ! empty( $attr['titleFont'][0]['lineHeight'][1] ) ) ) ) {
@@ -2479,7 +2554,7 @@ class Kadence_Blocks_Frontend {
 			}
 			$css .= '}';
 			$css .= '#kt-info-box' . $unique_id . ' .kt-blocks-info-box-link-wrap .kt-blocks-info-box-media {';
-			$css .= 'display: inline-block;';
+			$css .= 'display: block;';
 			$css .= '}';
 			$css .= '}';
 		}
@@ -2515,13 +2590,20 @@ class Kadence_Blocks_Frontend {
 			$css .= '}';
 			$css .= '#kt-info-box' . $unique_id . ' .kt-blocks-info-box-link-wrap .kt-blocks-info-box-media {';
 			$css .= 'display: inline-block;';
+			$css .= 'max-width: 100%;';
 			$css .= '}';
+			// $css .= '#kt-info-box' . $unique_id . ' .kt-blocks-info-box-media-align-left.kt-blocks-info-box-link-wrap .kt-blocks-info-box-media {';
+			// $css .= 'display: block;';
+			// $css .= '}';
+			// .kt-blocks-info-box-media-container {
+			// 	width: 100%;
+			// }
 			$css .= '}';
 		}
 		if ( isset( $attr['textColor'] ) || isset( $attr['textFont'] ) || isset( $attr['textSpacing'] ) ) {
 			$css .= '#kt-info-box' . $unique_id . ' .kt-blocks-info-box-text {';
 			if ( isset( $attr['textColor'] ) && ! empty( $attr['textColor'] ) ) {
-				$css .= 'color:' . $attr['textColor'] . ';';
+				$css .= 'color:' . $this->kadence_color_output( $attr['textColor'] ) . ';';
 			}
 			if ( isset( $attr['textFont'] ) && is_array( $attr['textFont'] ) && is_array( $attr['textFont'][ 0 ] ) ) {
 				$text_font = $attr['textFont'][ 0 ];
@@ -2557,7 +2639,7 @@ class Kadence_Blocks_Frontend {
 		}
 		if ( isset( $attr['textHoverColor'] ) && ! empty( $attr['textHoverColor'] ) ) {
 			$css .= '#kt-info-box' . $unique_id . ' .kt-blocks-info-box-link-wrap:hover .kt-blocks-info-box-text {';
-				$css .= 'color:' . $attr['textHoverColor'] . ';';
+				$css .= 'color:' . $this->kadence_color_output( $attr['textHoverColor'] ) . ';';
 			$css .= '}';
 		}
 		if ( isset( $attr['textFont'] ) && is_array( $attr['textFont'] ) && isset( $attr['textFont'][0] ) && is_array( $attr['textFont'][0] ) && ( ( isset( $attr['textFont'][0]['size'] ) && is_array( $attr['textFont'][0]['size'] ) && isset( $attr['textFont'][0]['size'][1] ) && ! empty( $attr['textFont'][0]['size'][1] ) ) || ( isset( $attr['textFont'][0]['lineHeight'] ) && is_array( $attr['textFont'][0]['lineHeight'] ) && isset( $attr['textFont'][0]['lineHeight'][1] ) && ! empty( $attr['textFont'][0]['lineHeight'][1] ) ) ) ) {
@@ -2609,13 +2691,13 @@ class Kadence_Blocks_Frontend {
 			$learn_more_styles = $attr['learnMoreStyles'][ 0 ];
 			$css .= '#kt-info-box' . $unique_id . ' .kt-blocks-info-box-learnmore {';
 			if ( isset( $learn_more_styles['color'] ) && ! empty( $learn_more_styles['color'] ) ) {
-				$css .= 'color:' . $learn_more_styles['color'] . ';';
+				$css .= 'color:' . $this->kadence_color_output( $learn_more_styles['color'] ) . ';';
 			}
 			if ( isset( $learn_more_styles['background'] ) && ! empty( $learn_more_styles['background'] ) ) {
-				$css .= 'background:' . $learn_more_styles['background'] . ';';
+				$css .= 'background:' . $this->kadence_color_output( $learn_more_styles['background'] ) . ';';
 			}
 			if ( isset( $learn_more_styles['border'] ) && ! empty( $learn_more_styles['border'] ) ) {
-				$css .= 'border-color:' . $learn_more_styles['border'] . ';';
+				$css .= 'border-color:' . $this->kadence_color_output( $learn_more_styles['border'] ) . ';';
 			}
 			if ( isset( $learn_more_styles['borderRadius'] ) && ! empty( $learn_more_styles['borderRadius'] ) ) {
 				$css .= 'border-radius:' . $learn_more_styles['borderRadius'] . 'px;';
@@ -2651,13 +2733,13 @@ class Kadence_Blocks_Frontend {
 			if ( isset( $learn_more_styles['colorHover'] ) || isset( $learn_more_styles['colorHover'] ) || isset( $learn_more_styles['borderHover'] ) ) {
 				$css .= '#kt-info-box' . $unique_id . ' .kt-blocks-info-box-link-wrap:hover .kt-blocks-info-box-learnmore {';
 				if ( isset( $learn_more_styles['colorHover'] ) && ! empty( $learn_more_styles['colorHover'] ) ) {
-					$css .= 'color:' . $learn_more_styles['colorHover'] . ';';
+					$css .= 'color:' . $this->kadence_color_output( $learn_more_styles['colorHover'] ) . ';';
 				}
 				if ( isset( $learn_more_styles['backgroundHover'] ) && ! empty( $learn_more_styles['backgroundHover'] ) ) {
-					$css .= 'background:' . $learn_more_styles['backgroundHover'] . ';';
+					$css .= 'background:' . $this->kadence_color_output( $learn_more_styles['backgroundHover'] ) . ';';
 				}
 				if ( isset( $learn_more_styles['borderHover'] ) && ! empty( $learn_more_styles['borderHover'] ) ) {
-					$css .= 'border-color:' . $learn_more_styles['borderHover'] . ';';
+					$css .= 'border-color:' . $this->kadence_color_output( $learn_more_styles['borderHover'] ) . ';';
 				}
 				$css .= '}';
 			}
@@ -2690,13 +2772,13 @@ class Kadence_Blocks_Frontend {
 			if ( isset( $attr['shadow'] ) && is_array( $attr['shadow'] ) && is_array( $attr['shadow'][ 0 ] ) ) {
 				$shadow = $attr['shadow'][ 0 ];
 				$css .= '#kt-info-box' . $unique_id . ' .kt-blocks-info-box-link-wrap {';
-				$css .= 'box-shadow:' . $shadow['hOffset'] . 'px ' . $shadow['vOffset'] . 'px ' . $shadow['blur'] . 'px ' . $shadow['spread'] . 'px ' . $this->hex2rgba( $shadow['color'], $shadow['opacity'] ) . ';';
+				$css .= 'box-shadow:' . $shadow['hOffset'] . 'px ' . $shadow['vOffset'] . 'px ' . $shadow['blur'] . 'px ' . $shadow['spread'] . 'px ' . $this->kadence_color_output( $shadow['color'], $shadow['opacity'] ) . ';';
 				$css .= '}';
 			}
 			if ( isset( $attr['shadowHover'] ) && is_array( $attr['shadowHover'] ) && is_array( $attr['shadowHover'][ 0 ] ) ) {
 				$shadow_hover = $attr['shadowHover'][ 0 ];
 				$css .= '#kt-info-box' . $unique_id . ' .kt-blocks-info-box-link-wrap:hover {';
-				$css .= 'box-shadow:' . $shadow_hover['hOffset'] . 'px ' . $shadow_hover['vOffset'] . 'px ' . $shadow_hover['blur'] . 'px ' . $shadow_hover['spread'] . 'px ' . $this->hex2rgba( $shadow_hover['color'], $shadow_hover['opacity'] ) . ';';
+				$css .= 'box-shadow:' . $shadow_hover['hOffset'] . 'px ' . $shadow_hover['vOffset'] . 'px ' . $shadow_hover['blur'] . 'px ' . $shadow_hover['spread'] . 'px ' . $this->kadence_color_output( $shadow_hover['color'], $shadow_hover['opacity'] ) . ';';
 				$css .= '}';
 			} else {
 				$css .= '#kt-info-box' . $unique_id . ' .kt-blocks-info-box-link-wrap:hover {';
@@ -2751,10 +2833,10 @@ class Kadence_Blocks_Frontend {
 				$css .= 'min-height:' . $attr['minHeight'] . 'px;';
 			}
 			if ( isset( $attr['contentBorderColor'] ) && ! empty( $attr['contentBorderColor'] ) ) {
-				$css .= 'border-color:' . $attr['contentBorderColor'] . ';';
+				$css .= 'border-color:' . $this->kadence_color_output( $attr['contentBorderColor'] ) . ';';
 			}
 			if ( isset( $attr['contentBgColor'] ) && ! empty( $attr['contentBgColor'] ) ) {
-				$css .= 'background:' . $attr['contentBgColor'] . ';';
+				$css .= 'background:' . $this->kadence_color_output( $attr['contentBgColor'] ) . ';';
 			}
 			$css .= '}';
 		}
@@ -2829,13 +2911,13 @@ class Kadence_Blocks_Frontend {
 				$css .= 'padding:' . $attr['titlePadding'][0] . 'px ' . $attr['titlePadding'][1] . 'px ' . $attr['titlePadding'][2] . 'px ' . $attr['titlePadding'][3] . 'px ;';
 			}
 			if ( isset( $attr['titleBorder'] ) && ! empty( $attr['titleBorder'] ) ) {
-				$css .= 'border-color:' . $attr['titleBorder'] . ';';
+				$css .= 'border-color:' . $this->kadence_color_output( $attr['titleBorder'] ) . ';';
 			}
 			if ( isset( $attr['titleColor'] ) && ! empty( $attr['titleColor'] ) ) {
-				$css .= 'color:' . $attr['titleColor'] . ';';
+				$css .= 'color:' . $this->kadence_color_output( $attr['titleColor'] ) . ';';
 			}
 			if ( isset( $attr['titleBg'] ) && ! empty( $attr['titleBg'] ) ) {
-				$css .= 'background:' . $attr['titleBg'] . ';';
+				$css .= 'background:' . $this->kadence_color_output( $attr['titleBg'] ) . ';';
 			}
 			$css .= '}';
 		}
@@ -2843,13 +2925,13 @@ class Kadence_Blocks_Frontend {
 		if ( isset( $attr['titleBorderHover'] ) || isset( $attr['titleColorHover'] ) || isset( $attr['titleBgHover'] ) ) {
 			$css .= '.kt-tabs-id' . $unique_id . ' > .kt-tabs-title-list li .kt-tab-title:hover, .kt-tabs-id' . $unique_id . ' > .kt-tabs-content-wrap > .kt-tabs-accordion-title .kt-tab-title:hover {';
 			if ( isset( $attr['titleBorderHover'] ) && ! empty( $attr['titleBorderHover'] ) ) {
-				$css .= 'border-color:' . $attr['titleBorderHover'] . ';';
+				$css .= 'border-color:' . $this->kadence_color_output( $attr['titleBorderHover'] ) . ';';
 			}
 			if ( isset( $attr['titleColorHover'] ) && ! empty( $attr['titleColorHover'] ) ) {
-				$css .= 'color:' . $attr['titleColorHover'] . ';';
+				$css .= 'color:' . $this->kadence_color_output( $attr['titleColorHover'] ) . ';';
 			}
 			if ( isset( $attr['titleBgHover'] ) && ! empty( $attr['titleBgHover'] ) ) {
-				$css .= 'background:' . $attr['titleBgHover'] . ';';
+				$css .= 'background:' . $this->kadence_color_output( $attr['titleBgHover'] ) . ';';
 			}
 			$css .= '}';
 		}
@@ -2857,13 +2939,13 @@ class Kadence_Blocks_Frontend {
 		if ( isset( $attr['titleBorderActive'] ) || isset( $attr['titleColorActive'] ) || isset( $attr['titleBgActive'] ) ) {
 			$css .= '.kt-tabs-id' . $unique_id . ' > .kt-tabs-title-list li.kt-tab-title-active .kt-tab-title, .kt-tabs-id' . $unique_id . ' > .kt-tabs-content-wrap > .kt-tabs-accordion-title.kt-tab-title-active .kt-tab-title  {';
 			if ( isset( $attr['titleBorderActive'] ) && ! empty( $attr['titleBorderActive'] ) ) {
-				$css .= 'border-color:' . $attr['titleBorderActive'] . ';';
+				$css .= 'border-color:' . $this->kadence_color_output( $attr['titleBorderActive'] ) . ';';
 			}
 			if ( isset( $attr['titleColorActive'] ) && ! empty( $attr['titleColorActive'] ) ) {
-				$css .= 'color:' . $attr['titleColorActive'] . ';';
+				$css .= 'color:' . $this->kadence_color_output( $attr['titleColorActive'] ) . ';';
 			}
 			if ( isset( $attr['titleBgActive'] ) && ! empty( $attr['titleBgActive'] ) ) {
-				$css .= 'background:' . $attr['titleBgActive'] . ';';
+				$css .= 'background:' . $this->kadence_color_output( $attr['titleBgActive'] ) . ';';
 			} else {
 				$css .= 'background:#ffffff;';
 			}
@@ -2957,6 +3039,25 @@ class Kadence_Blocks_Frontend {
 	 * @param array $attr the blocks attr.
 	 */
 	public function blocks_infobox_scripts_gfonts( $attr ) {
+		if ( isset( $attr['mediaType'] ) && 'number' === $attr['mediaType'] && isset( $attr['mediaNumber'] ) && is_array( $attr['mediaNumber'] ) && isset( $attr['mediaNumber'][0] ) && is_array( $attr['mediaNumber'][0] ) && isset( $attr['mediaNumber'][0]['google'] ) && $attr['mediaNumber'][0]['google'] && ( ! isset( $attr['mediaNumber'][0]['loadGoogle'] ) || true === $attr['mediaNumber'][0]['loadGoogle'] ) &&  isset( $attr['mediaNumber'][0]['family'] ) ) {
+			$number_font = $attr['mediaNumber'][0];
+			// Check if the font has been added yet.
+			if ( ! array_key_exists( $number_font['family'], self::$gfonts ) ) {
+				$add_font = array(
+					'fontfamily'   => $number_font['family'],
+					'fontvariants' => ( isset( $number_font['variant'] ) && ! empty( $number_font['variant'] ) ? array( $number_font['variant'] ) : array() ),
+					'fontsubsets'  => ( isset( $number_font['subset'] ) && ! empty( $number_font['subset'] ) ? array( $number_font['subset'] ) : array() ),
+				);
+				self::$gfonts[ $number_font['family'] ] = $add_font;
+			} else {
+				if ( ! in_array( $number_font['variant'], self::$gfonts[ $number_font['family'] ]['fontvariants'], true ) ) {
+					array_push( self::$gfonts[ $number_font['family'] ]['fontvariants'], $number_font['variant'] );
+				}
+				if ( ! in_array( $number_font['subset'], self::$gfonts[ $number_font['family'] ]['fontsubsets'], true ) ) {
+					array_push( self::$gfonts[ $number_font['family'] ]['fontsubsets'], $number_font['subset'] );
+				}
+			}
+		}
 		if ( isset( $attr['titleFont'] ) && is_array( $attr['titleFont'] ) && isset( $attr['titleFont'][0] ) && is_array( $attr['titleFont'][0] ) && isset( $attr['titleFont'][0]['google'] ) && $attr['titleFont'][0]['google'] && ( ! isset( $attr['titleFont'][0]['loadGoogle'] ) || true === $attr['titleFont'][0]['loadGoogle'] ) &&  isset( $attr['titleFont'][0]['family'] ) ) {
 			$title_font = $attr['titleFont'][0];
 			// Check if the font has been added yet.
@@ -3157,7 +3258,7 @@ class Kadence_Blocks_Frontend {
 			}
 			if ( isset( $attr['containerBorder'] ) && ! empty( $attr['containerBorder'] ) ) {
 				$alpha = ( isset( $attr['containerBorderOpacity'] ) && is_numeric( $attr['containerBorderOpacity'] ) ? $attr['containerBorderOpacity'] : 1 );
-				$css .= 'border-top-color: ' . $this->hex2rgba( $attr['containerBorder'], $alpha ) . ';';
+				$css .= 'border-top-color: ' . $this->kadence_color_output( $attr['containerBorder'], $alpha ) . ';';
 			}
 			$css .= '}';
 		}
@@ -3166,7 +3267,7 @@ class Kadence_Blocks_Frontend {
 
 			$css .= '.kt-blocks-testimonials-wrap' . $unique_id . ' .kt-testimonial-title {';
 			if ( isset( $title_font['color'] ) && ! empty( $title_font['color'] ) ) {
-				$css .= 'color:' . $title_font['color'] . ';';
+				$css .= 'color:' . $this->kadence_color_output( $title_font['color'] ) . ';';
 			}
 			if ( isset( $title_font['size'] ) && is_array( $title_font['size'] ) && ! empty( $title_font['size'][0] ) ) {
 				$css .= 'font-size:' . $title_font['size'][0] . ( ! isset( $title_font['sizeType'] ) ? 'px' : $title_font['sizeType'] ) . ';';
@@ -3220,7 +3321,7 @@ class Kadence_Blocks_Frontend {
 
 			$css .= '.kt-blocks-testimonials-wrap' . $unique_id . ' .kt-testimonial-content {';
 			if ( isset( $content_font['color'] ) && ! empty( $content_font['color'] ) ) {
-				$css .= 'color:' . $content_font['color'] . ';';
+				$css .= 'color:' . $this->kadence_color_output( $content_font['color'] ) . ';';
 			}
 			if ( isset( $content_font['size'] ) && is_array( $content_font['size'] ) && ! empty( $content_font['size'][0] ) ) {
 				$css .= 'font-size:' . $content_font['size'][0] . ( ! isset( $content_font['sizeType'] ) ? 'px' : $content_font['sizeType'] ) . ';';
@@ -3274,7 +3375,7 @@ class Kadence_Blocks_Frontend {
 
 			$css .= '.kt-blocks-testimonials-wrap' . $unique_id . ' .kt-testimonial-name {';
 			if ( isset( $name_font['color'] ) && ! empty( $name_font['color'] ) ) {
-				$css .= 'color:' . $name_font['color'] . ';';
+				$css .= 'color:' . $this->kadence_color_output( $name_font['color'] ) . ';';
 			}
 			if ( isset( $name_font['size'] ) && is_array( $name_font['size'] ) && ! empty( $name_font['size'][0] ) ) {
 				$css .= 'font-size:' . $name_font['size'][0] . ( ! isset( $name_font['sizeType'] ) ? 'px' : $name_font['sizeType'] ) . ';';
@@ -3328,7 +3429,7 @@ class Kadence_Blocks_Frontend {
 
 			$css .= '.kt-blocks-testimonials-wrap' . $unique_id . ' .kt-testimonial-occupation {';
 			if ( isset( $occupation_font['color'] ) && ! empty( $occupation_font['color'] ) ) {
-				$css .= 'color:' . $occupation_font['color'] . ';';
+				$css .= 'color:' . $this->kadence_color_output( $occupation_font['color'] ) . ';';
 			}
 			if ( isset( $occupation_font['size'] ) && is_array( $occupation_font['size'] ) && ! empty( $occupation_font['size'][0] ) ) {
 				$css .= 'font-size:' . $occupation_font['size'][0] . ( ! isset( $occupation_font['sizeType'] ) ? 'px' : $occupation_font['sizeType'] ) . ';';
@@ -3449,6 +3550,56 @@ class Kadence_Blocks_Frontend {
 				$css .= 'right:' . ( $attr['gutter'][0] / 2 ) . 'px;';
 			$css .= '}';
 		}
+		if ( isset( $attr['gutter'] ) && is_array( $attr['gutter'] ) && isset( $attr['gutter'][1] ) && is_numeric( $attr['gutter'][1] ) ) {
+			$css .= '@media (min-width: 767px) and (max-width: 1024px) {';
+			$css .= '.wp-block-kadence-advancedgallery ul.kb-gallery-id-' . $unique_id . ' {';
+				$css .= 'margin: -' . ( $attr['gutter'][1] / 2 ) . 'px;';
+			$css .= '}';
+			$css .= '.kb-gallery-id-' . $unique_id . ' .kadence-blocks-gallery-item {';
+				$css .= 'padding:' . ( $attr['gutter'][1] / 2 ) . 'px;';
+			$css .= '}';
+			$css .= '.kb-gallery-type-carousel.kb-gallery-id-' . $unique_id . ' .kt-blocks-carousel .kt-blocks-carousel-init {';
+				$css .= 'margin: 0 -' . ( $attr['gutter'][1] / 2 ) . 'px;';
+			$css .= '}';
+			$css .= '.kb-gallery-type-carousel.kb-gallery-id-' . $unique_id . ' .kt-blocks-carousel .kt-blocks-carousel-init .kb-slide-item, .kb-gallery-type-fluidcarousel.kb-gallery-id-' . $unique_id . ' .kt-blocks-carousel .kt-blocks-carousel-init .kb-slide-item, .kt-blocks-carousel-init:not(.slick-initialized) .kb-slide-item {';
+				$css .= 'padding: 4px ' . ( $attr['gutter'][1] / 2 ) . 'px;';
+			$css .= '}';
+			$css .= '.kb-gallery-type-fluidcarousel.kb-gallery-id-' . $unique_id . ' .kt-blocks-carousel .kt-blocks-carousel-init.kb-carousel-mode-align-left .kb-slide-item {';
+				$css .= 'padding: 4px ' . ( $attr['gutter'][1] ) . 'px 4px 0;';
+			$css .= '}';
+			$css .= '.kb-gallery-type-carousel.kb-gallery-id-' . $unique_id . ' .kt-blocks-carousel .kt-blocks-carousel-init .slick-prev {';
+				$css .= 'left:' . ( $attr['gutter'][1] / 2 ) . 'px;';
+			$css .= '}';
+			$css .= '.kb-gallery-type-carousel.kb-gallery-id-' . $unique_id . ' .kt-blocks-carousel .kt-blocks-carousel-init .slick-next {';
+				$css .= 'right:' . ( $attr['gutter'][1] / 2 ) . 'px;';
+			$css .= '}';
+			$css .= '}';
+		}
+		if ( isset( $attr['gutter'] ) && is_array( $attr['gutter'] ) && isset( $attr['gutter'][2] ) && is_numeric( $attr['gutter'][2] ) ) {
+			$css .= '@media (max-width: 767px) {';
+			$css .= '.wp-block-kadence-advancedgallery ul.kb-gallery-id-' . $unique_id . ' {';
+				$css .= 'margin: -' . ( $attr['gutter'][2] / 2 ) . 'px;';
+			$css .= '}';
+			$css .= '.kb-gallery-id-' . $unique_id . ' .kadence-blocks-gallery-item {';
+				$css .= 'padding:' . ( $attr['gutter'][2] / 2 ) . 'px;';
+			$css .= '}';
+			$css .= '.kb-gallery-type-carousel.kb-gallery-id-' . $unique_id . ' .kt-blocks-carousel .kt-blocks-carousel-init {';
+				$css .= 'margin: 0 -' . ( $attr['gutter'][2] / 2 ) . 'px;';
+			$css .= '}';
+			$css .= '.kb-gallery-type-carousel.kb-gallery-id-' . $unique_id . ' .kt-blocks-carousel .kt-blocks-carousel-init .kb-slide-item, .kb-gallery-type-fluidcarousel.kb-gallery-id-' . $unique_id . ' .kt-blocks-carousel .kt-blocks-carousel-init .kb-slide-item, .kt-blocks-carousel-init:not(.slick-initialized) .kb-slide-item {';
+				$css .= 'padding: 4px ' . ( $attr['gutter'][2] / 2 ) . 'px;';
+			$css .= '}';
+			$css .= '.kb-gallery-type-fluidcarousel.kb-gallery-id-' . $unique_id . ' .kt-blocks-carousel .kt-blocks-carousel-init.kb-carousel-mode-align-left .kb-slide-item {';
+				$css .= 'padding: 4px ' . ( $attr['gutter'][2] ) . 'px 4px 0;';
+			$css .= '}';
+			$css .= '.kb-gallery-type-carousel.kb-gallery-id-' . $unique_id . ' .kt-blocks-carousel .kt-blocks-carousel-init .slick-prev {';
+				$css .= 'left:' . ( $attr['gutter'][2] / 2 ) . 'px;';
+			$css .= '}';
+			$css .= '.kb-gallery-type-carousel.kb-gallery-id-' . $unique_id . ' .kt-blocks-carousel .kt-blocks-carousel-init .slick-next {';
+				$css .= 'right:' . ( $attr['gutter'][2] / 2 ) . 'px;';
+			$css .= '}';
+			$css .= '}';
+		}
 		if ( isset( $attr['type'] ) && 'fluidcarousel' === $attr['type'] && isset( $attr['carouselHeight'] ) && is_array( $attr['carouselHeight'] ) ) {
 			if ( isset( $attr['carouselHeight'][0] ) && is_numeric( $attr['carouselHeight'][0] ) ) {
 				$css .= '.kb-gallery-id-' . $unique_id . '.kb-gallery-ul.kb-gallery-type-fluidcarousel .kt-blocks-carousel figure .kb-gal-image-radius, .kb-gallery-id-' . $unique_id . '.kb-gallery-ul.kb-gallery-type-fluidcarousel .kt-blocks-carousel figure .kb-gal-image-radius img {';
@@ -3540,10 +3691,10 @@ class Kadence_Blocks_Frontend {
 			$caption_font = $attr['captionStyles'][0];
 			$css .= '.kb-gallery-id-' . $unique_id . ' .kadence-blocks-gallery-item .kadence-blocks-gallery-item-inner .kadence-blocks-gallery-item__caption {';
 			if ( isset( $caption_font['color'] ) && ! empty( $caption_font['color'] ) ) {
-				$css .= 'color:' . $caption_font['color'] . ';';
+				$css .= 'color:' . $this->kadence_color_output( $caption_font['color'] ) . ';';
 			}
 			if ( isset( $caption_font['background'] ) && ! empty( $caption_font['background'] ) ) {
-				$css .= 'background:linear-gradient( 0deg, ' . $this->hex2rgba( $caption_font['background'], ( isset( $caption_font['backgroundOpacity'] ) && is_numeric(  $caption_font['backgroundOpacity'] ) ) ?  $caption_font['backgroundOpacity'] : '0.5' ) . ' 0, ' . $this->hex2rgba( $caption_font['background'], 0 ) . ' 100% );';
+				$css .= 'background:linear-gradient( 0deg, ' . $this->kadence_color_output( $caption_font['background'], ( isset( $caption_font['backgroundOpacity'] ) && is_numeric(  $caption_font['backgroundOpacity'] ) ) ?  $caption_font['backgroundOpacity'] : '0.5' ) . ' 0, ' . $this->kadence_color_output( $caption_font['background'], 0 ) . ' 100% );';
 			}
 			if ( isset( $caption_font['size'] ) && is_array( $caption_font['size'] ) && ! empty( $caption_font['size'][0] ) ) {
 				$css .= 'font-size:' . $caption_font['size'][0] . ( ! isset( $caption_font['sizeType'] ) ? 'px' : $caption_font['sizeType'] ) . ';';
@@ -3569,7 +3720,7 @@ class Kadence_Blocks_Frontend {
 			$css .= '}';
 			if ( isset( $caption_font['background'] ) && ! empty( $caption_font['background'] ) ) {
 				$css .= '.kb-gallery-caption-style-cover-hover.kb-gallery-id-' . $unique_id . ' .kadence-blocks-gallery-item .kadence-blocks-gallery-item-inner .kadence-blocks-gallery-item__caption, .kb-gallery-caption-style-below.kb-gallery-id-' . $unique_id . ' .kadence-blocks-gallery-item .kadence-blocks-gallery-item-inner .kadence-blocks-gallery-item__caption {';
-				$css .= 'background:' . $this->hex2rgba( $caption_font['background'], ( isset( $caption_font['backgroundOpacity'] ) && is_numeric(  $caption_font['backgroundOpacity'] ) ) ?  $caption_font['backgroundOpacity'] : '0.5' ) . ';';
+				$css .= 'background:' . $this->kadence_color_output( $caption_font['background'], ( isset( $caption_font['backgroundOpacity'] ) && is_numeric(  $caption_font['backgroundOpacity'] ) ) ?  $caption_font['backgroundOpacity'] : '0.5' ) . ';';
 				$css .= '}';
 			}
 		}
@@ -3609,7 +3760,7 @@ class Kadence_Blocks_Frontend {
 	public function blocks_iconlist_array( $attr, $unique_id ) {
 		$css = '';
 		if ( isset( $attr['listMargin'] ) && is_array( $attr['listMargin'] ) && isset( $attr['listMargin'][0] ) ) {
-			$css .= '.kt-svg-icon-list-items' . $unique_id . ' ul.kt-svg-icon-list {';
+			$css .= '.wp-block-kadence-iconlist.kt-svg-icon-list-items' . $unique_id . ' ul.kt-svg-icon-list {';
 				$css .= 'margin:' . $attr['listMargin'][0] . 'px ' . $attr['listMargin'][1] . 'px ' . $attr['listMargin'][2] . 'px ' . $attr['listMargin'][3] . 'px;';
 			$css .= '}';
 		}
@@ -3627,7 +3778,7 @@ class Kadence_Blocks_Frontend {
 			$list_styles = $attr['listStyles'][ 0 ];
 			$css .= '.kt-svg-icon-list-items' . $unique_id . ' ul.kt-svg-icon-list .kt-svg-icon-list-item-wrap, .kt-svg-icon-list-items' . $unique_id . ' ul.kt-svg-icon-list .kt-svg-icon-list-item-wrap a {';
 			if ( isset( $list_styles['color'] ) && ! empty( $list_styles['color'] ) ) {
-				$css .= 'color:' . $list_styles['color'] .  ';';
+				$css .= 'color:' . $this->kadence_color_output( $list_styles['color'] ) .  ';';
 			}
 			if ( isset( $list_styles['size'] ) && is_array( $list_styles['size'] ) && ! empty( $list_styles['size'][0] ) ) {
 				$css .= 'font-size:' . $list_styles['size'][0] . ( ! isset( $list_styles['sizeType'] ) ? 'px' : $list_styles['sizeType'] ) . ';';
@@ -3784,13 +3935,13 @@ class Kadence_Blocks_Frontend {
 		if ( isset( $attr['contentBorderColor'] ) || isset( $attr['contentBgColor'] ) || isset( $attr['contentPadding'] ) || isset( $attr['contentBorderRadius'] ) || isset( $attr['contentBorder'] ) ) {
 			$css .= '.kt-accordion-id' . $unique_id . ' .kt-accordion-panel-inner {';
 			if ( isset( $attr['contentBorderColor'] ) && ! empty( $attr['contentBorderColor'] ) ) {
-				$css .= 'border-color:' . $attr['contentBorderColor'] . ';';
+				$css .= 'border-color:' . $this->kadence_color_output( $attr['contentBorderColor'] ) . ';';
 			}
 			if ( isset( $attr['contentBorderRadius'] ) && ! empty( $attr['contentBorderRadius'] ) ) {
 				$css .= 'border-radius:' . $attr['contentBorderRadius'][ 0 ] . 'px ' . $attr['contentBorderRadius'][ 1 ] . 'px ' . $attr['contentBorderRadius'][ 2 ] . 'px ' . $attr['contentBorderRadius'][ 3 ] . 'px;';
 			}
 			if ( isset( $attr['contentBgColor'] ) && ! empty( $attr['contentBgColor'] ) ) {
-				$css .= 'background:' . $attr['contentBgColor'] . ';';
+				$css .= 'background:' . $this->kadence_color_output( $attr['contentBgColor'] ) . ';';
 			}
 			if ( isset( $attr['contentPadding'] ) && is_array( $attr['contentPadding'] ) ) {
 				$css .= 'padding:' . $attr['contentPadding'][ 0 ] . 'px ' . $attr['contentPadding'][ 1 ] . 'px ' . $attr['contentPadding'][ 2 ] . 'px ' . $attr['contentPadding'][ 3 ] . 'px;';
@@ -3805,13 +3956,13 @@ class Kadence_Blocks_Frontend {
 			$title_styles = $attr['titleStyles'][ 0 ];
 			$css .= '.kt-accordion-id' . $unique_id . ' .wp-block-kadence-pane .kt-blocks-accordion-header {';
 			if ( isset( $title_styles['color'] ) && ! empty( $title_styles['color'] ) ) {
-				$css .= 'color:' . $title_styles['color'] .  ';';
+				$css .= 'color:' . $this->kadence_color_output( $title_styles['color'] ) .  ';';
 			}
 			if ( isset( $title_styles['background'] ) && ! empty( $title_styles['background'] ) ) {
-				$css .= 'background:' . $title_styles['background'] .  ';';
+				$css .= 'background:' . $this->kadence_color_output( $title_styles['background'] ) .  ';';
 			}
 			if ( isset( $title_styles['border'] ) && is_array( $title_styles['border'] ) && ! empty( $title_styles['border'][ 0 ] ) ) {
-				$css .= 'border-color:' . $title_styles['border'][0] . ' ' . $title_styles['border'][1] . ' ' . $title_styles['border'][2] . ' ' . $title_styles['border'][3] . ';';
+				$css .= 'border-color:' . $this->kadence_color_output( $title_styles['border'][0] ) . ' ' . $this->kadence_color_output( $title_styles['border'][1] ) . ' ' . $this->kadence_color_output( $title_styles['border'][2] ) . ' ' . $this->kadence_color_output( $title_styles['border'][3] ) . ';';
 			}
 			if ( isset( $title_styles['size'] ) && is_array( $title_styles['size'] ) && ! empty( $title_styles['size'][0] ) ) {
 				$css .= 'font-size:' . $title_styles['size'][0] . ( ! isset( $title_styles['sizeType'] ) ? 'px' : $title_styles['sizeType'] ) . ';';
@@ -3855,63 +4006,63 @@ class Kadence_Blocks_Frontend {
 			}
 			if ( isset( $title_styles['color'] ) && ! empty( $title_styles['color'] ) ) {
 				$css .= '.kt-accordion-id' . $unique_id . ':not( .kt-accodion-icon-style-basiccircle ):not( .kt-accodion-icon-style-xclosecircle ):not( .kt-accodion-icon-style-arrowcircle ) .kt-blocks-accordion-icon-trigger:after, .kt-accordion-id' . $unique_id . ':not( .kt-accodion-icon-style-basiccircle ):not( .kt-accodion-icon-style-xclosecircle ):not( .kt-accodion-icon-style-arrowcircle ) .kt-blocks-accordion-icon-trigger:before {';
-				$css .= 'background:' . $title_styles['color'] .  ';';
+				$css .= 'background:' . $this->kadence_color_output( $title_styles['color'] ) .  ';';
 				$css .= '}';
 				$css .= '.kt-accordion-id' . $unique_id . ':not( .kt-accodion-icon-style-basic ):not( .kt-accodion-icon-style-xclose ):not( .kt-accodion-icon-style-arrow ) .kt-blocks-accordion-icon-trigger {';
-					$css .= 'background:' . $title_styles['color'] .  ';';
+					$css .= 'background:' . $this->kadence_color_output( $title_styles['color'] ) .  ';';
 				$css .= '}';
 			}
 			if ( isset( $title_styles['background'] ) && ! empty( $title_styles['background'] ) ) {
 				$css .= '.kt-accordion-id' . $unique_id . ':not( .kt-accodion-icon-style-basic ):not( .kt-accodion-icon-style-xclose ):not( .kt-accodion-icon-style-arrow ) .kt-blocks-accordion-icon-trigger:after, .kt-accordion-id' . $unique_id . ':not( .kt-accodion-icon-style-basic ):not( .kt-accodion-icon-style-xclose ):not( .kt-accodion-icon-style-arrow ) .kt-blocks-accordion-icon-trigger:before {';
-					$css .= 'background:' . $title_styles['background'] .  ';';
+					$css .= 'background:' . $this->kadence_color_output( $title_styles['background'] ) .  ';';
 				$css .= '}';
 			}
 			$css .= '.kt-accordion-id' . $unique_id . ' .kt-blocks-accordion-header:hover, .kt-accordion-id' . $unique_id . ' .kt-blocks-accordion-header:focus {';
 			if ( isset( $title_styles['colorHover'] ) && ! empty( $title_styles['colorHover'] ) ) {
-				$css .= 'color:' . $title_styles['colorHover'] .  ';';
+				$css .= 'color:' . $this->kadence_color_output( $title_styles['colorHover'] ) .  ';';
 			}
 			if ( isset( $title_styles['backgroundHover'] ) && ! empty( $title_styles['backgroundHover'] ) ) {
-				$css .= 'background:' . $title_styles['backgroundHover'] .  ';';
+				$css .= 'background:' . $this->kadence_color_output( $title_styles['backgroundHover'] ) .  ';';
 			}
 			if ( isset( $title_styles['borderHover'] ) && is_array( $title_styles['borderHover'] ) && ! empty( $title_styles['borderHover'][0] ) ) {
-				$css .= 'border-color:' . $title_styles['borderHover'][0] . ' ' . $title_styles['borderHover'][1] . ' ' . $title_styles['borderHover'][2] . ' ' . $title_styles['borderHover'][3] . ';';
+				$css .= 'border-color:' . $this->kadence_color_output( $title_styles['borderHover'][0] ) . ' ' . $this->kadence_color_output( $title_styles['borderHover'][1] ) . ' ' . $this->kadence_color_output( $title_styles['borderHover'][2] ) . ' ' . $this->kadence_color_output( $title_styles['borderHover'][3] ) . ';';
 			}
 			$css .= '}';
 			if ( isset( $title_styles['colorHover'] ) && ! empty( $title_styles['colorHover'] ) ) {
 				$css .= '.kt-accordion-id' . $unique_id . ':not( .kt-accodion-icon-style-basiccircle ):not( .kt-accodion-icon-style-xclosecircle ):not( .kt-accodion-icon-style-arrowcircle ) .kt-blocks-accordion-header:hover .kt-blocks-accordion-icon-trigger:after, .kt-accordion-id' . $unique_id . ':not( .kt-accodion-icon-style-basiccircle ):not( .kt-accodion-icon-style-xclosecircle ):not( .kt-accodion-icon-style-arrowcircle ) .kt-blocks-accordion-header:hover .kt-blocks-accordion-icon-trigger:before, .kt-accordion-id' . $unique_id . ':not( .kt-accodion-icon-style-basiccircle ):not( .kt-accodion-icon-style-xclosecircle ):not( .kt-accodion-icon-style-arrowcircle ) .kt-blocks-accordion-header:focus .kt-blocks-accordion-icon-trigger:after, .kt-accordion-id' . $unique_id . ':not( .kt-accodion-icon-style-basiccircle ):not( .kt-accodion-icon-style-xclosecircle ):not( .kt-accodion-icon-style-arrowcircle ) .kt-blocks-accordion-header:focus .kt-blocks-accordion-icon-trigger:before {';
-				$css .= 'background:' . $title_styles['colorHover'] .  ';';
+				$css .= 'background:' . $this->kadence_color_output( $title_styles['colorHover'] ) .  ';';
 				$css .= '}';
 				$css .= '.kt-accordion-id' . $unique_id . ':not( .kt-accodion-icon-style-basic ):not( .kt-accodion-icon-style-xclose ):not( .kt-accodion-icon-style-arrow ) .kt-blocks-accordion-header:hover .kt-blocks-accordion-icon-trigger, .kt-accordion-id' . $unique_id . ':not( .kt-accodion-icon-style-basic ):not( .kt-accodion-icon-style-xclose ):not( .kt-accodion-icon-style-arrow ) .kt-blocks-accordion-header:focus .kt-blocks-accordion-icon-trigger {';
-					$css .= 'background:' . $title_styles['colorHover'] .  ';';
+					$css .= 'background:' . $this->kadence_color_output( $title_styles['colorHover'] ) .  ';';
 				$css .= '}';
 			}
 			if ( isset( $title_styles['backgroundHover'] ) && ! empty( $title_styles['backgroundHover'] ) ) {
 				$css .= '.kt-accordion-id' . $unique_id . ':not( .kt-accodion-icon-style-basic ):not( .kt-accodion-icon-style-xclose ):not( .kt-accodion-icon-style-arrow ) .kt-blocks-accordion-header:hover .kt-blocks-accordion-icon-trigger:after, .kt-accordion-id' . $unique_id . ':not( .kt-accodion-icon-style-basic ):not( .kt-accodion-icon-style-xclose ):not( .kt-accodion-icon-style-arrow ) .kt-blocks-accordion-header:hover .kt-blocks-accordion-icon-trigger:before, .kt-accordion-id' . $unique_id . ':not( .kt-accodion-icon-style-basic ):not( .kt-accodion-icon-style-xclose ):not( .kt-accodion-icon-style-arrow ) .kt-blocks-accordion-header:focus .kt-blocks-accordion-icon-trigger:after, .kt-accordion-id' . $unique_id . ':not( .kt-accodion-icon-style-basic ):not( .kt-accodion-icon-style-xclose ):not( .kt-accodion-icon-style-arrow ) .kt-blocks-accordion-header:focus .kt-blocks-accordion-icon-trigger:before {';
-					$css .= 'background:' . $title_styles['backgroundHover'] .  ';';
+					$css .= 'background:' . $this->kadence_color_output( $title_styles['backgroundHover'] ) .  ';';
 				$css .= '}';
 			}
 			$css .= '.kt-accordion-id' . $unique_id . ' .kt-blocks-accordion-header.kt-accordion-panel-active {';
 			if ( isset( $title_styles['colorActive'] ) && ! empty( $title_styles['colorActive'] ) ) {
-				$css .= 'color:' . $title_styles['colorActive'] .  ';';
+				$css .= 'color:' . $this->kadence_color_output( $title_styles['colorActive'] ) .  ';';
 			}
 			if ( isset( $title_styles['backgroundActive'] ) && ! empty( $title_styles['backgroundActive'] ) ) {
-				$css .= 'background:' . $title_styles['backgroundActive'] .  ';';
+				$css .= 'background:' . $this->kadence_color_output( $title_styles['backgroundActive'] ) .  ';';
 			}
 			if ( isset( $title_styles['borderActive'] ) && is_array( $title_styles['borderActive'] ) && ! empty( $title_styles['borderActive'][0] ) ) {
-				$css .= 'border-color:' . $title_styles['borderActive'][0] . ' ' . $title_styles['borderActive'][1] . ' ' . $title_styles['borderActive'][2] . ' ' . $title_styles['borderActive'][3] . ';';
+				$css .= 'border-color:' . $this->kadence_color_output( $title_styles['borderActive'][0] ) . ' ' . $this->kadence_color_output( $title_styles['borderActive'][1] ) . ' ' . $this->kadence_color_output( $title_styles['borderActive'][2] ) . ' ' . $this->kadence_color_output( $title_styles['borderActive'][3] ) . ';';
 			}
 			$css .= '}';
 			if ( isset( $title_styles['colorActive'] ) && ! empty( $title_styles['colorActive'] ) ) {
 				$css .= '.kt-accordion-id' . $unique_id . ':not( .kt-accodion-icon-style-basiccircle ):not( .kt-accodion-icon-style-xclosecircle ):not( .kt-accodion-icon-style-arrowcircle ) .kt-blocks-accordion-header.kt-accordion-panel-active .kt-blocks-accordion-icon-trigger:after, .kt-accordion-id' . $unique_id . ':not( .kt-accodion-icon-style-basiccircle ):not( .kt-accodion-icon-style-xclosecircle ):not( .kt-accodion-icon-style-arrowcircle ) .kt-blocks-accordion-header.kt-accordion-panel-active .kt-blocks-accordion-icon-trigger:before {';
-				$css .= 'background:' . $title_styles['colorActive'] .  ';';
+				$css .= 'background:' . $this->kadence_color_output( $title_styles['colorActive'] ) .  ';';
 				$css .= '}';
 				$css .= '.kt-accordion-id' . $unique_id . ':not( .kt-accodion-icon-style-basic ):not( .kt-accodion-icon-style-xclose ):not( .kt-accodion-icon-style-arrow ) .kt-blocks-accordion-header.kt-accordion-panel-active .kt-blocks-accordion-icon-trigger {';
-					$css .= 'background:' . $title_styles['colorActive'] .  ';';
+					$css .= 'background:' . $this->kadence_color_output( $title_styles['colorActive'] ) .  ';';
 				$css .= '}';
 			}
 			if ( isset( $title_styles['backgroundActive'] ) && ! empty( $title_styles['backgroundActive'] ) ) {
 				$css .= '.kt-accordion-id' . $unique_id . ':not( .kt-accodion-icon-style-basic ):not( .kt-accodion-icon-style-xclose ):not( .kt-accodion-icon-style-arrow ) .kt-blocks-accordion-header.kt-accordion-panel-active .kt-blocks-accordion-icon-trigger:after, .kt-accordion-id' . $unique_id . ':not( .kt-accodion-icon-style-basic ):not( .kt-accodion-icon-style-xclose ):not( .kt-accodion-icon-style-arrow ) .kt-blocks-accordion-header.kt-accordion-panel-active .kt-blocks-accordion-icon-trigger:before {';
-					$css .= 'background:' . $title_styles['backgroundActive'] .  ';';
+					$css .= 'background:' . $this->kadence_color_output( $title_styles['backgroundActive'] ) .  ';';
 				$css .= '}';
 			}
 		}
@@ -4169,6 +4320,28 @@ class Kadence_Blocks_Frontend {
 			}
 			$css .= '}';
 		}
+		if ( isset( $attr['margin'] ) && is_array( $attr['margin'] ) && is_array( $attr['margin'][0] ) ) {
+			$margin = $attr['margin'][0];
+			if ( isset( $margin['desk'] ) && is_array( $margin['desk'] ) && is_numeric( $margin['desk'][0] ) ) {
+				$css .= '.wp-block-kadence-advancedbtn.kt-btns' . $unique_id . ', .site .entry-content .wp-block-kadence-advancedbtn.kt-btns' . $unique_id . ' {';
+				$css .= 'margin:' . $margin['desk'][0] . 'px ' . $margin['desk'][1] . 'px ' . $margin['desk'][2] . 'px ' . $margin['desk'][3] . 'px;';
+				$css .= '}';
+			}
+			if ( isset( $margin['tablet'] ) && is_array( $margin['tablet'] ) && is_numeric( $margin['tablet'][0] ) ) {
+				$css .= '@media (min-width: 767px) and (max-width: 1024px) {';
+				$css .= '.wp-block-kadence-advancedbtn.kt-btns' . $unique_id . ', .site .entry-content .wp-block-kadence-advancedbtn.kt-btns' . $unique_id . ' {';
+				$css .= 'margin:' . $margin['tablet'][0] . 'px ' . $margin['tablet'][1] . 'px ' . $margin['tablet'][2] . 'px ' . $margin['tablet'][3] . 'px;';
+				$css .= '}';
+				$css .= '}';
+			}
+			if ( isset( $margin['mobile'] ) && is_array( $margin['mobile'] ) && is_numeric( $margin['mobile'][0] ) ) {
+				$css .= '@media (max-width: 767px) {';
+				$css .= '.wp-block-kadence-advancedbtn.kt-btns' . $unique_id . ', .site .entry-content .wp-block-kadence-advancedbtn.kt-btns' . $unique_id . ' {';
+				$css .= 'margin:' . $margin['mobile'][0] . 'px ' . $margin['mobile'][1] . 'px ' . $margin['mobile'][2] . 'px ' . $margin['mobile'][3] . 'px;';
+				$css .= '}';
+				$css .= '}';
+			}
+		}
 		if ( isset( $attr['btns'] ) && is_array( $attr['btns'] ) ) {
 			foreach ( $attr['btns'] as $btnkey => $btnvalue ) {
 				if ( is_array( $btnvalue ) ) {
@@ -4197,14 +4370,14 @@ class Kadence_Blocks_Frontend {
 						}
 					}
 					if ( isset( $btnvalue['color'] ) && ! empty( $btnvalue['color'] ) ) {
-						$css .= 'color:' . $btnvalue['color'] . ';';
+						$css .= 'color:' . $this->kadence_color_output( $btnvalue['color'] ) . ';';
 					}
 					if ( isset( $btnvalue['size'] ) && ! empty( $btnvalue['size'] ) ) {
 						$css .= 'font-size:' . $btnvalue['size'] . 'px;';
 					}
 					if ( isset( $btnvalue['backgroundType'] ) && 'gradient' === $btnvalue['backgroundType'] ) {
-						$bg1 = ( ! isset( $btnvalue['background'] ) || 'transparent' === $btnvalue['background'] ? 'rgba(255,255,255,0)' : $this->hex2rgba( $btnvalue['background'], ( isset( $btnvalue['backgroundOpacity'] ) && is_numeric( $btnvalue['backgroundOpacity'] ) ? $btnvalue['backgroundOpacity'] : 1 ) ) );
-						$bg2 = ( isset( $btnvalue['gradient'][0] ) && ! empty( $btnvalue['gradient'][0] ) ? $this->hex2rgba( $btnvalue['gradient'][0], ( isset( $btnvalue['gradient'][1] ) && is_numeric( $btnvalue['gradient'][1] ) ? $btnvalue['gradient'][1] : 1 ) ) : $this->hex2rgba( '#999999', ( isset( $btnvalue['gradient'][1] ) && is_numeric( $btnvalue['gradient'][1] ) ? $btnvalue['gradient'][1] : 1 ) ) );
+						$bg1 = ( ! isset( $btnvalue['background'] ) || 'transparent' === $btnvalue['background'] ? 'rgba(255,255,255,0)' : $this->kadence_color_output( $btnvalue['background'], ( isset( $btnvalue['backgroundOpacity'] ) && is_numeric( $btnvalue['backgroundOpacity'] ) ? $btnvalue['backgroundOpacity'] : 1 ) ) );
+						$bg2 = ( isset( $btnvalue['gradient'][0] ) && ! empty( $btnvalue['gradient'][0] ) ? $this->kadence_color_output( $btnvalue['gradient'][0], ( isset( $btnvalue['gradient'][1] ) && is_numeric( $btnvalue['gradient'][1] ) ? $btnvalue['gradient'][1] : 1 ) ) : $this->hex2rgba( '#999999', ( isset( $btnvalue['gradient'][1] ) && is_numeric( $btnvalue['gradient'][1] ) ? $btnvalue['gradient'][1] : 1 ) ) );
 						if ( isset( $btnvalue['gradient'][4] ) && 'radial' === $btnvalue['gradient'][4] ) {
 							$css .= 'background:radial-gradient(at ' . ( isset( $btnvalue['gradient'][6] ) && ! empty( $btnvalue['gradient'][6] ) ? $btnvalue['gradient'][6] : 'center center' ) . ', ' . $bg1 . ' ' . ( isset( $btnvalue['gradient'][2] ) && is_numeric( $btnvalue['gradient'][2] ) ? $btnvalue['gradient'][2] : '0' ) . '%, ' . $bg2 . ' ' . ( isset( $btnvalue['gradient'][3] ) && is_numeric( $btnvalue['gradient'][3] ) ? $btnvalue['gradient'][3] : '100' ) . '%);';
 						} else if ( ! isset( $btnvalue['gradient'][4] ) || 'radial' !== $btnvalue['gradient'][4] ) {
@@ -4214,33 +4387,33 @@ class Kadence_Blocks_Frontend {
 						$css .= 'background:transparent;';
 					} else if ( isset( $btnvalue['background'] ) && ! empty( $btnvalue['background'] ) ) {
 						$alpha = ( isset( $btnvalue['backgroundOpacity'] ) && is_numeric( $btnvalue['backgroundOpacity'] ) ? $btnvalue['backgroundOpacity'] : 1 );
-						$css  .= 'background:' . $this->hex2rgba( $btnvalue['background'], $alpha ) . ';';
+						$css  .= 'background:' . $this->kadence_color_output( $btnvalue['background'], $alpha ) . ';';
 					}
 					if ( isset( $btnvalue['border'] ) && ! empty( $btnvalue['border'] ) ) {
 						$alpha = ( isset( $btnvalue['borderOpacity'] ) && is_numeric( $btnvalue['borderOpacity'] ) ? $btnvalue['borderOpacity'] : 1 );
-						$css  .= 'border-color:' . $this->hex2rgba( $btnvalue['border'], $alpha ) . ';';
+						$css  .= 'border-color:' . $this->kadence_color_output( $btnvalue['border'], $alpha ) . ';';
 					}
 					if ( isset( $btnvalue['boxShadow'] ) && is_array( $btnvalue['boxShadow'] ) && isset( $btnvalue['boxShadow'][0] ) && true === $btnvalue['boxShadow'][0] ) {
-						$css  .= 'box-shadow:' . ( isset( $btnvalue['boxShadow'][7] ) && true === $btnvalue['boxShadow'][7] ? 'inset ' : '' ) . ( isset( $btnvalue['boxShadow'][3] ) && is_numeric( $btnvalue['boxShadow'][3] ) ? $btnvalue['boxShadow'][3] : '1' ) . 'px ' . ( isset( $btnvalue['boxShadow'][4] ) && is_numeric( $btnvalue['boxShadow'][4] ) ? $btnvalue['boxShadow'][4] : '1' ) . 'px ' . ( isset( $btnvalue['boxShadow'][5] ) && is_numeric( $btnvalue['boxShadow'][5] ) ? $btnvalue['boxShadow'][5] : '2' ) . 'px ' . ( isset( $btnvalue['boxShadow'][6] ) && is_numeric( $btnvalue['boxShadow'][6] ) ? $btnvalue['boxShadow'][6] : '0' ) . 'px ' . $this->hex2rgba( ( isset( $btnvalue['boxShadow'][1] ) && ! empty( $btnvalue['boxShadow'][1] ) ? $btnvalue['boxShadow'][1] : '#000000' ), ( isset( $btnvalue['boxShadow'][2] ) && is_numeric( $btnvalue['boxShadow'][2] ) ? $btnvalue['boxShadow'][2] : 0.2 ) ) . ';';
+						$css  .= 'box-shadow:' . ( isset( $btnvalue['boxShadow'][7] ) && true === $btnvalue['boxShadow'][7] ? 'inset ' : '' ) . ( isset( $btnvalue['boxShadow'][3] ) && is_numeric( $btnvalue['boxShadow'][3] ) ? $btnvalue['boxShadow'][3] : '1' ) . 'px ' . ( isset( $btnvalue['boxShadow'][4] ) && is_numeric( $btnvalue['boxShadow'][4] ) ? $btnvalue['boxShadow'][4] : '1' ) . 'px ' . ( isset( $btnvalue['boxShadow'][5] ) && is_numeric( $btnvalue['boxShadow'][5] ) ? $btnvalue['boxShadow'][5] : '2' ) . 'px ' . ( isset( $btnvalue['boxShadow'][6] ) && is_numeric( $btnvalue['boxShadow'][6] ) ? $btnvalue['boxShadow'][6] : '0' ) . 'px ' . $this->kadence_color_output( ( isset( $btnvalue['boxShadow'][1] ) && ! empty( $btnvalue['boxShadow'][1] ) ? $btnvalue['boxShadow'][1] : '#000000' ), ( isset( $btnvalue['boxShadow'][2] ) && is_numeric( $btnvalue['boxShadow'][2] ) ? $btnvalue['boxShadow'][2] : 0.2 ) ) . ';';
 					}
 					$css .= '}';
 					$css .= '.kt-btns' . $unique_id . ' .kt-btn-wrap-' . $btnkey . ' .kt-button:hover, .kt-btns' . $unique_id . ' .kt-btn-wrap-' . $btnkey . ' .kt-button:focus {';
 					if ( isset( $btnvalue['colorHover'] ) && ! empty( $btnvalue['colorHover'] ) ) {
-						$css .= 'color:' . $btnvalue['colorHover'] . ';';
+						$css .= 'color:' . $this->kadence_color_output( $btnvalue['colorHover'] ) . ';';
 					}
 					if ( isset( $btnvalue['borderHover'] ) && ! empty( $btnvalue['borderHover'] ) ) {
 						$alpha = ( isset( $btnvalue['borderHoverOpacity'] ) && is_numeric( $btnvalue['borderHoverOpacity'] ) ? $btnvalue['borderHoverOpacity'] : 1 );
-						$css .= 'border-color:' . $this->hex2rgba( $btnvalue['borderHover'], $alpha ) . ';';
+						$css .= 'border-color:' . $this->kadence_color_output( $btnvalue['borderHover'], $alpha ) . ';';
 					}
 					if ( isset( $btnvalue['boxShadowHover'] ) && is_array( $btnvalue['boxShadowHover'] ) && isset( $btnvalue['boxShadowHover'][0] ) && true === $btnvalue['boxShadowHover'][0] && isset( $btnvalue['boxShadowHover'][7] ) && true !== $btnvalue['boxShadowHover'][7] ) {
-						$css  .= 'box-shadow:' . ( isset( $btnvalue['boxShadowHover'][7] ) && true === $btnvalue['boxShadowHover'][7] ? 'inset ' : '' ) . ( isset( $btnvalue['boxShadowHover'][3] ) && is_numeric( $btnvalue['boxShadowHover'][3] ) ? $btnvalue['boxShadowHover'][3] : '2' ) . 'px ' . ( isset( $btnvalue['boxShadowHover'][4] ) && is_numeric( $btnvalue['boxShadowHover'][4] ) ? $btnvalue['boxShadowHover'][4] : '2' ) . 'px ' . ( isset( $btnvalue['boxShadowHover'][5] ) && is_numeric( $btnvalue['boxShadowHover'][5] ) ? $btnvalue['boxShadowHover'][5] : '3' ) . 'px ' . ( isset( $btnvalue['boxShadowHover'][6] ) && is_numeric( $btnvalue['boxShadowHover'][6] ) ? $btnvalue['boxShadowHover'][6] : '0' ) . 'px ' . $this->hex2rgba( ( isset( $btnvalue['boxShadowHover'][1] ) && ! empty( $btnvalue['boxShadowHover'][1] ) ? $btnvalue['boxShadowHover'][1] : '#000000' ), ( isset( $btnvalue['boxShadowHover'][2] ) && is_numeric( $btnvalue['boxShadowHover'][2] ) ? $btnvalue['boxShadowHover'][2] : 0.4 ) ) . ';';
+						$css  .= 'box-shadow:' . ( isset( $btnvalue['boxShadowHover'][7] ) && true === $btnvalue['boxShadowHover'][7] ? 'inset ' : '' ) . ( isset( $btnvalue['boxShadowHover'][3] ) && is_numeric( $btnvalue['boxShadowHover'][3] ) ? $btnvalue['boxShadowHover'][3] : '2' ) . 'px ' . ( isset( $btnvalue['boxShadowHover'][4] ) && is_numeric( $btnvalue['boxShadowHover'][4] ) ? $btnvalue['boxShadowHover'][4] : '2' ) . 'px ' . ( isset( $btnvalue['boxShadowHover'][5] ) && is_numeric( $btnvalue['boxShadowHover'][5] ) ? $btnvalue['boxShadowHover'][5] : '3' ) . 'px ' . ( isset( $btnvalue['boxShadowHover'][6] ) && is_numeric( $btnvalue['boxShadowHover'][6] ) ? $btnvalue['boxShadowHover'][6] : '0' ) . 'px ' . $this->kadence_color_output( ( isset( $btnvalue['boxShadowHover'][1] ) && ! empty( $btnvalue['boxShadowHover'][1] ) ? $btnvalue['boxShadowHover'][1] : '#000000' ), ( isset( $btnvalue['boxShadowHover'][2] ) && is_numeric( $btnvalue['boxShadowHover'][2] ) ? $btnvalue['boxShadowHover'][2] : 0.4 ) ) . ';';
 					}
 					$css .= '}';
 					if ( 'gradient' === $bgtype ) {
 						$css .= '.kt-btns' . $unique_id . ' .kt-btn-wrap-' . $btnkey . ' .kt-button::before {';
 						if ( isset( $btnvalue['backgroundHoverType'] ) && 'gradient' === $btnvalue['backgroundHoverType'] ) {
-							$bg1 = ( ! isset( $btnvalue['backgroundHover'] ) ? $this->hex2rgba( '#444444', ( isset( $btnvalue['backgroundHoverOpacity'] ) && is_numeric( $btnvalue['backgroundHoverOpacity'] ) ? $btnvalue['backgroundHoverOpacity'] : 1 ) ) : $this->hex2rgba( $btnvalue['backgroundHover'], ( isset( $btnvalue['backgroundHoverOpacity'] ) && is_numeric( $btnvalue['backgroundHoverOpacity'] ) ? $btnvalue['backgroundHoverOpacity'] : 1 ) ) );
-							$bg2 = ( isset( $btnvalue['gradientHover'][0] ) && ! empty( $btnvalue['gradientHover'][0] ) ? $this->hex2rgba( $btnvalue['gradientHover'][0], ( isset( $btnvalue['gradientHover'][1] ) && is_numeric( $btnvalue['gradientHover'][1] ) ? $btnvalue['gradientHover'][1] : 1 ) ) : $this->hex2rgba( '#999999', ( isset( $btnvalue['gradientHover'][1] ) && is_numeric( $btnvalue['gradientHover'][1] ) ? $btnvalue['gradientHover'][1] : 1 ) ) );
+							$bg1 = ( ! isset( $btnvalue['backgroundHover'] ) ? $this->hex2rgba( '#444444', ( isset( $btnvalue['backgroundHoverOpacity'] ) && is_numeric( $btnvalue['backgroundHoverOpacity'] ) ? $btnvalue['backgroundHoverOpacity'] : 1 ) ) : $this->kadence_color_output( $btnvalue['backgroundHover'], ( isset( $btnvalue['backgroundHoverOpacity'] ) && is_numeric( $btnvalue['backgroundHoverOpacity'] ) ? $btnvalue['backgroundHoverOpacity'] : 1 ) ) );
+							$bg2 = ( isset( $btnvalue['gradientHover'][0] ) && ! empty( $btnvalue['gradientHover'][0] ) ? $this->kadence_color_output( $btnvalue['gradientHover'][0], ( isset( $btnvalue['gradientHover'][1] ) && is_numeric( $btnvalue['gradientHover'][1] ) ? $btnvalue['gradientHover'][1] : 1 ) ) : $this->hex2rgba( '#999999', ( isset( $btnvalue['gradientHover'][1] ) && is_numeric( $btnvalue['gradientHover'][1] ) ? $btnvalue['gradientHover'][1] : 1 ) ) );
 							if ( isset( $btnvalue['gradientHover'][4] ) && 'radial' === $btnvalue['gradientHover'][4] ) {
 								$css .= 'background:radial-gradient(at ' . ( isset( $btnvalue['gradientHover'][6] ) && ! empty( $btnvalue['gradientHover'][6] ) ? $btnvalue['gradientHover'][6] : 'center center' ) . ', ' . $bg1 . ' ' . ( isset( $btnvalue['gradientHover'][2] ) && is_numeric( $btnvalue['gradientHover'][2] ) ? $btnvalue['gradientHover'][2] : '0' ) . '%, ' . $bg2 . ' ' . ( isset( $btnvalue['gradientHover'][3] ) && is_numeric( $btnvalue['gradientHover'][3] ) ? $btnvalue['gradientHover'][3] : '100' ) . '%);';
 							} else if ( ! isset( $btnvalue['gradientHover'][4] ) || 'radial' !== $btnvalue['gradientHover'][4] ) {
@@ -4248,10 +4421,10 @@ class Kadence_Blocks_Frontend {
 							}
 						} else if ( isset( $btnvalue['backgroundHover'] ) && ! empty( $btnvalue['backgroundHover'] ) ) {
 							$alpha = ( isset( $btnvalue['backgroundHoverOpacity'] ) && is_numeric( $btnvalue['backgroundHoverOpacity'] ) ? $btnvalue['backgroundHoverOpacity'] : 1 );
-							$css  .= 'background:' . $this->hex2rgba( $btnvalue['backgroundHover'], $alpha ) . ';';
+							$css  .= 'background:' . $this->kadence_color_output( $btnvalue['backgroundHover'], $alpha ) . ';';
 						}
 						if ( isset( $btnvalue['boxShadowHover'] ) && is_array( $btnvalue['boxShadowHover'] ) && isset( $btnvalue['boxShadowHover'][0] ) && true === $btnvalue['boxShadowHover'][0] && isset( $btnvalue['boxShadowHover'][7] ) && true === $btnvalue['boxShadowHover'][7] ) {
-							$css  .= 'box-shadow:' . ( isset( $btnvalue['boxShadowHover'][7] ) && true === $btnvalue['boxShadowHover'][7] ? 'inset ' : '' ) . ( isset( $btnvalue['boxShadowHover'][3] ) && is_numeric( $btnvalue['boxShadowHover'][3] ) ? $btnvalue['boxShadowHover'][3] : '2' ) . 'px ' . ( isset( $btnvalue['boxShadowHover'][4] ) && is_numeric( $btnvalue['boxShadowHover'][4] ) ? $btnvalue['boxShadowHover'][4] : '2' ) . 'px ' . ( isset( $btnvalue['boxShadowHover'][5] ) && is_numeric( $btnvalue['boxShadowHover'][5] ) ? $btnvalue['boxShadowHover'][5] : '3' ) . 'px ' . ( isset( $btnvalue['boxShadowHover'][6] ) && is_numeric( $btnvalue['boxShadowHover'][6] ) ? $btnvalue['boxShadowHover'][6] : '0' ) . 'px ' . $this->hex2rgba( ( isset( $btnvalue['boxShadowHover'][1] ) && ! empty( $btnvalue['boxShadowHover'][1] ) ? $btnvalue['boxShadowHover'][1] : '#000000' ), ( isset( $btnvalue['boxShadowHover'][2] ) && is_numeric( $btnvalue['boxShadowHover'][2] ) ? $btnvalue['boxShadowHover'][2] : 0.4 ) ) . ';';
+							$css  .= 'box-shadow:' . ( isset( $btnvalue['boxShadowHover'][7] ) && true === $btnvalue['boxShadowHover'][7] ? 'inset ' : '' ) . ( isset( $btnvalue['boxShadowHover'][3] ) && is_numeric( $btnvalue['boxShadowHover'][3] ) ? $btnvalue['boxShadowHover'][3] : '2' ) . 'px ' . ( isset( $btnvalue['boxShadowHover'][4] ) && is_numeric( $btnvalue['boxShadowHover'][4] ) ? $btnvalue['boxShadowHover'][4] : '2' ) . 'px ' . ( isset( $btnvalue['boxShadowHover'][5] ) && is_numeric( $btnvalue['boxShadowHover'][5] ) ? $btnvalue['boxShadowHover'][5] : '3' ) . 'px ' . ( isset( $btnvalue['boxShadowHover'][6] ) && is_numeric( $btnvalue['boxShadowHover'][6] ) ? $btnvalue['boxShadowHover'][6] : '0' ) . 'px ' . $this->kadence_color_output( ( isset( $btnvalue['boxShadowHover'][1] ) && ! empty( $btnvalue['boxShadowHover'][1] ) ? $btnvalue['boxShadowHover'][1] : '#000000' ), ( isset( $btnvalue['boxShadowHover'][2] ) && is_numeric( $btnvalue['boxShadowHover'][2] ) ? $btnvalue['boxShadowHover'][2] : 0.4 ) ) . ';';
 							$css  .= 'border-radius:' . ( isset( $btnvalue['borderRadius'] ) && is_numeric( $btnvalue['borderRadius'] ) ? $btnvalue['borderRadius'] : '3' ) . 'px;';
 						}
 						$css .= '}';
@@ -4262,17 +4435,24 @@ class Kadence_Blocks_Frontend {
 						$css .= '.kt-btns' . $unique_id . ' .kt-btn-wrap-' . $btnkey . ' .kt-button:hover, .kt-btns' . $unique_id . ' .kt-btn-wrap-' . $btnkey . ' .kt-button:focus {';
 						if ( isset( $btnvalue['backgroundHover'] ) && ! empty( $btnvalue['backgroundHover'] ) ) {
 							$alpha = ( isset( $btnvalue['backgroundHoverOpacity'] ) && is_numeric( $btnvalue['backgroundHoverOpacity'] ) ? $btnvalue['backgroundHoverOpacity'] : 1 );
-							$css  .= 'background:' . $this->hex2rgba( $btnvalue['backgroundHover'], $alpha ) . ';';
+							$css  .= 'background:' . $this->kadence_color_output( $btnvalue['backgroundHover'], $alpha ) . ';';
 						} else {
 							$alpha = ( isset( $btnvalue['backgroundHoverOpacity'] ) && is_numeric( $btnvalue['backgroundHoverOpacity'] ) ? $btnvalue['backgroundHoverOpacity'] : 1 );
 							$css  .= 'background:' . $this->hex2rgba( '#444444', $alpha ) . ';';
 						}
 						if ( isset( $btnvalue['boxShadowHover'] ) && is_array( $btnvalue['boxShadowHover'] ) && isset( $btnvalue['boxShadowHover'][0] ) && true === $btnvalue['boxShadowHover'][0] && isset( $btnvalue['boxShadowHover'][7] ) && true === $btnvalue['boxShadowHover'][7] ) {
-							$css  .= 'box-shadow:' . ( isset( $btnvalue['boxShadowHover'][7] ) && true === $btnvalue['boxShadowHover'][7] ? 'inset ' : '' ) . ( isset( $btnvalue['boxShadowHover'][3] ) && is_numeric( $btnvalue['boxShadowHover'][3] ) ? $btnvalue['boxShadowHover'][3] : '2' ) . 'px ' . ( isset( $btnvalue['boxShadowHover'][4] ) && is_numeric( $btnvalue['boxShadowHover'][4] ) ? $btnvalue['boxShadowHover'][4] : '2' ) . 'px ' . ( isset( $btnvalue['boxShadowHover'][5] ) && is_numeric( $btnvalue['boxShadowHover'][5] ) ? $btnvalue['boxShadowHover'][5] : '3' ) . 'px ' . ( isset( $btnvalue['boxShadowHover'][6] ) && is_numeric( $btnvalue['boxShadowHover'][6] ) ? $btnvalue['boxShadowHover'][6] : '0' ) . 'px ' . $this->hex2rgba( ( isset( $btnvalue['boxShadowHover'][1] ) && ! empty( $btnvalue['boxShadowHover'][1] ) ? $btnvalue['boxShadowHover'][1] : '#000000' ), ( isset( $btnvalue['boxShadowHover'][2] ) && is_numeric( $btnvalue['boxShadowHover'][2] ) ? $btnvalue['boxShadowHover'][2] : 0.4 ) ) . ';';
+							$css  .= 'box-shadow:' . ( isset( $btnvalue['boxShadowHover'][7] ) && true === $btnvalue['boxShadowHover'][7] ? 'inset ' : '' ) . ( isset( $btnvalue['boxShadowHover'][3] ) && is_numeric( $btnvalue['boxShadowHover'][3] ) ? $btnvalue['boxShadowHover'][3] : '2' ) . 'px ' . ( isset( $btnvalue['boxShadowHover'][4] ) && is_numeric( $btnvalue['boxShadowHover'][4] ) ? $btnvalue['boxShadowHover'][4] : '2' ) . 'px ' . ( isset( $btnvalue['boxShadowHover'][5] ) && is_numeric( $btnvalue['boxShadowHover'][5] ) ? $btnvalue['boxShadowHover'][5] : '3' ) . 'px ' . ( isset( $btnvalue['boxShadowHover'][6] ) && is_numeric( $btnvalue['boxShadowHover'][6] ) ? $btnvalue['boxShadowHover'][6] : '0' ) . 'px ' . $this->kadence_color_output( ( isset( $btnvalue['boxShadowHover'][1] ) && ! empty( $btnvalue['boxShadowHover'][1] ) ? $btnvalue['boxShadowHover'][1] : '#000000' ), ( isset( $btnvalue['boxShadowHover'][2] ) && is_numeric( $btnvalue['boxShadowHover'][2] ) ? $btnvalue['boxShadowHover'][2] : 0.4 ) ) . ';';
 						}
 						$css .= '}';
 					}
 					// Tablet CSS.
+					if ( isset( $btnvalue['tabletGap'] ) && is_numeric( $btnvalue['tabletGap'] ) ) {
+						$css .= '@media (min-width: 768px) and (max-width: 1024px) {';
+						$css .= '.kt-btns' . $unique_id . ' .kt-btn-wrap-' . $btnkey . ' {';
+						$css .= 'margin-right:' . $btnvalue['tabletGap'] . 'px;';
+						$css .= '}';
+						$css .= '}';
+					}
 					if ( ( isset( $btnvalue['responsiveSize'] ) && is_array( $btnvalue['responsiveSize'] ) && isset( $btnvalue['responsiveSize'][0] ) && is_numeric( $btnvalue['responsiveSize'][0] ) ) || ( isset( $attr['widthType'] ) && 'fixed' === $attr['widthType'] && isset( $btnvalue['width'] ) && is_array( $btnvalue['width'] ) && isset( $btnvalue['width'][1] ) && ! empty( $btnvalue['width'][1] ) ) ) {
 						$css .= '@media (min-width: 768px) and (max-width: 1024px) {';
 						$css .= '.kt-btns' . $unique_id . ' .kt-btn-wrap-' . $btnkey . ' .kt-button {';
@@ -4300,6 +4480,13 @@ class Kadence_Blocks_Frontend {
 						$css .= '}';
 					}
 					// Mobile CSS.
+					if ( isset( $btnvalue['mobileGap'] ) && is_numeric( $btnvalue['mobileGap'] ) ) {
+						$css .= '@media (max-width: 767px) {';
+						$css .= '.kt-btns' . $unique_id . ' .kt-btn-wrap-' . $btnkey . ' {';
+						$css .= 'margin-right:' . $btnvalue['mobileGap'] . 'px;';
+						$css .= '}';
+						$css .= '}';
+					}
 					if ( ( isset( $btnvalue['responsiveSize'] ) && is_array( $btnvalue['responsiveSize'] ) && isset( $btnvalue['responsiveSize'][1] ) && is_numeric( $btnvalue['responsiveSize'][1] ) ) || ( isset( $attr['widthType'] ) && 'fixed' === $attr['widthType'] && isset( $btnvalue['width'] ) && is_array( $btnvalue['width'] ) && isset( $btnvalue['width'][2] ) && ! empty( $btnvalue['width'][2] ) ) ) {
 						$css .= '@media (max-width: 767px) {';
 						$css .= '.kt-btns' . $unique_id . ' .kt-btn-wrap-' . $btnkey . ' .kt-button {';
@@ -4492,8 +4679,10 @@ class Kadence_Blocks_Frontend {
 			if ( isset( $attr['bottomMargin'] ) ) {
 				$css .= 'margin-bottom:' . $attr['bottomMargin'] . ( isset( $attr['marginUnit'] ) && ! empty( $attr['marginUnit'] ) ? $attr['marginUnit'] : 'px') . ';';
 			}
-			if ( isset( $attr['bgColor'] ) ) {
-				$css .= 'background-color:' . $attr['bgColor'] . ';';
+			if ( isset( $attr['bgColor'] ) && !empty( $attr['bgColor'] ) ) {
+				if ( isset( $attr['bgColorClass'] ) && empty( $attr['bgColorClass'] ) || ! isset( $attr['bgColorClass'] ) ) {
+					$css .= 'background-color:' . $this->kadence_color_output( $attr['bgColor'] ) . ';';
+				}
 			}
 			if ( isset( $attr['bgImg'] ) && ! empty( $attr['bgImg'] ) && ( ! isset( $attr['backgroundSettingTab'] ) || empty( $attr['backgroundSettingTab'] ) || 'normal' === $attr['backgroundSettingTab'] ) ) {
 				if ( isset( $attr['bgImgAttachment'] ) ) {
@@ -4520,17 +4709,17 @@ class Kadence_Blocks_Frontend {
 		}
 		if ( isset( $attr['textColor'] ) ) {
 			$css .= '.kt-layout-id' . $unique_id . ', .kt-layout-id' . $unique_id . ' h1, .kt-layout-id' . $unique_id . ' h2, .kt-layout-id' . $unique_id . ' h3, .kt-layout-id' . $unique_id . ' h4, .kt-layout-id' . $unique_id . ' h5, .kt-layout-id' . $unique_id . ' h6 {';
-				$css .= 'color:' . $attr['textColor'] . ';';
+				$css .= 'color:' . $this->kadence_color_output( $attr['textColor'] ) . ';';
 			$css .= '}';
 		}
 		if ( isset( $attr['linkColor'] ) ) {
 			$css .= '.kt-layout-id' . $unique_id . ' a {';
-				$css .= 'color:' . $attr['linkColor'] . ';';
+				$css .= 'color:' . $this->kadence_color_output( $attr['linkColor'] ) . ';';
 			$css .= '}';
 		}
 		if ( isset( $attr['linkHoverColor'] ) ) {
 			$css .= '.kt-layout-id' . $unique_id . ' a:hover {';
-				$css .= 'color:' . $attr['linkHoverColor'] . ';';
+				$css .= 'color:' . $this->kadence_color_output( $attr['linkHoverColor'] ) . ';';
 			$css .= '}';
 		}
 		if ( isset( $attr['bottomSep'] ) && 'none' != $attr['bottomSep'] ) {
@@ -4660,13 +4849,13 @@ class Kadence_Blocks_Frontend {
 						$angle = ( isset( $attr['overlayGradAngle'] ) ? $attr['overlayGradAngle'] . 'deg' : '180deg');
 					}
 					$loc = ( isset( $attr['overlayGradLoc'] ) ? $attr['overlayGradLoc'] : '0');
-					$color = ( isset( $attr['overlay'] ) ? $this->hex2rgba( $attr['overlay'], ( isset( $attr['overlayFirstOpacity'] ) && is_numeric( $attr['overlayFirstOpacity'] ) ? $attr['overlayFirstOpacity'] : 1 ) ) : 'transparent');
+					$color = ( isset( $attr['overlay'] ) ? $this->kadence_color_output( $attr['overlay'], ( isset( $attr['overlayFirstOpacity'] ) && is_numeric( $attr['overlayFirstOpacity'] ) ? $attr['overlayFirstOpacity'] : 1 ) ) : 'transparent');
 					$locsecond = ( isset( $attr['overlayGradLocSecond'] ) ? $attr['overlayGradLocSecond'] : '100');
-					$colorsecond = ( isset( $attr['overlaySecond'] ) ? $this->hex2rgba( $attr['overlaySecond'], ( isset( $attr['overlaySecondOpacity'] ) && is_numeric( $attr['overlaySecondOpacity'] ) ? $attr['overlaySecondOpacity'] : 1 ) ) : '#00B5E2');
+					$colorsecond = ( isset( $attr['overlaySecond'] ) ? $this->kadence_color_output( $attr['overlaySecond'], ( isset( $attr['overlaySecondOpacity'] ) && is_numeric( $attr['overlaySecondOpacity'] ) ? $attr['overlaySecondOpacity'] : 1 ) ) : '#00B5E2');
 					$css .= 'background-image: ' . $type . '-gradient(' . $angle. ', ' . $color . ' ' . $loc . '%, ' . $colorsecond . ' ' . $locsecond . '%);';
 				} else {
 					if ( isset( $attr['overlay'] ) ) {
-						$css .= 'background-color:' . $attr['overlay'] . ';';
+						$css .= 'background-color:' . $this->kadence_color_output( $attr['overlay'], ( isset( $attr['overlayFirstOpacity'] ) && is_numeric( $attr['overlayFirstOpacity'] ) ? $attr['overlayFirstOpacity'] : 1 ) ) . ';';
 					}
 					if ( isset( $attr['overlayBgImg'] ) ) {
 						if ( isset( $attr['overlayBgImgAttachment'] ) ) {
@@ -4692,7 +4881,7 @@ class Kadence_Blocks_Frontend {
 		}
 		$tablet_overlay = ( isset( $attr['tabletOverlay'] ) && is_array( $attr['tabletOverlay'] ) && isset( $attr['tabletOverlay'][0] ) && is_array( $attr['tabletOverlay'][0] ) ? $attr['tabletOverlay'][0] : array() );
 		$tablet_background = ( isset( $attr['tabletBackground'] ) && is_array( $attr['tabletBackground'] ) && isset( $attr['tabletBackground'][0] ) && is_array( $attr['tabletBackground'][0] ) ? $attr['tabletBackground'][0] : array() );
-		if ( isset( $attr['tabletPadding'] ) || isset( $attr['topMarginT'] ) || isset( $attr['bottomMarginT'] ) || ( isset( $tablet_overlay['enable'] ) && $tablet_overlay['enable'] ) || ( isset( $tablet_background['enable'] ) && $tablet_background['enable'] ) ) {
+		if ( isset( $attr['tabletPadding'] ) || isset( $attr['topMarginT'] ) || isset( $attr['minHeightTablet'] ) || isset( $attr['bottomMarginT'] ) || ( isset( $tablet_overlay['enable'] ) && $tablet_overlay['enable'] ) || ( isset( $tablet_background['enable'] ) && $tablet_background['enable'] ) ) {
 			$css .= '@media (min-width: 768px) and (max-width: 1024px) {';
 			if ( isset( $attr['topMarginT'] ) || isset( $attr['bottomMarginT'] ) ) {
 				$css .= '#kt-layout-id' . $unique_id . ' {';
@@ -4704,7 +4893,7 @@ class Kadence_Blocks_Frontend {
 				}
 				$css .= '}';
 			}
-			if ( isset( $attr['tabletPadding'] ) && is_array( $attr['tabletPadding'] ) ) {
+			if ( ( isset( $attr['tabletPadding'] ) && is_array( $attr['tabletPadding'] ) ) || isset( $attr['minHeightTablet'] ) ) {
 				$css .= '#kt-layout-id' . $unique_id . ' > .kt-row-column-wrap {';
 					if ( isset( $attr['tabletPadding'][ 0 ] ) && is_numeric( $attr['tabletPadding'][ 0 ] ) ) {
 						$css .= 'padding-top:' . $attr['tabletPadding'][ 0 ] . ( isset( $attr['paddingUnit'] ) && ! empty( $attr['paddingUnit'] ) ? $attr['paddingUnit'] : 'px') . ';';
@@ -4718,12 +4907,15 @@ class Kadence_Blocks_Frontend {
 					if ( isset( $attr['tabletPadding'][ 3 ] ) && is_numeric( $attr['tabletPadding'][ 3 ] ) ) {
 						$css .= 'padding-left:' . $attr['tabletPadding'][ 3 ] . ( isset( $attr['paddingUnit'] ) && ! empty( $attr['paddingUnit'] ) ? $attr['paddingUnit'] : 'px') . ';';
 					}
+					if ( isset( $attr['minHeightTablet'] ) ) {
+						$css .= 'min-height:' . $attr['minHeightTablet'] . ( isset( $attr['minHeightUnit'] ) && ! empty( $attr['minHeightUnit'] ) ? $attr['minHeightUnit'] : 'px') . ';';
+					}
 				$css .= '}';
 			}
 			if ( isset( $tablet_background['enable'] ) && $tablet_background['enable'] ) {
 				$css .= '#kt-layout-id' . $unique_id . ' {';
 					if ( ! empty( $tablet_background['bgColor'] ) ) {
-						$css .= 'background-color:' . $tablet_background['bgColor'] . ';';
+						$css .= 'background-color:' . $this->kadence_color_output( $tablet_background['bgColor'] ) . ';';
 					}
 					if ( ! empty( $tablet_background['bgImg'] ) ) {
 						if ( ! empty( $tablet_background['bgImgAttachment'] ) ) {
@@ -4774,13 +4966,13 @@ class Kadence_Blocks_Frontend {
 							$angle = ( ! empty( $tablet_overlay['overlayGradAngle'] ) ? $tablet_overlay['overlayGradAngle'] . 'deg' : '180deg');
 						}
 						$loc = ( ! empty( $tablet_overlay['overlayGradLoc'] ) ? $tablet_overlay['overlayGradLoc'] : '0');
-						$color = ( ! empty( $tablet_overlay['overlay'] ) ? $tablet_overlay['overlay'] : 'transparent');
+						$color = ( ! empty( $tablet_overlay['overlay'] ) ? $this->kadence_color_output( $tablet_overlay['overlay'] ) : 'transparent');
 						$locsecond = ( ! empty( $tablet_overlay['overlayGradLocSecond'] ) ? $tablet_overlay['overlayGradLocSecond'] : '100');
-						$colorsecond = ( ! empty( $tablet_overlay['overlaySecond'] ) ? $tablet_overlay['overlaySecond'] : '#00B5E2');
+						$colorsecond = ( ! empty( $tablet_overlay['overlaySecond'] ) ? $this->kadence_color_output( $tablet_overlay['overlaySecond'] ) : '#00B5E2');
 						$css .= 'background-image: ' . $type . '-gradient(' . $angle. ', ' . $color . ' ' . $loc . '%, ' . $colorsecond . ' ' . $locsecond . '%);';
 					} else {
 						if ( ! empty( $tablet_overlay['overlay'] ) ) {
-							$css .= 'background-color:' . $tablet_overlay['overlay'] . ';';
+							$css .= 'background-color:' . $this->kadence_color_output( $tablet_overlay['overlay'] ) . ';';
 						}
 						if ( ! empty( $tablet_overlay['overlayBgImg'] ) ) {
 							if ( ! empty( $tablet_overlay['overlayBgImgAttachment'] ) ) {
@@ -4808,7 +5000,7 @@ class Kadence_Blocks_Frontend {
 		}
 		$mobile_overlay = ( isset( $attr['mobileOverlay'] ) && is_array( $attr['mobileOverlay'] ) && isset( $attr['mobileOverlay'][0] ) && is_array( $attr['mobileOverlay'][0] ) ? $attr['mobileOverlay'][0] : array() );
 		$mobile_background = ( isset( $attr['mobileBackground'] ) && is_array( $attr['mobileBackground'] ) && isset( $attr['mobileBackground'][0] ) && is_array( $attr['mobileBackground'][0] ) ? $attr['mobileBackground'][0] : array() );
-		if ( isset( $attr['topPaddingM'] ) || isset( $attr['bottomPaddingM'] ) || isset( $attr['leftPaddingM'] ) || isset( $attr['rightPaddingM'] ) || isset( $attr['topMarginM'] ) || isset( $attr['bottomMarginM'] ) || ( isset( $mobile_overlay['enable'] ) && $mobile_overlay['enable'] ) || ( isset( $mobile_background['enable'] ) && $mobile_background['enable'] == 'true' ) ) {
+		if ( isset( $attr['topPaddingM'] ) || isset( $attr['bottomPaddingM'] ) || isset( $attr['leftPaddingM'] ) || isset( $attr['rightPaddingM'] ) || isset( $attr['topMarginM'] ) || isset( $attr['bottomMarginM'] ) || ( isset( $mobile_overlay['enable'] ) && $mobile_overlay['enable'] ) || isset( $attr['minHeightMobile'] ) || ( isset( $mobile_background['enable'] ) && $mobile_background['enable'] == 'true' ) ) {
 			$css .= '@media (max-width: 767px) {';
 			if ( isset( $attr['topMarginM'] ) || isset( $attr['bottomMarginM'] ) ) {
 				$css .= '#kt-layout-id' . $unique_id . ' {';
@@ -4820,7 +5012,7 @@ class Kadence_Blocks_Frontend {
 				}
 				$css .= '}';
 			}
-			if ( isset( $attr['topPaddingM'] ) || isset( $attr['bottomPaddingM'] ) || isset( $attr['leftPaddingM'] ) || isset( $attr['rightPaddingM'] ) ) {
+			if ( isset( $attr['topPaddingM'] ) || isset( $attr['bottomPaddingM'] ) || isset( $attr['leftPaddingM'] ) || isset( $attr['rightPaddingM'] ) || isset( $attr['minHeightMobile'] ) ) {
 				$css .= '#kt-layout-id' . $unique_id . ' > .kt-row-column-wrap {';
 				if ( isset( $attr['topPaddingM'] ) ) {
 					$css .= 'padding-top:' . $attr['topPaddingM'] . ( isset( $attr['paddingUnit'] ) && ! empty( $attr['paddingUnit'] ) ? $attr['paddingUnit'] : 'px') . ';';
@@ -4834,12 +5026,15 @@ class Kadence_Blocks_Frontend {
 				if ( isset( $attr['rightPaddingM'] ) ) {
 					$css .= 'padding-right:' . $attr['rightPaddingM'] . ( isset( $attr['paddingUnit'] ) && ! empty( $attr['paddingUnit'] ) ? $attr['paddingUnit'] : 'px') . ';';
 				}
+				if ( isset( $attr['minHeightMobile'] ) ) {
+					$css .= 'min-height:' . $attr['minHeightMobile'] . ( isset( $attr['minHeightUnit'] ) && ! empty( $attr['minHeightUnit'] ) ? $attr['minHeightUnit'] : 'px') . ';';
+				}
 				$css .= '}';
 			}
 			if ( isset( $mobile_background['enable'] ) && $mobile_background['enable'] ) {
 				$css .= '#kt-layout-id' . $unique_id . ' {';
 					if ( isset( $mobile_background['bgColor'] ) && ! empty( $mobile_background['bgColor'] ) ) {
-						$css .= 'background-color:' . $mobile_background['bgColor'] . ';';
+						$css .= 'background-color:' . $this->kadence_color_output( $mobile_background['bgColor'] ) . ';';
 					}
 					if ( isset( $mobile_background['bgImg'] ) && ! empty( $mobile_background['bgImg'] ) ) {
 						if ( ! empty( $mobile_background['bgImgAttachment'] ) ) {
@@ -4890,13 +5085,13 @@ class Kadence_Blocks_Frontend {
 							$angle = ( ! empty( $mobile_overlay['overlayGradAngle'] ) ? $mobile_overlay['overlayGradAngle'] . 'deg' : '180deg');
 						}
 						$loc = ( ! empty( $mobile_overlay['overlayGradLoc'] ) ? $mobile_overlay['overlayGradLoc'] : '0');
-						$color = ( ! empty( $mobile_overlay['overlay'] ) ? $mobile_overlay['overlay'] : 'transparent');
+						$color = ( ! empty( $mobile_overlay['overlay'] ) ? $this->kadence_color_output( $mobile_overlay['overlay'] ) : 'transparent');
 						$locsecond = ( ! empty( $mobile_overlay['overlayGradLocSecond'] ) ? $mobile_overlay['overlayGradLocSecond'] : '100');
-						$colorsecond = ( ! empty( $mobile_overlay['overlaySecond'] ) ? $mobile_overlay['overlaySecond'] : '#00B5E2');
+						$colorsecond = ( ! empty( $mobile_overlay['overlaySecond'] ) ? $this->kadence_color_output( $mobile_overlay['overlaySecond'] ) : '#00B5E2');
 						$css .= 'background-image: ' . $type . '-gradient(' . $angle. ', ' . $color . ' ' . $loc . '%, ' . $colorsecond . ' ' . $locsecond . '%);';
 					} else {
 						if ( ! empty( $mobile_overlay['overlay'] ) ) {
-							$css .= 'background-color:' . $mobile_overlay['overlay'] . ';';
+							$css .= 'background-color:' . $this->kadence_color_output( $mobile_overlay['overlay'] ) . ';';
 						}
 						if ( ! empty( $mobile_overlay['overlayBgImg'] ) ) {
 							if ( ! empty( $mobile_overlay['overlayBgImgAttachment'] ) ) {
@@ -4932,7 +5127,7 @@ class Kadence_Blocks_Frontend {
 	 */
 	public function column_layout_css( $attr, $unique_id ) {
 		$css = '';
-		if ( isset( $attr['topPadding'] ) || isset( $attr['bottomPadding'] ) || isset( $attr['leftPadding'] ) || isset( $attr['rightPadding'] ) || isset( $attr['topMargin'] ) || isset( $attr['bottomMargin'] ) || isset( $attr['rightMargin'] ) || isset( $attr['leftMargin'] ) || isset( $attr['border'] ) || isset( $attr['borderWidth'] ) || ( isset( $attr['displayShadow'] ) && true == $attr['displayShadow'] ) ) {
+		if ( isset( $attr['topPadding'] ) || isset( $attr['bottomPadding'] ) || isset( $attr['leftPadding'] ) || isset( $attr['rightPadding'] ) || isset( $attr['topMargin'] ) || isset( $attr['bottomMargin'] ) || isset( $attr['rightMargin'] ) || isset( $attr['leftMargin'] ) || isset( $attr['border'] ) || isset( $attr['borderRadius'] ) || isset( $attr['borderWidth'] ) || ( isset( $attr['displayShadow'] ) && true == $attr['displayShadow'] ) ) {
 			$css .= '.kt-row-layout-inner > .kt-row-column-wrap > .kadence-column' . $unique_id . ' > .kt-inside-inner-col {';
 			if ( isset( $attr['topPadding'] ) ) {
 				$css .= 'padding-top:' . $attr['topPadding'] . 'px;';
@@ -4960,7 +5155,7 @@ class Kadence_Blocks_Frontend {
 			}
 			if ( isset( $attr['border'] ) ) {
 				$alpha = ( isset( $attr['borderOpacity'] ) && ! empty( $attr['borderOpacity'] ) ? $attr['borderOpacity'] : 1 );
-				$css .= 'border-color:' . $this->hex2rgba( $attr['border'], $alpha ) . ';';
+				$css .= 'border-color:' . $this->kadence_color_output( $attr['border'], $alpha ) . ';';
 			}
 			if ( isset( $attr['borderWidth'] ) && ! empty( $attr['borderWidth'] ) && is_array( $attr['borderWidth'] ) ) {
 				$css .= 'border-width:' . $attr['borderWidth'][0] . 'px ' . $attr['borderWidth'][1] . 'px ' . $attr['borderWidth'][2] . 'px ' . $attr['borderWidth'][3] . 'px ;';
@@ -4968,8 +5163,12 @@ class Kadence_Blocks_Frontend {
 			if ( isset( $attr['borderRadius'] ) && ! empty( $attr['borderRadius'] ) && is_array( $attr['borderRadius'] ) ) {
 				$css .= 'border-radius:' . $attr['borderRadius'][0] . 'px ' . $attr['borderRadius'][1] . 'px ' . $attr['borderRadius'][2] . 'px ' . $attr['borderRadius'][3] . 'px ;';
 			}
-			if ( isset( $attr['displayShadow'] ) && true == $attr['displayShadow'] && isset( $attr['shadow'] ) && is_array( $attr['shadow'] ) && isset( $attr['shadow'][0] ) && is_array( $attr['shadow'][0] ) ) {
-				$css  .= 'box-shadow:' . ( isset( $attr['shadow'][0]['inset'] ) && true === $attr['shadow'][0]['inset'] ? 'inset ' : '' ) . ( isset( $attr['shadow'][0]['hOffset'] ) && is_numeric( $attr['shadow'][0]['hOffset'] ) ? $attr['shadow'][0]['hOffset'] : '0' ) . 'px ' . ( isset( $attr['shadow'][0]['vOffset'] ) && is_numeric( $attr['shadow'][0]['vOffset'] ) ? $attr['shadow'][0]['vOffset'] : '0' ) . 'px ' . ( isset( $attr['shadow'][0]['blur'] ) && is_numeric( $attr['shadow'][0]['blur'] ) ? $attr['shadow'][0]['blur'] : '14' ) . 'px ' . ( isset( $attr['shadow'][0]['spread'] ) && is_numeric( $attr['shadow'][0]['spread'] ) ? $attr['shadow'][0]['spread'] : '0' ) . 'px ' . $this->hex2rgba( ( isset( $attr['shadow'][0]['color'] ) && ! empty( $attr['shadow'][0]['color'] ) ? $attr['shadow'][0]['color'] : '#000000' ), ( isset( $attr['shadow'][0]['opacity'] ) && is_numeric( $attr['shadow'][0]['opacity'] ) ? $attr['shadow'][0]['opacity'] : 0.2 ) ) . ';';
+			if ( isset( $attr['displayShadow'] ) && true == $attr['displayShadow'] ) {
+				if ( isset( $attr['shadow'] ) && is_array( $attr['shadow'] ) && isset( $attr['shadow'][0] ) && is_array( $attr['shadow'][0] ) ) {
+					$css  .= 'box-shadow:' . ( isset( $attr['shadow'][0]['inset'] ) && true === $attr['shadow'][0]['inset'] ? 'inset ' : '' ) . ( isset( $attr['shadow'][0]['hOffset'] ) && is_numeric( $attr['shadow'][0]['hOffset'] ) ? $attr['shadow'][0]['hOffset'] : '0' ) . 'px ' . ( isset( $attr['shadow'][0]['vOffset'] ) && is_numeric( $attr['shadow'][0]['vOffset'] ) ? $attr['shadow'][0]['vOffset'] : '0' ) . 'px ' . ( isset( $attr['shadow'][0]['blur'] ) && is_numeric( $attr['shadow'][0]['blur'] ) ? $attr['shadow'][0]['blur'] : '14' ) . 'px ' . ( isset( $attr['shadow'][0]['spread'] ) && is_numeric( $attr['shadow'][0]['spread'] ) ? $attr['shadow'][0]['spread'] : '0' ) . 'px ' . $this->hex2rgba( ( isset( $attr['shadow'][0]['color'] ) && ! empty( $attr['shadow'][0]['color'] ) ? $attr['shadow'][0]['color'] : '#000000' ), ( isset( $attr['shadow'][0]['opacity'] ) && is_numeric( $attr['shadow'][0]['opacity'] ) ? $attr['shadow'][0]['opacity'] : 0.2 ) ) . ';';
+				} else {
+					$css  .= 'box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 14px 0px;';
+				}
 			}
 			$css .= '}';
 		}
@@ -4978,7 +5177,7 @@ class Kadence_Blocks_Frontend {
 			$css .= '.kt-row-layout-inner > .kt-row-column-wrap > .kadence-column' . $unique_id . ' > .kt-inside-inner-col {';
 				if ( isset( $attr['background'] ) && ! empty( $attr['background'] ) ) {
 					$alpha = ( isset( $attr['backgroundOpacity'] ) && ! empty( $attr['backgroundOpacity'] ) ? $attr['backgroundOpacity'] : 1 );
-					$css .= 'background-color:' . $this->hex2rgba( $attr['background'], $alpha ) . ';';
+					$css .= 'background-color:' . $this->kadence_color_output( $attr['background'], $alpha ) . ';';
 				}
 				$css .= 'background-image:url(' . $bg_img['bgImg'] . ');';
 				$css .= 'background-size:' . ( ! empty( $bg_img['bgImgSize'] ) ? $bg_img['bgImgSize'] : 'cover' ) . ';';
@@ -4994,17 +5193,17 @@ class Kadence_Blocks_Frontend {
 		}
 		if ( isset( $attr['textColor'] ) ) {
 			$css .= '.kadence-column' . $unique_id . ', .kadence-column' . $unique_id . ' h1, .kadence-column' . $unique_id . ' h2, .kadence-column' . $unique_id . ' h3, .kadence-column' . $unique_id . ' h4, .kadence-column' . $unique_id . ' h5, .kadence-column' . $unique_id . ' h6 {';
-				$css .= 'color:' . $attr['textColor'] . ';';
+				$css .= 'color:' . $this->kadence_color_output( $attr['textColor'] ) . ';';
 			$css .= '}';
 		}
 		if ( isset( $attr['linkColor'] ) ) {
 			$css .= '.kadence-column' . $unique_id . ' a {';
-				$css .= 'color:' . $attr['linkColor'] . ';';
+				$css .= 'color:' . $this->kadence_color_output( $attr['linkColor'] ) . ';';
 			$css .= '}';
 		}
 		if ( isset( $attr['linkHoverColor'] ) ) {
 			$css .= '.kadence-column' . $unique_id . ' a:hover {';
-				$css .= 'color:' . $attr['linkHoverColor'] . ';';
+				$css .= 'color:' . $this->kadence_color_output( $attr['linkHoverColor'] ) . ';';
 			$css .= '}';
 		}
 		if ( isset( $attr['textAlign'] ) && is_array( $attr['textAlign'] ) && isset( $attr['textAlign'][ 1 ] ) && ! empty( $attr['textAlign'][ 1 ] ) ) {

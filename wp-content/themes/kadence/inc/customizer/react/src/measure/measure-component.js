@@ -156,7 +156,7 @@ class MeasureComponent extends Component {
 									onChange={ (val) => {
 										let value = this.state.size;
 										if ( undefined === value[ this.state.currentDevice ] ) {
-											value[ this.state.currentDevice ] = [ '', '', '', '' ];
+											value[ this.state.currentDevice ] = [ 0, 0, 0, 0 ];
 										}
 										value[ this.state.currentDevice ][0] = val;
 										this.setState( { size: value } );
@@ -175,7 +175,7 @@ class MeasureComponent extends Component {
 									onChange={ (val) => {
 										let value = this.state.size;
 										if ( undefined === value[ this.state.currentDevice ] ) {
-											value[ this.state.currentDevice ] = [ '', '', '', '' ];
+											value[ this.state.currentDevice ] = [ 0, 0, 0, 0 ];
 										}
 										value[ this.state.currentDevice ][1] = val;
 										this.setState( { size: value } );
@@ -194,7 +194,7 @@ class MeasureComponent extends Component {
 									onChange={ (val) => {
 										let value = this.state.size;
 										if ( undefined === value[ this.state.currentDevice ] ) {
-											value[ this.state.currentDevice ] = [ '', '', '', '' ];
+											value[ this.state.currentDevice ] = [ 0, 0, 0, 0 ];
 										}
 										value[ this.state.currentDevice ][2] = val;
 										this.setState( { size: value } );
@@ -213,7 +213,7 @@ class MeasureComponent extends Component {
 									onChange={ (val) => {
 										let value = this.state.size;
 										if ( undefined === value[ this.state.currentDevice ] ) {
-											value[ this.state.currentDevice ] = [ '', '', '', '' ];
+											value[ this.state.currentDevice ] = [ 0, 0, 0, 0 ];
 										}
 										value[ this.state.currentDevice ][3] = val;
 										this.setState( { size: value } );

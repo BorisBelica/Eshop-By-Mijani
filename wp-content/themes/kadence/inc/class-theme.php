@@ -303,6 +303,12 @@ class Theme {
 		if ( class_exists( 'LifterLMS' ) ) {
 			$components[] = new LifterLMS\Component();
 		}
+		if ( class_exists( 'Essential_Real_Estate' ) ) {
+			$components[] = new Essential_Real_Estate\Component();
+		}
+		if ( class_exists( 'Estatik' ) ) {
+			$components[] = new Estatik\Component();
+		}
 
 		return $components;
 	}

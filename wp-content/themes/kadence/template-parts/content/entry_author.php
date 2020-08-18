@@ -26,9 +26,9 @@ kadence()->print_styles( 'kadence-author-box' );
 		<?php if ( get_the_author_meta( 'occupation' ) ) { ?>
 			<p class="entry-author-occupation author-occupation"><?php the_author_meta( 'occupation' ); ?></p>
 		<?php } ?>
-		<p class="entry-author-description author-bio">
+		<div class="entry-author-description author-bio">
 			<?php the_author_meta( 'description' ); ?>
-		</p>
+		</div>
 		<div class="entry-author-follow author-follow">
 			<?php
 			foreach ( array( 'facebook', 'twitter', 'instagram', 'youtube', 'flickr', 'vimeo', 'linkedin', 'pinterest', 'dribbble' ) as $social ) {

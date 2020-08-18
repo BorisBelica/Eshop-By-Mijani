@@ -45,5 +45,10 @@ class Kadence_Control_Social extends WP_Customize_Control {
 		$this->json['input_attrs'] = $this->input_attrs;
 		$this->json['default']     = $this->default;
 	}
+	/**
+	 * Empty Render Function to prevent errors.
+	 */
+	public function render_content() {
+	}
 }
 $wp_customize->register_control_type( 'Kadence_Control_Social' );

@@ -560,6 +560,168 @@
 			// Add CSS string to <style> tag.
 			$style.html( css );
 		},
+		live_css_boxshadow : function( key, rules, newValue ) {
+			var styleID = 'kadence-customize-preview-css-' + key,
+			    $style = $( '#' + styleID ),
+				css = '',
+				media_tablet = '@media screen and (max-width: 1023px)',
+				media_mobile = '@media screen and (max-width: 499px)',
+				selector,
+				property,
+			    cssArray = {};
+			// Create <style> tag if doesn't exist.
+			if ( 0 === $style.length ) {
+				$style = $( document.createElement( 'style' ) );
+				$style.attr( 'id', styleID );
+				$style.attr( 'type', 'text/css' );
+
+				// Append <style> tag to <head>.
+				$style.appendTo( $( 'head' ) );
+			}
+			_.each( rules, function( rule ) {
+				if ( undefined == rule['property'] || undefined == rule['selector'] ) {
+					return;
+				}
+				rule['media'] = rule['media'] || 'global';
+				rule['pattern'] = rule['pattern'] || '$';
+				if ( 'object' == typeof newValue ) {
+					if ( undefined !== newValue['desktop'] ) {
+						selector = ( undefined !== rule['selector']['desktop'] ? rule['selector']['desktop'] : rule['selector'] );
+						property = ( undefined !== rule['property']['desktop'] ? rule['property']['desktop'] : rule['property'] );
+						// Define properties.
+						if ( undefined == cssArray[ rule['media'] ] ) cssArray[ rule['media'] ] = {};
+						if ( undefined == cssArray[ rule['media'] ][ selector ] ) cssArray[ rule['media'] ][ selector ] = {};
+						var border_style = ( undefined !== newValue['desktop']['style'] && '' !== newValue['desktop']['style'] ? newValue['desktop']['style'] : 'undefined' );
+						if ( 'undefined' !== border_style ) {
+							var color_type = '';
+							if ( undefined !== newValue['desktop']['color'] && '' !== newValue['desktop']['color'] ) {
+								if ( newValue['desktop']['color'].includes('palette') ) {
+									color_type = 'var(--global-' + newValue['desktop']['color'] + ')';
+								} else {
+									color_type = newValue['desktop']['color']
+								}
+							}
+							if ( '' !== color_type ) {
+								cssArray[ rule['media'] ][ selector ][ property ] = ( newValue['desktop']['width'] ? newValue['desktop']['width'] : '0' ) + newValue['desktop']['unit'] + ' ' + border_style + ' ' + color_type;
+							} else {
+								cssArray[ rule['media'] ][ selector ][ property ] = ( newValue['desktop']['width'] ? newValue['desktop']['width'] : '0' ) + newValue['desktop']['unit'] + ' ' + border_style + ' ' + 'transparent';
+							}
+						}
+					}
+					if ( undefined !== newValue['tablet'] ) {
+						selector = ( undefined !== rule['selector']['tablet'] ? rule['selector']['tablet'] : rule['selector'] );
+						property = ( undefined !== rule['property']['tablet'] ? rule['property']['tablet'] : rule['property'] );
+						// Define properties.
+						if ( undefined == cssArray[ media_tablet ] ) cssArray[ media_tablet ] = {};
+						if ( undefined == cssArray[ media_tablet ][ selector ] ) cssArray[ media_tablet ][ selector ] = {};
+						var border_style = ( undefined !== newValue['tablet']['style'] && '' !== newValue['tablet']['style'] ? newValue['tablet']['style'] : newValue['desktop']['style'] );
+						var border_style_show = ( undefined !== newValue['tablet']['style'] && '' !== newValue['tablet']['style'] ? newValue['tablet']['style'] : 'undefined' );
+						if ( 'undefined' !== border_style_show ) {
+							var color_type = '';
+							var width = ( newValue['desktop']['width'] ? newValue['desktop']['width'] : '0' );
+							var unit = ( newValue['desktop']['unit'] ? newValue['desktop']['unit'] : 'px' );
+							if ( undefined !== newValue['tablet']['color'] && '' !== newValue['tablet']['color'] ) {
+								if ( newValue['tablet']['color'].includes('palette') ) {
+									color_type = 'var(--global-' + newValue['tablet']['color'] + ')';
+								} else {
+									color_type = newValue['tablet']['color']
+								}
+							} else if ( undefined !== newValue['desktop']['color'] && '' !== newValue['desktop']['color'] ) {
+								if ( newValue['desktop']['color'].includes('palette') ) {
+									color_type = 'var(--global-' + newValue['desktop']['color'] + ')';
+								} else {
+									color_type = newValue['desktop']['color']
+								}
+							}
+							if ( '' !== color_type ) {
+								cssArray[ media_tablet ][ selector ][ property ] = ( newValue['tablet']['width'] ? newValue['tablet']['width'] : width ) + ( newValue['tablet']['unit'] ? newValue['tablet']['unit'] : unit ) + ' ' + border_style + ' ' + color_type;
+							} else {
+								cssArray[ media_tablet ][ selector ][ property ] = ( newValue['tablet']['width'] ? newValue['tablet']['width'] : width ) + ( newValue['tablet']['unit'] ? newValue['tablet']['unit'] : unit ) + ' ' + border_style + ' ' + 'transparent';
+							}
+						}
+					}
+					if ( undefined !== newValue['mobile'] ) {
+						selector = ( undefined !== rule['selector']['mobile'] ? rule['selector']['mobile'] : rule['selector'] );
+						property = ( undefined !== rule['property']['mobile'] ? rule['property']['mobile'] : rule['property'] );
+						// Define properties.
+						if ( undefined == cssArray[ media_mobile ] ) cssArray[ media_mobile ] = {};
+						if ( undefined == cssArray[ media_mobile ][ selector ] ) cssArray[ media_mobile ][ selector ] = {};
+						var border_style = ( undefined !== newValue['mobile']['style'] && '' !== newValue['mobile']['style'] ? newValue['mobile']['style'] : newValue['desktop']['style'] );
+						var border_style_show = ( undefined !== newValue['mobile']['style'] && '' !== newValue['mobile']['style'] ? newValue['mobile']['style'] : 'undefined' );
+						if ( 'undefined' !== border_style_show ) {
+							var color_type = '';
+							var deskWidth = ( newValue['desktop']['width'] ? newValue['desktop']['width'] : '0' );
+							var deskUnit = ( newValue['desktop']['unit'] ? newValue['desktop']['unit'] : 'px' );
+							var width = ( newValue['tablet'] && newValue['tablet']['width'] ? newValue['tablet']['width'] : deskWidth );
+							var unit = ( newValue['tablet'] && newValue['tablet']['unit'] ? newValue['tablet']['unit'] : deskUnit );
+							if ( undefined !== newValue['mobile']['color'] && '' !== newValue['mobile']['color'] ) {
+								if ( newValue['mobile']['color'].includes('palette') ) {
+									color_type = 'var(--global-' + newValue['mobile']['color'] + ')';
+								} else {
+									color_type = newValue['mobile']['color']
+								}
+							} else if ( undefined !== newValue['tablet'] && undefined !== newValue['tablet']['color'] && '' !== newValue['tablet']['color'] ) {
+								if ( newValue['tablet']['color'].includes('palette') ) {
+									color_type = 'var(--global-' + newValue['tablet']['color'] + ')';
+								} else {
+									color_type = newValue['tablet']['color']
+								}
+							} else if ( undefined !== newValue['desktop']['color'] && '' !== newValue['desktop']['color'] ) {
+								if ( newValue['desktop']['color'].includes('palette') ) {
+									color_type = 'var(--global-' + newValue['desktop']['color'] + ')';
+								} else {
+									color_type = newValue['desktop']['color']
+								}
+							}
+							if ( '' !== color_type ) {
+								cssArray[ media_mobile ][ selector ][ property ] = ( newValue['mobile']['width'] ? newValue['mobile']['width'] : width ) + ( newValue['mobile']['unit'] ? newValue['mobile']['unit'] : unit ) + ' ' + border_style + ' ' + color_type;
+							} else {
+								cssArray[ media_mobile ][ selector ][ property ] = ( newValue['mobile']['width'] ? newValue['mobile']['width'] : width ) + ( newValue['mobile']['unit'] ? newValue['mobile']['unit'] : unit ) + ' ' + border_style + ' ' + 'transparent';
+							}
+						}
+					}
+					if ( undefined !== newValue['color'] ) {
+						selector = rule['selector'];
+						property = rule['property'];
+						// Define properties.
+						if ( undefined == cssArray[ rule['media'] ] ) cssArray[ rule['media'] ] = {};
+						if ( undefined == cssArray[ rule['media'] ][ selector ] ) cssArray[ rule['media'] ][ selector ] = {};
+
+						var inset = ( undefined !== newValue['inset'] && newValue['inset'] ? 'inset' : '' );
+						//if ( 'none' !== border_style ) {
+							var color_type = '';
+							if ( undefined !== newValue['color'] && '' !== newValue['color'] ) {
+								if ( newValue['color'].includes('palette') ) {
+									color_type = 'var(--global-' + newValue['color'] + ')';
+								} else {
+									color_type = newValue['color']
+								}
+							}
+							if ( '' !== color_type ) {
+								cssArray[ rule['media'] ][ selector ][ property ] = ( inset ? inset + ' ' : '' ) + ( newValue['hOffset'] ? newValue['hOffset'] : '0' ) + 'px ' + ( newValue['vOffset'] ? newValue['vOffset'] : '0' ) + 'px ' + ( newValue['blur'] ? newValue['blur'] : '0' ) + 'px ' + ( newValue['spread'] ? newValue['spread'] : '0' ) + 'px ' + ' ' + color_type;
+							} else {
+								cssArray[ rule['media'] ][ selector ][ property ] = ( inset ? inset + ' ' : '' ) + ( newValue['hOffset'] ? newValue['hOffset'] : '0' ) + 'px ' + ( newValue['vOffset'] ? newValue['vOffset'] : '0' ) + 'px ' + ( newValue['blur'] ? newValue['blur'] : '0' ) + 'px ' + ( newValue['spread'] ? newValue['spread'] : '0' ) + 'px ' + ' ' + 'transparent';
+							}
+						//}
+					}
+				}
+			} );
+			// Loop into the sorted array to build CSS string.
+			_.each( cssArray, function( selectors, media ) {
+				if ( 'global' !== media ) css += media + '{';
+				_.each( selectors, function( properties, selector ) {
+					css += selector + '{';
+					_.each( properties, function( value, property ) {
+						css += property + ':' + value + ';';
+					});
+					css += '}';
+				});
+				if ( 'global' !== media ) css += '}';
+			});
+
+			// Add CSS string to <style> tag.
+			$style.html( css );
+		},
 		live_css : function( key, rules, newValue ) {
 			var styleID = 'kadence-customize-preview-css-' + key,
 			    $style = $( '#' + styleID ),

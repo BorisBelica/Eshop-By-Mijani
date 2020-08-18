@@ -18,42 +18,12 @@ kadence()->print_styles( 'kadence-slide' );
 wp_enqueue_script( 'kadence-slide-init' );
 
 $related_title = __( 'Similar Posts', 'kadence' );
-$categories    = get_the_category( $post->ID );
-if ( $categories ) {
-	$category_ids = array();
-	foreach ( $categories as $individual_category ) {
-		$category_ids[] = $individual_category->term_id;
-	}
-}
-$args = array(
-	'orderby'        => 'rand',
-	'category__in'   => $category_ids,
-	'post__not_in'   => array( $post->ID ),
-	'posts_per_page' => 6,
-);
-if ( kadence()->has_sidebar() ) {
-	$cols = array(
-		'xxl' => 2,
-		'xl'  => 2,
-		'md'  => 2,
-		'sm'  => 2,
-		'xs'  => 2,
-		'ss'  => 1,
-	);
-} else {
-	$cols = array(
-		'xxl' => 3,
-		'xl'  => 3,
-		'md'  => 3,
-		'sm'  => 2,
-		'xs'  => 2,
-		'ss'  => 1,
-	);
-}
 
-$bpc           = new WP_Query( apply_filters( 'kadence_related_posts_carousel_args', $args ) );
-$cols          = apply_filters( 'kadence_related_posts_carousel_columns', $cols );
-$columns_class = ( 2 === $cols['xxl'] ? 'grid-sm-col-2 grid-lg-col-2' : 'grid-sm-col-2 grid-lg-col-3' );
+$args          = get_related_posts_args( $post->ID );
+$cols          = get_related_posts_columns();
+$columns_class = apply_filters( 'kadence_related_posts_columns_class', ( 2 === $cols['xxl'] ? 'grid-sm-col-2 grid-lg-col-2' : 'grid-sm-col-2 grid-lg-col-3' ) );
+
+$bpc = new WP_Query( apply_filters( 'kadence_related_posts_carousel_args', $args ) );
 if ( $bpc ) :
 	$num = $bpc->post_count;
 	if ( $num > 0 ) {

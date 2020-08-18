@@ -27,7 +27,7 @@ class ColorLinkComponent extends Component {
 		let defaultParams = {
 			colors: {
 				'highlight': {
-					tooltip: __( 'Inital', 'kadence' ),
+					tooltip: __( 'Initial', 'kadence' ),
 					palette: true,
 				},
 				'highlight-alt': {

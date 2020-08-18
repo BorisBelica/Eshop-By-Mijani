@@ -205,8 +205,6 @@ class SingleBorderComponent extends Component {
 		} else if ( 'border_bottom' === this.props.item ) {
 			theIcon = Icons.outlinebottom;
 		}
-		console.log( this.state.value );
-		console.log( this.defaultValue );
 		let isDisabled = true;
 		if ( this.controlParams.responsive ) {
 			if ( ( undefined !== this.state.value['tablet'] ) || ( undefined !== this.state.value['mobile'] ) ) {

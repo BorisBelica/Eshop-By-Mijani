@@ -79,6 +79,9 @@
 			} else {
 				var products = document.querySelector( '.products.products-grid-view' );
 			}
+			if ( ! products ) {
+				products = document.querySelector( '.products' );
+			}
 			products.classList.remove( 'products-list-view' );
 			products.classList.remove( 'products-grid-view' );
 			products.classList.add( 'products-' + element.dataset.archiveToggle + '-view' );

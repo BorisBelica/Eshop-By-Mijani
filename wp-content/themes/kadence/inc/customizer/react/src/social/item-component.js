@@ -20,7 +20,7 @@ class ItemComponent extends Component {
 		return (
 			<div className="kadence-sorter-item" data-id={ this.props.item.id } key={ this.props.item.id }>
 				<div className="kadence-sorter-item-panel-header">
-					<Tooltip text={ __( 'Toggle Item Visiblity', 'kadence' ) }>
+					<Tooltip text={ __( 'Toggle Item Visibility', 'kadence' ) }>
 						<Button
 							className={ `kadence-sorter-visiblity ${ ( this.props.item.enabled ? 'item-is-visible' : 'item-is-hidden' ) }`}
 							onClick={ () => {

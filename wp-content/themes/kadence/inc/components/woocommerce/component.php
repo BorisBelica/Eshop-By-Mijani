@@ -53,12 +53,12 @@ class Component implements Component_Interface {
 		remove_action( 'woocommerce_before_main_content', 'woocommerce_output_content_wrapper' );
 		remove_action( 'woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end' );
 		// Remove Default Woo Sidebar.
-		remove_action( 'woocommerce_sidebar', 'woocommerce_get_sidebar', 10 );
+		remove_action( 'woocommerce_sidebar', 'woocommerce_get_sidebar' );
 		// Remove default Woo archive title meta.
 		remove_action( 'woocommerce_before_shop_loop', 'woocommerce_result_count', 20 );
 		remove_action( 'woocommerce_before_shop_loop', 'woocommerce_catalog_ordering', 30 );
 		// Remove default descrption output.
-		remove_action( 'woocommerce_archive_description', 'woocommerce_taxonomy_archive_description', 10 );
+		remove_action( 'woocommerce_archive_description', 'woocommerce_taxonomy_archive_description' );
 		// Remove Breadcrumbs.
 		remove_action( 'woocommerce_before_main_content', 'woocommerce_breadcrumb', 20, 0 );
 		// Add Product Above Area Breadcrumb.
@@ -84,7 +84,7 @@ class Component implements Component_Interface {
 		// Add category grid class.
 		add_filter( 'product_cat_class', array( $this, 'add_woo_cat_entry_classes' ), 20, 3 );
 		// Remove standard link open for products.
-		remove_action( 'woocommerce_before_shop_loop_item', 'woocommerce_template_loop_product_link_open', 10 );
+		remove_action( 'woocommerce_before_shop_loop_item', 'woocommerce_template_loop_product_link_open' );
 		remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_product_link_close', 5 );
 		// Image Link.
 		add_action( 'woocommerce_before_shop_loop_item_title', array( $this, 'archive_loop_image_link_open' ), 5 );
@@ -95,20 +95,20 @@ class Component implements Component_Interface {
 		add_action( 'woocommerce_shop_loop_subcategory_title', array( $this, 'archive_content_wrap_start' ), 5 );
 		add_action( 'woocommerce_after_subcategory_title', array( $this, 'archive_content_wrap_end' ), 50 );
 		// Title Link.
-		remove_action( 'woocommerce_shop_loop_item_title', 'woocommerce_template_loop_product_title', 10 );
-		add_action( 'woocommerce_shop_loop_item_title', array( $this, 'archive_title_with_link' ), 10 );
+		remove_action( 'woocommerce_shop_loop_item_title', 'woocommerce_template_loop_product_title' );
+		add_action( 'woocommerce_shop_loop_item_title', array( $this, 'archive_title_with_link' ) );
 		// Excerpt.
 		add_action( 'woocommerce_after_shop_loop_item_title', array( $this, 'archive_excerpt' ), 20 );
-		add_filter( 'archive_woocommerce_short_description', 'wptexturize', 10 );
-		add_filter( 'archive_woocommerce_short_description', 'wpautop', 10 );
-		add_filter( 'archive_woocommerce_short_description', 'shortcode_unautop', 10 );
+		add_filter( 'archive_woocommerce_short_description', 'wptexturize' );
+		add_filter( 'archive_woocommerce_short_description', 'wpautop' );
+		add_filter( 'archive_woocommerce_short_description', 'shortcode_unautop' );
 		add_filter( 'archive_woocommerce_short_description', 'do_shortcode', 11 );
 		// Add to cart wrap.
 		add_action( 'woocommerce_after_shop_loop_item', array( $this, 'archive_action_wrap_start' ), 5 );
 		add_action( 'woocommerce_after_shop_loop_item', array( $this, 'archive_action_wrap_end' ), 20 );
 		// Add to cart.
-		add_filter( 'woocommerce_product_loop_start', array( $this, 'add_filter_for_add_to_cart_link' ), 10 );
-		add_filter( 'woocommerce_product_loop_end', array( $this, 'remove_filter_for_add_to_cart_link' ), 10 );
+		add_filter( 'woocommerce_product_loop_start', array( $this, 'add_filter_for_add_to_cart_link' ) );
+		add_filter( 'woocommerce_product_loop_end', array( $this, 'remove_filter_for_add_to_cart_link' ) );
 		// My Account.
 		add_action( 'woocommerce_before_account_navigation', array( $this, 'myaccount_nav_wrap_start' ), 2 );
 		add_action( 'woocommerce_before_account_navigation', array( $this, 'myaccount_nav_avatar' ), 20 );
@@ -125,9 +125,9 @@ class Component implements Component_Interface {
 		add_filter( 'woocommerce_cross_sells_columns', array( $this, 'cross_sell_columns' ), 20 );
 		add_filter( 'woocommerce_cross_sells_total', array( $this, 'cross_sell_limit' ), 20 );
 
-		add_action( 'kadence_before_main_content', array( $this, 'wc_print_notices_none_woo' ), 10 );
+		add_action( 'kadence_before_main_content', array( $this, 'wc_print_notices_none_woo' ) );
 		// Add Fragment Support.
-		add_action( 'init', array( $this, 'check_for_fragment_support' ), 10 );
+		add_action( 'init', array( $this, 'check_for_fragment_support' ) );
 
 		// Add my Account Navigation Classes.
 		add_filter( 'body_class', array( $this, 'my_account_body_classes' ) );
@@ -176,13 +176,22 @@ class Component implements Component_Interface {
 		if ( $product->supports( 'ajax_add_to_cart' ) ) {
 			$attributes['class'] .= ' ajax_add_to_cart';
 		}
-
-		$cart_text = sprintf(
-			'<a href="%s" %s>%s</a>',
-			esc_url( $product->add_to_cart_url() ),
-			wc_implode_html_attributes( $attributes ),
-			esc_html( $product->add_to_cart_text() ) . ' ' . kadence()->get_icon( 'arrow-right-alt' ) . ' ' . kadence()->get_icon( 'spinner' ) . ' ' . kadence()->get_icon( 'check' )
-		);
+		$product_btn_style = kadence()->option( 'product_archive_button_style' );
+		if ( 'button' === $product_btn_style ) {
+			$cart_text = sprintf(
+				'<a href="%s" %s>%s</a>',
+				esc_url( $product->add_to_cart_url() ),
+				wc_implode_html_attributes( $attributes ),
+				esc_html( $product->add_to_cart_text() ) . ' ' . kadence()->get_icon( 'spinner' ) . ' ' . kadence()->get_icon( 'check' )
+			);
+		} else {
+			$cart_text = sprintf(
+				'<a href="%s" %s>%s</a>',
+				esc_url( $product->add_to_cart_url() ),
+				wc_implode_html_attributes( $attributes ),
+				esc_html( $product->add_to_cart_text() ) . ' ' . kadence()->get_icon( 'arrow-right-alt' ) . ' ' . kadence()->get_icon( 'spinner' ) . ' ' . kadence()->get_icon( 'check' )
+			);
+		}
 		$action_button = '<div class="wp-block-button wc-block-grid__product-add-to-cart">' . $cart_text . '</div>';
 		$new_data = (object) array(
 			'permalink' => $data->permalink,
@@ -193,8 +202,16 @@ class Component implements Component_Interface {
 			'badge'     => $data->badge,
 			'button'    => ( ! empty ( $data->button ) ? $action_button : '' ),
 		);
-
-		return "<li class=\"wc-block-grid__product entry content-bg\">
+		$product_style     = kadence()->option( 'product_archive_style' );
+		$action_style      = 'woo-archive-' . esc_attr( $product_style );
+		$button_style      = 'woo-archive-btn-' . esc_attr( $product_btn_style );
+		$boxed = kadence()->option( 'product_archive_content_style' );
+		if ( 'unboxed' === $boxed || 'boxed' === $boxed ) {
+			$boxed_class = 'product-loop-' . $boxed;
+		} else {
+			$boxed_class = 'product-loop-unboxed';
+		}
+		return "<li class=\"wc-block-grid__product entry loop-entry content-bg {$action_style} {$button_style} {$boxed_class}\">
 				<a href=\"{$new_data->permalink}\" class=\"wc-block-grid__product-link\">
 					{$new_data->image}
 				</a>
@@ -232,12 +249,12 @@ class Component implements Component_Interface {
 		// Product Rating.
 		$rating_element = kadence()->option( 'product_content_element_rating' );
 		if ( isset( $rating_element ) && is_array( $rating_element ) && false === $rating_element['enabled'] ) {
-			remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_rating', 10 );
+			remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_rating' );
 		}
 		// Product Price.
 		$price_element = kadence()->option( 'product_content_element_price' );
 		if ( isset( $price_element ) && is_array( $price_element ) && false === $price_element['enabled'] ) {
-			remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_price', 10 );
+			remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_price' );
 		} else {
 			if ( isset( $price_element ) && is_array( $price_element ) && true === $price_element['show_shipping'] ) {
 				add_filter( 'woocommerce_get_price_html', array( $this, 'add_shipping_statement_price' ), 10, 2 );
@@ -681,7 +698,7 @@ class Component implements Component_Interface {
 	 * @param string $output the loop start.
 	 */
 	public function product_loop_start( $output ) {
-		$columns = wc_get_loop_prop( 'columns' );
+		$columns = absint( wc_get_loop_prop( 'columns' ) );
 		if ( 1 === $columns ) {
 			if ( is_main_query() && is_archive() ) {
 				$columns_class = 'content-wrap product-archive grid-cols grid-sm-col-1 grid-lg-col-1 products-list-view';
@@ -698,8 +715,9 @@ class Component implements Component_Interface {
 			$columns_class = 'content-wrap product-archive grid-cols grid-ss-col-2 grid-sm-col-3 grid-md-col-4 grid-lg-col-5';
 		}
 		$product_style = kadence()->option( 'product_archive_style' );
+		$product_btn_style = kadence()->option( 'product_archive_button_style' );
 
-		return '<ul class="products ' . esc_attr( $columns_class ) . ' woo-archive-' . esc_attr( $product_style ) . '">';
+		return '<ul class="products ' . esc_attr( $columns_class ) . ' woo-archive-' . esc_attr( $product_style ) . ' woo-archive-btn-' . esc_attr( $product_btn_style ) . '">';
 
 	}
 	/**
@@ -779,14 +797,26 @@ class Component implements Component_Interface {
 	 * @param array  $args The Product args.
 	 */
 	public function filter_add_to_cart_link_link( $button, $product, $args = array() ) {
-		$button = sprintf(
-			'<a href="%s" data-quantity="%s" class="%s" %s>%s</a>',
-			esc_url( $product->add_to_cart_url() ),
-			esc_attr( isset( $args['quantity'] ) ? $args['quantity'] : 1 ),
-			esc_attr( isset( $args['class'] ) ? $args['class'] : 'button' ),
-			isset( $args['attributes'] ) ? wc_implode_html_attributes( $args['attributes'] ) : '',
-			esc_html( $product->add_to_cart_text() ) . ' ' . kadence()->get_icon( 'arrow-right-alt' ) . ' ' . kadence()->get_icon( 'spinner' ) . ' ' . kadence()->get_icon( 'check' )
-		);
+		$product_btn_style = kadence()->option( 'product_archive_button_style' );
+		if ( 'button' === $product_btn_style ) {
+			$button = sprintf(
+				'<a href="%s" data-quantity="%s" class="%s" %s>%s</a>',
+				esc_url( $product->add_to_cart_url() ),
+				esc_attr( isset( $args['quantity'] ) ? $args['quantity'] : 1 ),
+				esc_attr( isset( $args['class'] ) ? $args['class'] : 'button' ),
+				isset( $args['attributes'] ) ? wc_implode_html_attributes( $args['attributes'] ) : '',
+				esc_html( $product->add_to_cart_text() ) . ' ' . kadence()->get_icon( 'spinner' ) . ' ' . kadence()->get_icon( 'check' )
+			);
+		} else {
+			$button = sprintf(
+				'<a href="%s" data-quantity="%s" class="%s" %s>%s</a>',
+				esc_url( $product->add_to_cart_url() ),
+				esc_attr( isset( $args['quantity'] ) ? $args['quantity'] : 1 ),
+				esc_attr( isset( $args['class'] ) ? $args['class'] : 'button' ),
+				isset( $args['attributes'] ) ? wc_implode_html_attributes( $args['attributes'] ) : '',
+				esc_html( $product->add_to_cart_text() ) . ' ' . kadence()->get_icon( 'arrow-right-alt' ) . ' ' . kadence()->get_icon( 'spinner' ) . ' ' . kadence()->get_icon( 'check' )
+			);
+		}
 		return $button;
 	}
 	/**
@@ -918,7 +948,7 @@ class Component implements Component_Interface {
 		 * Hook for Hero Section
 		 */
 		do_action( 'kadence_hero_header' );
-		echo '<div id="primary" class="content-area"><div class="content-container site-container"><main id="main" class="site-main">';
+		echo '<div id="primary" class="content-area"><div class="content-container site-container"><main id="main" class="site-main" role="main">';
 		if ( ! is_product() && kadence()->show_in_content_title() ) {
 			get_template_part( 'template-parts/content/archive_header' );
 		}

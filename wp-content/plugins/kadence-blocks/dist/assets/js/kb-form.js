@@ -12,7 +12,7 @@ jQuery( function( $ ) {
 			var form = $(this),
 			submitButton = form.find('input[type=submit]')
 			form_data = kadence_blocks_form.validateForm( form );
-
+			console.log( form_data );
 			if ( form_data ) {
 				// send the request.
 				form.parent( '.wp-block-kadence-form' ).find( '.kadence-blocks-form-message' ).slideUp( 'fast', function() {
@@ -217,6 +217,18 @@ jQuery( function( $ ) {
 						}
 						break;
 
+					case 'checkbox':
+						var length = $(item).find('input:checked').length;
+
+						if ( !length ) {
+							error = true;
+							error_type = 'required';
+
+							// make it warn collor
+							kadence_blocks_form.markError( item,  error_type );
+						}
+						break;
+	
 					case 'email':
 						var val = $(item).val();
 

@@ -67,6 +67,7 @@ class Kadence_Dashboard_Settings {
 	public function add_menu() {
 		$page = add_theme_page( __( 'Kadence - Next Generation Theme', 'kadence' ), __( 'Kadence', 'kadence' ), apply_filters( 'kadence_admin_settings_capability', 'manage_options' ), 'kadence', array( $this, 'config_page' ) );
 		add_action( 'admin_print_styles-' . $page, array( $this, 'scripts' ) );
+		do_action( 'kadence_theme_admin_menu' );
 	}
 	/**
 	 * Loads admin style sheets and scripts
@@ -93,7 +94,7 @@ class Kadence_Dashboard_Settings {
 			'kadence_theme_config',
 			array(
 				'type'              => 'string',
-				'description'       => __( 'Config Kadence Modules', 'kadence-blocks' ),
+				'description'       => __( 'Config Kadence Modules', 'kadence' ),
 				'sanitize_callback' => 'sanitize_text_field',
 				'show_in_rest'      => true,
 				'default'           => '',

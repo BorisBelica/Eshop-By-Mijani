@@ -296,7 +296,7 @@ $settings = array(
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(
@@ -330,7 +330,7 @@ $settings = array(
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(
@@ -577,7 +577,7 @@ $settings = array(
 		'section'      => 'woocommerce_product_catalog',
 		'priority'     => 7,
 		'transport'    => 'refresh',
-		'label'        => esc_html__( 'Action Button Style', 'kadence' ),
+		'label'        => esc_html__( 'Button Action Style', 'kadence' ),
 		'default'      => kadence()->default( 'product_archive_style' ),
 		'input_attrs'  => array(
 			'layout' => array(
@@ -588,6 +588,28 @@ $settings = array(
 				'action-visible' => array(
 					'tooltip' => __( 'On the Bottom Always Visible', 'kadence' ),
 					'name' => __( 'Always Visible', 'kadence' ),
+				),
+			),
+			'responsive' => false,
+			'class'      => 'kadence-tiny-text',
+		),
+	),
+	'product_archive_button_style' => array(
+		'control_type' => 'kadence_radio_icon_control',
+		'section'      => 'woocommerce_product_catalog',
+		'priority'     => 7,
+		'transport'    => 'refresh',
+		'label'        => esc_html__( 'Button Style', 'kadence' ),
+		'default'      => kadence()->default( 'product_archive_button_style' ),
+		'input_attrs'  => array(
+			'layout' => array(
+				'text' => array(
+					'tooltip' => __( 'Bold text with arrow icon.', 'kadence' ),
+					'name' => __( 'Text with Arrow', 'kadence' ),
+				),
+				'button' => array(
+					'tooltip' => __( 'Show as standard button', 'kadence' ),
+					'name' => __( 'Button', 'kadence' ),
 				),
 			),
 			'responsive' => false,

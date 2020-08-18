@@ -129,6 +129,13 @@ $settings = array(
 			'responsive' => false,
 		),
 	),
+	'info_general_single_boxed' => array(
+		'control_type' => 'kadence_title_control',
+		'section'      => 'general_layout',
+		'priority'     => 21,
+		'label'        => esc_html__( 'Single Post Boxed', 'kadence' ),
+		'settings'     => false,
+	),
 	'boxed_spacing' => array(
 		'control_type' => 'kadence_range_control',
 		'section'      => 'general_layout',
@@ -164,6 +171,48 @@ $settings = array(
 			'responsive' => true,
 		),
 	),
+	'boxed_shadow' => array(
+		'control_type' => 'kadence_shadow_control',
+		'section'      => 'general_layout',
+		'priority'     => 22,
+		'label'        => esc_html__( 'Single Post Boxed Shadow', 'kadence' ),
+		'live_method'     => array(
+			array(
+				'type'     => 'css_boxshadow',
+				'selector' => '.entry.single-entry',
+				'property' => 'box-shadow',
+				'pattern'  => '$',
+				'key'      => '',
+			),
+		),
+		'default'      => kadence()->default( 'boxed_shadow' ),
+	),
+	'boxed_border_radius' => array(
+		'control_type' => 'kadence_measure_control',
+		'section'      => 'general_layout',
+		'priority'     => 22,
+		'label'        => esc_html__( 'Single Post Boxed Border Radius', 'kadence' ),
+		'live_method'     => array(
+			array(
+				'type'     => 'css',
+				'selector' => '.entry.single-entry',
+				'property' => 'border-radius',
+				'pattern'  => '$',
+				'key'      => 'measuer',
+			),
+		),
+		'default'      => kadence()->default( 'boxed_border_radius' ),
+		'input_attrs'  => array(
+			'responsive' => false,
+		),
+	),
+	'info_general_archive_boxed' => array(
+		'control_type' => 'kadence_title_control',
+		'section'      => 'general_layout',
+		'priority'     => 22,
+		'label'        => esc_html__( 'Archive Grid Boxed', 'kadence' ),
+		'settings'     => false,
+	),
 	'boxed_grid_spacing' => array(
 		'control_type' => 'kadence_range_control',
 		'section'      => 'general_layout',
@@ -197,6 +246,41 @@ $settings = array(
 			),
 			'units'      => array( 'px', 'em', 'rem' ),
 			'responsive' => true,
+		),
+	),
+	'boxed_grid_shadow' => array(
+		'control_type' => 'kadence_shadow_control',
+		'section'      => 'general_layout',
+		'priority'     => 22,
+		'label'        => esc_html__( 'Archive Grid Boxed Shadow', 'kadence' ),
+		'live_method'     => array(
+			array(
+				'type'     => 'css_boxshadow',
+				'selector' => '.entry.loop-entry',
+				'property' => 'box-shadow',
+				'pattern'  => '$',
+				'key'      => '',
+			),
+		),
+		'default'      => kadence()->default( 'boxed_grid_shadow' ),
+	),
+	'boxed_grid_border_radius' => array(
+		'control_type' => 'kadence_measure_control',
+		'section'      => 'general_layout',
+		'priority'     => 22,
+		'label'        => esc_html__( 'Archive Grid Boxed Border Radius', 'kadence' ),
+		'live_method'     => array(
+			array(
+				'type'     => 'css',
+				'selector' => '.entry.loop-entry',
+				'property' => 'border-radius',
+				'pattern'  => '$',
+				'key'      => 'measure',
+			),
+		),
+		'default'      => kadence()->default( 'boxed_grid_border_radius' ),
+		'input_attrs'  => array(
+			'responsive' => false,
 		),
 	),
 );

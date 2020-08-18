@@ -172,6 +172,7 @@
 		}
 		.kadence-radio-icon {
 			display: flex;
+			justify-content: center;
 		}
 	}
 	&.kadence-radio-icon-container-control {
@@ -232,7 +233,13 @@
 .kadence-background-picker-wrap .kadence-popover-color .components-popover__content {
 	min-width: 300px;
     min-height: 340px;
-    max-height: 60vh;
+	max-height: 60vh;
+	> div {
+		min-height: 320px;
+	}
+}
+.components-popover.kadence-popover-add-builder .components-popover__content {
+    bottom: 0;
 }
 .components-button.kadence-color-icon-indicate {
     height: auto;
@@ -389,7 +396,10 @@
 .kadence-color-picker-wrap {
     margin-left: 5px;
 }
-@media ( max-width: 1800px ) {
+.customize-control-kadence_measure_control input[type=number] {
+    padding: 0 4px;
+}
+@media ( max-width: 1900px ) {
 .kadence-palette-colors .components-button.kadence-color-icon-indicate .component-color-indicator.kadence-advanced-color-indicate {
     width: 26px;
     height: 26px;
@@ -403,11 +413,23 @@
 .kadence-typography-control .typography-button-wrap>button.components-button {
     padding: 0 4px;
 }
+.customize-control-kadence_measure_control input[type=number] {
+    padding: 0 2px;
+}
+}
+@media ( max-width: 1900px ) {
+	.kadence-palette-colors .components-button.kadence-color-icon-indicate .component-color-indicator.kadence-advanced-color-indicate {
+		width: 24px;
+		height: 24px;
+	}
 }
 @media ( max-width: 1400px ) {
 	.kadence-palette-colors .components-button.kadence-color-icon-indicate .component-color-indicator.kadence-advanced-color-indicate {
 		width: 22px;
 		height: 22px;
+	}
+	.customize-control-kadence_measure_control input[type=number] {
+		padding: 0px;
 	}
 }
 .kadence-palette-colors .kadence-color-picker-wrap:first-child {
@@ -418,6 +440,60 @@
     border-bottom: 1px solid #dadada;
     margin-top: -5px;
     margin-bottom: 15px;
+}
+.kadence-palette-import-wrap {
+    float: left;
+}
+
+.kadence-palette-popover-tabs {
+	width: 350px;
+	max-height: 420px;
+}
+.kadence-palette-popover-tabs .components-tab-panel__tabs-item {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    font-style: normal;
+    height: 36px;
+    text-transform: uppercase;
+    border: 0;
+    border-bottom: 4px solid transparent;
+    border-radius: 0;
+    margin-bottom: -1px;
+    opacity: 0.6;
+}
+.kadence-palette-popover-tabs .components-tab-panel__tabs {
+    display: flex;
+    border-bottom: 1px solid #dadada;
+    margin-top: -5px;
+    margin-bottom: 15px;
+}
+.kadence-palette-popover-copy-paste .components-popover__content {
+    padding: 15px 15px;
+    box-sizing: initial;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: rgba(0,0,0,0.15) 0px 8px 16px;
+}
+.kadence-palette-popover-tabs .components-tab-panel__tabs-item.active-tab {
+    border-bottom-color: #007cba;
+    opacity: 1;
+    box-shadow: none;
+}
+
+.kadence-palette-popover-tabs .components-button.kadence-palette-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 5px;
+    margin-bottom: 5px;
+    border:1px solid transparent;
+    border-radius:4px;
+}
+.kadence-palette-popover-tabs .components-button.kadence-palette-item:hover {
+    border-color:#777;
 }
 .kadence-popover-tabs.kadence-background-tabs .components-tab-panel__tabs .components-button {
     display: flex;
@@ -488,13 +564,14 @@
 	padding: 0 4px;
 	box-shadow: none;
 }
-@media ( max-width: 1800px ) {
+@media ( max-width: 1900px ) {
 .kadence-palette-header .components-button-group .components-button.is-tertiary {
 font-size: 10px;
 padding: 0 2px;
+letter-spacing: -0.4px;
 }
 }
-@media ( max-width: 1400px ) {
+@media ( max-width: 1601px ) {
 .kadence-control-field .customize-control-title {
 	font-size: 13px;
 }
@@ -544,6 +621,9 @@ padding: 0 2px;
 	.components-popover.kadence-popover-typography > .components-popover__content {
 		min-width: 340px;
 		min-height: 339px;
+		> div {
+			min-height: 339px;
+		}
 	}
 	.kadence-typography-tabs .customize-control-title {
 		padding-top: 0;
@@ -905,7 +985,7 @@ padding: 0 2px;
 .kadence-sorter-item-panel-content .kadence-radio-container-control button.components-button.is-tertiary {
     padding: 4px;
 }
-@media ( max-width: 1660px ) {
+@media ( max-width: 1760px ) {
 	.measure-input-wrap {
 		padding-right: 2px;
 	}
@@ -972,7 +1052,7 @@ padding: 0 2px;
     margin: 0;
 	min-height: 90px;
 	svg {
-		max-width: 70px;
+		max-width: 50px;
 	}
 }
 .kadence-radio-icon-control.kadence-two-col .components-button-group.kadence-radio-container-control .components-button.is-tertiary {
@@ -1132,7 +1212,7 @@ span.border-icon svg {
 }
 
 // Fake Tabs
-#accordion-section-kadence_customizer_sidebar_design, #accordion-section-kadence_customizer_cart_design, #accordion-section-kadence_customizer_product_layout_design, #accordion-section-kadence_customizer_course_layout_design, #accordion-section-kadence_customizer_lesson_layout_design, #accordion-section-kadence_customizer_course_archive_design, #accordion-section-kadence_customizer_header_popup_design, #accordion-section-kadence_customizer_llms_membership_archive_design, #accordion-section-woocommerce_product_catalog_design, #accordion-section-kadence_customizer_post_archive_design, #accordion-section-kadence_customizer_sfwd_courses_layout_design, #accordion-section-kadence_customizer_post_layout_design,#accordion-section-kadence_customizer_header_transparent_design, #accordion-section-woocommerce_store_notice_design, #accordion-section-kadence_customizer_scroll_up_design, li#accordion-section-kadence_customizer_courses_layout_design {
+#accordion-section-kadence_customizer_sidebar_design, #accordion-section-kadence_customizer_cart_design, #accordion-section-kadence_customizer_product_layout_design, #accordion-section-kadence_customizer_course_layout_design, #accordion-section-kadence_customizer_lesson_layout_design, #accordion-section-kadence_customizer_course_archive_design, #accordion-section-kadence_customizer_header_popup_design, #accordion-section-kadence_customizer_llms_membership_archive_design, #accordion-section-woocommerce_product_catalog_design, #accordion-section-kadence_customizer_post_archive_design, #accordion-section-kadence_customizer_sfwd_courses_layout_design, #accordion-section-kadence_customizer_post_layout_design,#accordion-section-kadence_customizer_header_transparent_design, #accordion-section-woocommerce_store_notice_design, #accordion-section-kadence_customizer_scroll_up_design, li#accordion-section-kadence_customizer_courses_layout_design, #accordion-section-kadence_customizer_sfwd_groups_layout_design, #accordion-section-kadence_customizer_sfwd_essays_layout_design, #accordion-section-kadence_customizer_search_design {
     display: none !important;
 }
 .kadence-prevent-transition {
@@ -1192,4 +1272,68 @@ span.border-icon svg {
 li#customize-control-kadence_color_palette .customize-control-description {
     text-align: right;
     margin-top: 10px;
+}
+@media ( max-width: 1700px ) {
+.kadence-tiny-text .kadence-radio-container-control button.components-button.is-tertiary {
+font-size: 7px;
+}
+}
+p.kt-box-shadow-title {
+	text-align: center;
+	margin-bottom: 0;
+}
+.kadence-boxshadow-control .kadence-responsive-controls-content input.components-text-control__input {
+    border: 1px solid #e2e4e7;
+	width: 50px;
+	padding-left: 2px;
+}
+.kt-box-inset-settings {
+    padding-top: 10px;
+}
+#customize-control-google_subsets .kadence-radio-container-control {
+	display:grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	grid-gap: 10px;
+ }
+ 
+ #customize-control-google_subsets .kadence-radio-container-control button.components-button.is-tertiary {
+	 margin: 0;
+	 font-size:9px
+ }
+ .kadence-popover-tabs .components-custom-gradient-picker__gradient-bar:not(.has-gradient) {
+    opacity: 1;
+}
+.components-dropdown__content.components-custom-gradient-picker__color-picker-popover .components-popover__content>div {
+    padding: 0;
+}
+hr.kt-theme-hr {
+    margin: 20px 0;
+}
+#customize-control-kadence_theme_import_export .kadence-theme-button {
+    margin-top: 10px;
+}
+
+#customize-control-kadence_theme_import_export .kadence-theme-button.components-button.is-destructive {
+    border: 1px solid;
+}
+#customize-control-kadence_theme_import_export .kadence-theme-import-file {
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px 0;
+    font-size: 13px;
+}
+#customize-control-kadence_theme_import_export .kadence-theme-uploading {
+    display: none;
+    margin: 10px 0;
+    padding: 10px;
+    font-size: 12px;
+}
+.kadence-sorter-no-sorting .kadence-sorter-item {
+    background: #fff;
+    border: 0;
+    line-height: 42px;
+}
+
+.kadence-sorter-no-sorting .kadence-sorter-item-panel-header {
+    border-bottom: 0;
 }

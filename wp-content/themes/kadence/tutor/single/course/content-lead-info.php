@@ -79,7 +79,7 @@ $profile_url = tutor_utils()->profile_url( $authordata->ID );
 	if ( ! empty( $excerpt ) && ! $disable_about ) {
 		?>
 		<div class="tutor-course-summery">
-			<h4 class="tutor-segment-title"><?php esc_html_e( 'About Course', 'tutor' ); ?></h4>
+			<h4 class="tutor-segment-title"><?php esc_html_e( 'About Course', 'kadence' ); ?></h4>
 			<?php echo wp_kses_post( $excerpt ); ?>
 		</div>
 		<?php

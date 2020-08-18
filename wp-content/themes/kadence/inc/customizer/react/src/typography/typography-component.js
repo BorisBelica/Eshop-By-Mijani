@@ -696,17 +696,17 @@ class TypographyComponent extends Component {
 									tabs={ [
 										{
 											name: 'font',
-											title: __( 'Font', 'kadence-blocks' ),
+											title: __( 'Font', 'kadence' ),
 											className: 'kadence-font-typography',
 										},
 										{
 											name: 'style',
-											title: __( 'Style', 'kadence-blocks' ),
+											title: __( 'Style', 'kadence' ),
 											className: 'kadence-style-typography',
 										},
 										{
 											name: 'size',
-											title: __( 'Size', 'kadence-blocks' ),
+											title: __( 'Size', 'kadence' ),
 											className: 'kadence-size-typography',
 										},
 									] }>

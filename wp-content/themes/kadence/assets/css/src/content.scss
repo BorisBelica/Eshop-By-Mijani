@@ -31,10 +31,15 @@
 
 }
 */
-
+article.sticky {
+	font-size: inherit;
+}
 .entry {
     box-shadow: 0px 15px 25px -10px rgba(0,0,0,0.05);
-    border-radius: .25rem;
+	border-radius: .25rem;
+}
+.entry-loop {
+	overflow: hidden;
 }
 .content-wrap {
     position: relative;
@@ -48,6 +53,7 @@
 	.content-style-boxed .content-bg:not(.loop-entry) {
 		margin-left: -1rem;
 		margin-right: -1rem;
+		width: auto;
 	}
 	.content-style-boxed .comments-area {
 		padding-left: 0.5rem;
@@ -70,7 +76,7 @@
 	}
 }
 @media screen and (min-width: $tablet-plus-query) {
-	.grid-lg-col-1.item-image-style-beside article.loop-entry {
+	.grid-lg-col-1.item-image-style-beside article.loop-entry.has-post-thumbnail {
 		display: grid;
 		grid-template-columns: 1fr 2fr;
 	}
@@ -83,7 +89,7 @@
 		}
 	}
 }
-.archive.content-style-unboxed, .blog.content-style-unboxed {
+.archive.content-style-unboxed, .blog.content-style-unboxed, .post-type-archive.content-style-unboxed, .search-results.content-style-unboxed {
 	.entry-content-wrap {
 		padding: 0;
 	}
@@ -93,17 +99,26 @@
 }
 .single-content {
 	margin: var(--global-md-spacing) 0 0;
-	address, figure, hr, p, table, pre, form, .wp-block-buttons, .wp-block-button, .wp-block-kadence-advancedbtn, .wp-block-media-text, .wp-block-image, .wp-block-cover, .entry-content-asset, .wp-block-kadence-form {
+	address, figure, hr, p, table, pre, form, .wp-block-buttons, .wp-block-button, .wp-block-kadence-advancedbtn, .wp-block-media-text, .wp-block-image, .wp-block-cover, .entry-content-asset, .wp-block-kadence-form, .wp-block-group, .wp-block-yoast-faq-block, .wp-block-yoast-how-to-block, .schema-faq-section {
 		margin-top: var(--global-md-spacing);
 		margin-bottom:0;
 	}
 	.wp-block-buttons .wp-block-button {
 		margin-top: 0;
 	}
+	.wp-block-yoast-faq-block .schema-faq-answer {
+		margin-top: .5em;
+	}
 	h1, h2, h3, h4, h5, h6 {
 		margin: 1.5em 0 .5em;
 		&+* {
 			margin-top: 0;
+		}
+		&+ {
+			.wp-block-buttons, .wp-block-button, .wp-block-kadence-advancedbtn, .wp-block-media-text, .wp-block-image, .wp-block-cover, .entry-content-asset, .wp-block-kadence-form {
+				margin-top: 0;
+			}
+
 		}
 	}
 	ul, ol {
@@ -121,11 +136,13 @@
 	> .more-link {
 		display: block;
 	}
-	*:first-child {
-		margin-top: 0;
-		// > figure {
-		// 	margin-top: 0;
-		// }
+	address, figure, hr, p, table, pre, form, .wp-block-buttons, .wp-block-button, .wp-block-kadence-advancedbtn, .wp-block-media-text, .wp-block-image, .wp-block-cover, .entry-content-asset, .wp-block-kadence-form, .wp-block-group, .wp-block-yoast-faq-block, .wp-block-yoast-how-to-block, .schema-faq-section, h1, h2, h3, h4, h5, h6, ul, ol {
+		&:first-child {
+			margin-top: 0;
+			// > figure {
+			// 	margin-top: 0;
+			// }
+		}
 	}
 }
 .entry-content:after {
@@ -221,7 +238,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	> * {
-		display: flex;
+		display: inline-flex;
 		align-items: center;
 		flex-wrap: wrap;
 	}
@@ -237,6 +254,7 @@
 		height: 25px;
 		margin-right: .5rem;
 		position: relative;
+		display: inline-block;
 		.image-size-ratio {
 			padding-bottom: 100%;
 			display: block;
@@ -281,13 +299,20 @@
 .entry-meta>*:last-child:after {
     display: none;
 }
+.entry-meta-divider-customicon.entry-meta>*>.kadence-svg-iconset {
+    margin-right: 0.3em;
+    margin-left: .8em;
+}
+.entry-meta-divider-customicon.entry-meta>*:after {
+    display: none;
+}
 
 /* Hides the update date and time. */
 .updated:not(.published) {
 	display: none;
 }
 .updated-on .updated:not(.published) {
-    display: block;
+    display: inline-block;
 }
 .updated-on .published {
     display: none;
@@ -360,7 +385,7 @@ a.post-more-link {
 		text-decoration: none;
 		&:hover {
 			background: var(--global-palette-highlight);
-			color: var(--global-palette9);
+			color: var(--global-palette-btn);
 			border-color: var(--global-palette-highlight);
 		}
 		&:last-child {
@@ -521,7 +546,8 @@ a.post-more-link {
 	margin-right: calc(50% - 50vw);
 	max-width: 100vw;
 	width: 100vw;
-	padding:0;
+	padding-left: 0;
+    padding-right: 0;
 	clear:both;
 }
 @media screen and (min-width: $laptop-plus-query) {
@@ -586,4 +612,11 @@ body.content-style-unboxed {
 	form.post-password-form {
 		margin: var(--global-xxl-spacing) auto;
 	}
+}
+// Edge Case.
+.entry-title {
+    word-wrap: break-word;
+}
+.entry-hero-layout-contained >.entry-hero-container-inner {
+    position: relative;
 }

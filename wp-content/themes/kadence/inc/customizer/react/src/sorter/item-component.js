@@ -19,7 +19,7 @@ class ItemComponent extends Component {
 		return (
 			<div className="kadence-sorter-item" data-id={ this.props.item.id } key={ this.props.item.id }>
 				<div className={ `kadence-sorter-item-panel-header ${ ( this.props.item.enabled ? 'panel-item-is-visible' : 'panel-item-is-hidden' ) }` }>
-					<Tooltip text={ __( 'Toggle Item Visiblity', 'kadence' ) }>
+					<Tooltip text={ __( 'Toggle Item Visibility', 'kadence' ) }>
 						<Button
 							className={ `kadence-sorter-visiblity ${ ( this.props.item.enabled ? 'item-is-visible' : 'item-is-hidden' ) }`}
 							onClick={ () => {
@@ -102,7 +102,7 @@ class ItemComponent extends Component {
 											<div className="meta-label-control">
 												<span className="sorter-control-title">{ __( 'Author Label', 'kadence' ) }</span>
 												<div className={ `meta-label-input-control ${ ( this.props.item.authorEnableLabel ? 'label-is-visible' : 'label-is-hidden' ) }` }>
-													<Tooltip text={ __( 'Toggle Label Visiblity', 'kadence' ) }>
+													<Tooltip text={ __( 'Toggle Label Visibility', 'kadence' ) }>
 														<Button
 															className={ `kadence-label-visiblity ${ ( this.props.item.authorEnableLabel ? 'item-is-visible' : 'item-is-hidden' ) }`}
 															onClick={ () => {
@@ -140,7 +140,7 @@ class ItemComponent extends Component {
 									<div className="meta-label-control">
 										<span className="sorter-control-title">{ __( 'Date Label', 'kadence' ) }</span>
 										<div className={ `meta-label-input-control ${ ( this.props.item.dateEnableLabel ? 'label-is-visible' : 'label-is-hidden' ) }` }>
-											<Tooltip text={ __( 'Toggle Label Visiblity', 'kadence' ) }>
+											<Tooltip text={ __( 'Toggle Label Visibility', 'kadence' ) }>
 												<Button
 													className={ `kadence-label-visiblity ${ ( this.props.item.dateEnableLabel ? 'item-is-visible' : 'item-is-hidden' ) }`}
 													onClick={ () => {
@@ -176,7 +176,7 @@ class ItemComponent extends Component {
 									<div className="meta-label-control">
 										<span className="sorter-control-title">{ __( 'Updated Date Label', 'kadence' ) }</span>
 										<div className={ `meta-label-input-control ${ ( this.props.item.dateUpdatedEnableLabel ? 'label-is-visible' : 'label-is-hidden' ) }` }>
-											<Tooltip text={ __( 'Toggle Label Visiblity', 'kadence' ) }>
+											<Tooltip text={ __( 'Toggle Label Visibility', 'kadence' ) }>
 												<Button
 													className={ `kadence-label-visiblity ${ ( this.props.item.dateUpdatedEnableLabel ? 'item-is-visible' : 'item-is-hidden' ) }`}
 													onClick={ () => {
@@ -212,7 +212,7 @@ class ItemComponent extends Component {
 									<div className="meta-label-control">
 										<span className="sorter-control-title">{ __( 'Categories Label', 'kadence' ) }</span>
 										<div className={ `meta-label-input-control ${ ( this.props.item.categoriesEnableLabel ? 'label-is-visible' : 'label-is-hidden' ) }` }>
-											<Tooltip text={ __( 'Toggle Label Visiblity', 'kadence' ) }>
+											<Tooltip text={ __( 'Toggle Label Visibility', 'kadence' ) }>
 												<Button
 													className={ `kadence-label-visiblity ${ ( this.props.item.categoriesEnableLabel ? 'item-is-visible' : 'item-is-hidden' ) }`}
 													onClick={ () => {

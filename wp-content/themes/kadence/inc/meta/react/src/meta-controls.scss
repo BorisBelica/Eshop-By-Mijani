@@ -51,6 +51,7 @@
 			border-radius: 2px;
 			background: transparent;
 			color: #4A5568;
+			box-shadow: none;
 			&.active-radio {
 				border-color: #007cba;
 				background: #007cba;
@@ -99,5 +100,5 @@
 }
 .kadence-control-field.three-col-square .components-button-group.kadence-radio-container-control button.components-button.is-tertiary.btn-flex-col {
     flex-direction: column;
-    font-size: 10px;
+	font-size: 8px;
 }

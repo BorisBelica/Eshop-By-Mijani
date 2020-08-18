@@ -1,10 +1,10 @@
-=== Kadence Blocks – Gutenberg Page Builder Toolkit ===
+=== Gutenberg Blocks by Kadence Blocks – Page Builder Features ===
 Contributors: britner
 Tags: gutenberg, blocks, page builder, google fonts, dual buttons, svg icons, editor width,
 Donate link: https://www.kadencewp.com/about-us/
 Requires at least: 5.2
-Tested up to: 5.4.1
-Stable tag: 1.8.5
+Tested up to: 5.5.0
+Stable tag: 1.8.12
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,6 +86,65 @@ Install the plugin into the `/wp-content/plugins/` folder, and activate it.
 6. Editor Width settings inside Gutenberg
 
 == Changelog ==
+
+= 1.8.12 =
+* Add: User visibility settings.
+* Fix: Name on Plugins page.
+* Fix: Issue with columns resizer.
+* Fix button margin not working issue.
+* Fix: Radio field option for form.
+* Fix: Tabs interlinking issue.
+
+= 1.8.11 =
+* Update: Accordion and Tab Color selectors.
+* Fix: Margin issue for icon list.
+
+= 1.8.10 =
+* Fix: Gallery Tablet and Mobile Gutter not working.
+* Fix: Border radius issue with column.
+* Fix: Cover Block over extending inside row.
+* Fix: Hover Text color for Form Button not working with global styles.
+* Fix: Gallery Caption not showing in lightbox.
+
+= 1.8.9 =
+* Add: Responsive align options for spacer block.
+* Fix: Issue with font size in heading block when empty.
+* Fix: Issue with REM units in heading block.
+
+= 1.8.8 =
+* Fix: possible gallery issue showing broken block.
+* Add: option to set default caption.
+
+= 1.8.7 =
+* Fix possible php error. Thanks Susan D!
+* Add: Select placeholder option.
+
+= 1.8.6 =
+* Spacing between buttons (add responsive controls)
+* Update: Change fonts to load display swap by default.
+* Add: Margin option for Buttons container.
+* Update: Button color settings sync with kadence theme global colors.
+* Update: Row and Column Color settings sync with kadence theme global colors.
+* Update: Row and column image background to allow for focus point position control.
+* Add: Responsive visibility settings to row layout and columns.
+* Add: Responsive controls for min height.
+* Fix: Small lazy load issue with testimonials.
+* Update: Testimonials color settings.
+* Add: Option for testimonials to use url instead of hosted image.
+* Add: Advanced heading Copy and Paste Styling.
+* Add: Button Copy and Paste styling.
+* add: Column Copy and Paste styling.
+* Add: Move options for buttons.
+* Add: Duplicate and delete options for buttons.
+* Update: Button focus for better settings control.
+* Update: Info box you can now use a number.
+* Add: Start adding basic support for tablet and mobile previews in the editor.
+* Fix: Issue with info box copy styling not pulling in box shadow.
+* Update: Allow global settings to pull in color palette.
+* Fix: Left Align image on mobile not looking good in info box.
+* Update: Allow Form field sub options to be rearranged.
+* Update: Add Checkbox field to form.
+* Fix: validator issues with gallery.
 
 = 1.8.5 =
 * Fix: Update not showing.

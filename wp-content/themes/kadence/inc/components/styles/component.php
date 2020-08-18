@@ -87,10 +87,10 @@ class Component implements Component_Interface, Templating_Component_Interface {
 		add_action( 'wp_head', array( $this, 'action_preload_styles' ) );
 		add_action( 'after_setup_theme', array( $this, 'action_add_editor_styles' ) );
 		add_filter( 'wp_resource_hints', array( $this, 'filter_resource_hints' ), 10, 2 );
-		add_filter( 'kadence_dynamic_css', array( $this, 'dynamic_css' ), 10 );
+		add_filter( 'kadence_dynamic_css', array( $this, 'dynamic_css' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'action_add_gutenberg_styles' ), 90 );
 		add_filter( 'tiny_mce_before_init', array( $this, 'filter_add_tinymce_editor_styles' ) );
-		add_filter( 'kadence_editor_dynamic_css', array( $this, 'editor_dynamic_css' ), 10 );
+		add_filter( 'kadence_editor_dynamic_css', array( $this, 'editor_dynamic_css' ) );
 		add_action( 'wp_head', array( $this, 'frontend_gfonts' ), 85 );
 	}
 
@@ -352,48 +352,48 @@ class Component implements Component_Interface, Templating_Component_Interface {
 
 		// Editor Colors.
 		$css->set_selector( ':root .has-theme-palette-1-background-color' );
-		$css->add_property( 'background-color', kadence()->palette_option( 'palette1' ) );
+		$css->add_property( 'background-color', 'var(--global-palette1)' );
 		$css->set_selector( ':root .has-theme-palette-1-color' );
-		$css->add_property( 'color', kadence()->palette_option( 'palette1' ) );
+		$css->add_property( 'color', 'var(--global-palette1)' );
 		$css->set_selector( ':root .has-theme-palette-2-background-color' );
-		$css->add_property( 'background-color', kadence()->palette_option( 'palette2' ) );
+		$css->add_property( 'background-color', 'var(--global-palette2)' );
 		$css->set_selector( ':root .has-theme-palette-2-color' );
-		$css->add_property( 'color', kadence()->palette_option( 'palette2' ) );
+		$css->add_property( 'color', 'var(--global-palette2)' );
 
 		$css->set_selector( ':root .has-theme-palette-3-background-color' );
-		$css->add_property( 'background-color', kadence()->palette_option( 'palette3' ) );
+		$css->add_property( 'background-color', 'var(--global-palette3)' );
 		$css->set_selector( ':root .has-theme-palette-3-color' );
-		$css->add_property( 'color', kadence()->palette_option( 'palette3' ) );
+		$css->add_property( 'color', 'var(--global-palette3)' );
 
 		$css->set_selector( ':root .has-theme-palette-4-background-color' );
-		$css->add_property( 'background-color', kadence()->palette_option( 'palette4' ) );
+		$css->add_property( 'background-color', 'var(--global-palette4)' );
 		$css->set_selector( ':root .has-theme-palette-4-color' );
-		$css->add_property( 'color', kadence()->palette_option( 'palette4' ) );
+		$css->add_property( 'color', 'var(--global-palette4)' );
 
 		$css->set_selector( ':root .has-theme-palette-5-background-color' );
-		$css->add_property( 'background-color', kadence()->palette_option( 'palette5' ) );
+		$css->add_property( 'background-color', 'var(--global-palette5)' );
 		$css->set_selector( ':root .has-theme-palette-5-color' );
-		$css->add_property( 'color', kadence()->palette_option( 'palette5' ) );
+		$css->add_property( 'color', 'var(--global-palette5)' );
 
 		$css->set_selector( ':root .has-theme-palette-6-background-color' );
-		$css->add_property( 'background-color', kadence()->palette_option( 'palette6' ) );
+		$css->add_property( 'background-color', 'var(--global-palette6)' );
 		$css->set_selector( ':root .has-theme-palette-6-color' );
-		$css->add_property( 'color', kadence()->palette_option( 'palette6' ) );
+		$css->add_property( 'color', 'var(--global-palette6)' );
 
 		$css->set_selector( ':root .has-theme-palette-7-background-color' );
-		$css->add_property( 'background-color', kadence()->palette_option( 'palette7' ) );
+		$css->add_property( 'background-color', 'var(--global-palette7)' );
 		$css->set_selector( ':root .has-theme-palette-7-color' );
-		$css->add_property( 'color', kadence()->palette_option( 'palette7' ) );
+		$css->add_property( 'color', 'var(--global-palette7)' );
 
 		$css->set_selector( ':root .has-theme-palette-8-background-color' );
-		$css->add_property( 'background-color', kadence()->palette_option( 'palette8' ) );
+		$css->add_property( 'background-color', 'var(--global-palette8)' );
 		$css->set_selector( ':root .has-theme-palette-8-color' );
-		$css->add_property( 'color', kadence()->palette_option( 'palette8' ) );
+		$css->add_property( 'color', 'var(--global-palette8)' );
 
 		$css->set_selector( ':root .has-theme-palette-9-background-color' );
-		$css->add_property( 'background-color', kadence()->palette_option( 'palette9' ) );
+		$css->add_property( 'background-color', 'var(--global-palette9)' );
 		$css->set_selector( ':root .has-theme-palette-9-color' );
-		$css->add_property( 'color', kadence()->palette_option( 'palette9' ) );
+		$css->add_property( 'color', 'var(--global-palette9)' );
 
 		$css->set_selector( 'body' );
 		$css->render_background( kadence()->sub_option( 'site_background', 'desktop' ), $css );
@@ -541,17 +541,17 @@ class Component implements Component_Interface, Templating_Component_Interface {
 		$css->stop_media_query();
 		// Content Spacing.
 		$css->set_selector( '.content-area' );
-		$css->add_property( 'margin-top', $this->render_range( kadence()->option( 'content_spacing' ), 'desktop' ) );
-		$css->add_property( 'margin-bottom', $this->render_range( kadence()->option( 'content_spacing' ), 'desktop' ) );
+		$css->add_property( 'margin-top', $css->render_range( kadence()->option( 'content_spacing' ), 'desktop' ) );
+		$css->add_property( 'margin-bottom', $css->render_range( kadence()->option( 'content_spacing' ), 'desktop' ) );
 		$css->start_media_query( $media_query['tablet'] );
 		$css->set_selector( '.content-area' );
-		$css->add_property( 'margin-top', $this->render_range( kadence()->option( 'content_spacing' ), 'tablet' ) );
-		$css->add_property( 'margin-bottom', $this->render_range( kadence()->option( 'content_spacing' ), 'tablet' ) );
+		$css->add_property( 'margin-top', $css->render_range( kadence()->option( 'content_spacing' ), 'tablet' ) );
+		$css->add_property( 'margin-bottom', $css->render_range( kadence()->option( 'content_spacing' ), 'tablet' ) );
 		$css->stop_media_query();
 		$css->start_media_query( $media_query['mobile'] );
 		$css->set_selector( '.content-area' );
-		$css->add_property( 'margin-top', $this->render_range( kadence()->option( 'content_spacing' ), 'mobile' ) );
-		$css->add_property( 'margin-bottom', $this->render_range( kadence()->option( 'content_spacing' ), 'mobile' ) );
+		$css->add_property( 'margin-top', $css->render_range( kadence()->option( 'content_spacing' ), 'mobile' ) );
+		$css->add_property( 'margin-bottom', $css->render_range( kadence()->option( 'content_spacing' ), 'mobile' ) );
 		$css->stop_media_query();
 		// Boxed Spacing.
 		$css->set_selector( '.entry-content-wrap' );
@@ -564,16 +564,24 @@ class Component implements Component_Interface, Templating_Component_Interface {
 		$css->set_selector( '.entry-content-wrap' );
 		$css->add_property( 'padding', $this->render_range( kadence()->option( 'boxed_spacing' ), 'mobile' ) );
 		$css->stop_media_query();
+		// Single Boxed Shadow.
+		$css->set_selector( '.entry.single-entry' );
+		$css->add_property( 'box-shadow', $css->render_shadow( kadence()->option( 'boxed_shadow' ), kadence()->default( 'boxed_shadow' ) ) );
+		$css->add_property( 'border-radius', $css->render_measure( kadence()->option( 'boxed_border_radius' ) ) );
+		// Loop Boxed Shadow.
+		$css->set_selector( '.entry.loop-entry' );
+		$css->add_property( 'box-shadow', $css->render_shadow( kadence()->option( 'boxed_grid_shadow' ), kadence()->default( 'boxed_grid_shadow' ) ) );
+		$css->add_property( 'border-radius', $css->render_measure( kadence()->option( 'boxed_grid_border_radius' ) ) );
 		// Boxed Grid Spacing.
 		$css->set_selector( '.loop-entry .entry-content-wrap' );
-		$css->add_property( 'padding', $this->render_range( kadence()->option( 'boxed_grid_spacing' ), 'desktop' ) );
+		$css->add_property( 'padding', $css->render_range( kadence()->option( 'boxed_grid_spacing' ), 'desktop' ) );
 		$css->start_media_query( $media_query['tablet'] );
 		$css->set_selector( '.loop-entry .entry-content-wrap' );
-		$css->add_property( 'padding', $this->render_range( kadence()->option( 'boxed_grid_spacing' ), 'tablet' ) );
+		$css->add_property( 'padding', $css->render_range( kadence()->option( 'boxed_grid_spacing' ), 'tablet' ) );
 		$css->stop_media_query();
 		$css->start_media_query( $media_query['mobile'] );
 		$css->set_selector( '.loop-entry .entry-content-wrap' );
-		$css->add_property( 'padding', $this->render_range( kadence()->option( 'boxed_grid_spacing' ), 'mobile' ) );
+		$css->add_property( 'padding', $css->render_range( kadence()->option( 'boxed_grid_spacing' ), 'mobile' ) );
 		$css->stop_media_query();
 		// Sidebar Width.
 		if ( ! empty( kadence()->sub_option( 'sidebar_width', 'size' ) ) && is_numeric( kadence()->sub_option( 'sidebar_width', 'size' ) ) ) {
@@ -678,6 +686,16 @@ class Component implements Component_Interface, Templating_Component_Interface {
 				}
 			}
 		}
+		$css->set_selector( '.site-branding' );
+		$css->add_property( 'padding', $this->render_responsive_measure( kadence()->option( 'header_logo_padding' ), 'desktop' ) );
+		$css->start_media_query( $media_query['tablet'] );
+		$css->set_selector( '.site-branding' );
+		$css->add_property( 'padding', $this->render_responsive_measure( kadence()->option( 'header_logo_padding' ), 'tablet' ) );
+		$css->stop_media_query();
+		$css->start_media_query( $media_query['mobile'] );
+		$css->set_selector( '.site-branding' );
+		$css->add_property( 'padding', $this->render_responsive_measure( kadence()->option( 'header_logo_padding' ), 'mobile' ) );
+		$css->stop_media_query();
 		$css->set_selector( '.site-branding .site-title' );
 		$css->render_font( kadence()->option( 'brand_typography' ), $css );
 		$css->set_selector( '.site-branding .site-title:hover' );
@@ -994,6 +1012,7 @@ class Component implements Component_Interface, Templating_Component_Interface {
 		// Dropdown.
 		$css->set_selector( '.header-navigation .header-menu-container ul ul' );
 		$css->add_property( 'background', $this->render_color( kadence()->sub_option( 'dropdown_navigation_background', 'color' ) ) );
+		$css->add_property( 'box-shadow', $css->render_shadow( kadence()->option( 'dropdown_navigation_shadow' ), kadence()->default( 'dropdown_navigation_shadow' ) ) );
 		$css->set_selector( '.header-navigation .header-menu-container ul ul li' );
 		$css->add_property( 'border-bottom', $css->render_border( kadence()->option( 'dropdown_navigation_divider' ) ) );
 		$css->set_selector( '.header-navigation .header-menu-container ul ul li a' );
@@ -1207,6 +1226,7 @@ class Component implements Component_Interface, Templating_Component_Interface {
 		$css->add_property( 'background', $this->render_color( kadence()->sub_option( 'header_search_background', 'color' ) ) );
 		$css->add_property( 'color', $this->render_color( kadence()->sub_option( 'header_search_color', 'color' ) ) );
 		$css->add_property( 'padding', $this->render_measure( kadence()->option( 'header_search_padding' ) ) );
+		$css->add_property( 'margin', $this->render_measure( kadence()->option( 'header_search_margin' ) ) );
 		$css->render_font( kadence()->option( 'header_search_typography' ), $css );
 		$css->start_media_query( $media_query['tablet'] );
 		$css->set_selector( '.search-toggle-open-container .search-toggle-open' );
@@ -1973,6 +1993,107 @@ class Component implements Component_Interface, Templating_Component_Interface {
 		$css->add_property( 'line-height', $this->render_font_height( kadence()->option( 'post_archive_item_meta_font' ), 'mobile' ) );
 		$css->add_property( 'letter-spacing', $this->render_font_spacing( kadence()->option( 'post_archive_item_meta_font' ), 'mobile' ) );
 		$css->stop_media_query();
+		// Search results Title.
+		$css->set_selector( '.search-archive-hero-section .entry-hero-container-inner' );
+		$css->render_background( kadence()->sub_option( 'search_archive_title_background', 'desktop' ), $css );
+		$css->add_property( 'border-top', $css->render_border( kadence()->sub_option( 'search_archive_title_top_border', 'desktop' ) ) );
+		$css->add_property( 'border-bottom', $css->render_border( kadence()->sub_option( 'search_archive_title_bottom_border', 'desktop' ) ) );
+		$css->set_selector( '.entry-hero.search-archive-hero-section .entry-header' );
+		$css->add_property( 'min-height', $this->render_range( kadence()->option( 'search_archive_title_height' ), 'desktop' ) );
+		$css->set_selector( '.search-archive-hero-section .hero-section-overlay' );
+		$css->add_property( 'background', $this->render_color( kadence()->sub_option( 'search_archive_title_overlay_color', 'color' ) ) );
+		$css->start_media_query( $media_query['tablet'] );
+		$css->set_selector( '.search-archive-hero-section .entry-hero-container-inner' );
+		$css->render_background( kadence()->sub_option( 'search_archive_title_background', 'tablet' ), $css );
+		$css->add_property( 'border-top', $css->render_border( kadence()->sub_option( 'search_archive_title_top_border', 'tablet' ) ) );
+		$css->add_property( 'border-bottom', $css->render_border( kadence()->sub_option( 'search_archive_title_bottom_border', 'tablet' ) ) );
+		$css->set_selector( '.search-archive-hero-section .entry-header' );
+		$css->add_property( 'min-height', $this->render_range( kadence()->option( 'search_archive_title_height' ), 'tablet' ) );
+		$css->stop_media_query();
+		$css->start_media_query( $media_query['mobile'] );
+		$css->set_selector( '.search-archive-hero-section .entry-hero-container-inner' );
+		$css->render_background( kadence()->sub_option( 'search_archive_title_background', 'mobile' ), $css );
+		$css->add_property( 'border-top', $css->render_border( kadence()->sub_option( 'search_archive_title_top_border', 'mobile' ) ) );
+		$css->add_property( 'border-bottom', $css->render_border( kadence()->sub_option( 'search_archive_title_bottom_border', 'mobile' ) ) );
+		$css->set_selector( '.entry-hero.search-archive-hero-section .entry-header' );
+		$css->add_property( 'min-height', $this->render_range( kadence()->option( 'search_archive_title_height' ), 'mobile' ) );
+		$css->stop_media_query();
+		$css->set_selector( '.search-archive-title h1' );
+		$css->add_property( 'color', $this->render_color( kadence()->sub_option( 'search_archive_title_color', 'color' ) ) );
+		// Search Results Backgrounds.
+		$css->set_selector( 'body.search-results' );
+		$css->render_background( kadence()->sub_option( 'search_archive_background', 'desktop' ), $css );
+		$css->set_selector( 'body.search-results .content-bg, body.content-style-unboxed.search-results .site' );
+		$css->render_background( kadence()->sub_option( 'search_archive_content_background', 'desktop' ), $css );
+		$css->start_media_query( $media_query['tablet'] );
+		$css->set_selector( 'body.search-results' );
+		$css->render_background( kadence()->sub_option( 'search_archive_background', 'tablet' ), $css );
+		$css->set_selector( 'body.search-results .content-bg, body.content-style-unboxed.search-results .site' );
+		$css->render_background( kadence()->sub_option( 'search_archive_content_background', 'tablet' ), $css );
+		$css->stop_media_query();
+		$css->start_media_query( $media_query['mobile'] );
+		$css->set_selector( 'body.search-results' );
+		$css->render_background( kadence()->sub_option( 'search_archive_background', 'mobile' ), $css );
+		$css->set_selector( 'body.search-results .content-bg, body.content-style-unboxed.search-results .site' );
+		$css->render_background( kadence()->sub_option( 'search_archive_content_background', 'mobile' ), $css );
+		$css->stop_media_query();
+		// Search Results item title.
+		$css->set_selector( '.search-results .loop-entry h2.entry-title' );
+		$css->render_font( kadence()->option( 'search_archive_item_title_font' ), $css );
+		$css->start_media_query( $media_query['tablet'] );
+		$css->set_selector( '.search-results .loop-entry h2.entry-title' );
+		$css->add_property( 'font-size', $this->render_font_size( kadence()->option( 'search_archive_item_title_font' ), 'tablet' ) );
+		$css->add_property( 'line-height', $this->render_font_height( kadence()->option( 'search_archive_item_title_font' ), 'tablet' ) );
+		$css->add_property( 'letter-spacing', $this->render_font_spacing( kadence()->option( 'search_archive_item_title_font' ), 'tablet' ) );
+		$css->stop_media_query();
+		$css->start_media_query( $media_query['mobile'] );
+		$css->set_selector( '.search-results .loop-entry h2.entry-title' );
+		$css->add_property( 'font-size', $this->render_font_size( kadence()->option( 'search_archive_item_title_font' ), 'mobile' ) );
+		$css->add_property( 'line-height', $this->render_font_height( kadence()->option( 'search_archive_item_title_font' ), 'mobile' ) );
+		$css->add_property( 'letter-spacing', $this->render_font_spacing( kadence()->option( 'search_archive_item_title_font' ), 'mobile' ) );
+		$css->stop_media_query();
+		// Search Results item category.
+		$css->set_selector( '.search-results .loop-entry .entry-taxonomies' );
+		$css->render_font( kadence()->option( 'search_archive_item_category_font' ), $css );
+		$css->set_selector( '.search-results .loop-entry .entry-taxonomies, .search-results .loop-entry .entry-taxonomies a' );
+		$css->add_property( 'color', $this->render_color( kadence()->sub_option( 'search_archive_item_category_color', 'color' ) ) );
+		$css->set_selector( '.loop-entry .entry-taxonomies .category-style-pill a' );
+		$css->add_property( 'background', $this->render_color( kadence()->sub_option( 'search_archive_item_category_color', 'color' ) ) );
+		$css->set_selector( '.search-results .loop-entry .entry-taxonomies a:hover' );
+		$css->add_property( 'color', $this->render_color( kadence()->sub_option( 'search_archive_item_category_color', 'hover' ) ) );
+		$css->set_selector( '.loop-entry .entry-taxonomies .category-style-pill a:hover' );
+		$css->add_property( 'background', $this->render_color( kadence()->sub_option( 'search_archive_item_category_color', 'hover' ) ) );
+		$css->start_media_query( $media_query['tablet'] );
+		$css->set_selector( '.search-results .loop-entry .entry-taxonomies' );
+		$css->add_property( 'font-size', $this->render_font_size( kadence()->option( 'search_archive_item_category_font' ), 'tablet' ) );
+		$css->add_property( 'line-height', $this->render_font_height( kadence()->option( 'search_archive_item_category_font' ), 'tablet' ) );
+		$css->add_property( 'letter-spacing', $this->render_font_spacing( kadence()->option( 'search_archive_item_category_font' ), 'tablet' ) );
+		$css->stop_media_query();
+		$css->start_media_query( $media_query['mobile'] );
+		$css->set_selector( '.search-results .loop-entry .entry-taxonomies' );
+		$css->add_property( 'font-size', $this->render_font_size( kadence()->option( 'search_archive_item_category_font' ), 'mobile' ) );
+		$css->add_property( 'line-height', $this->render_font_height( kadence()->option( 'search_archive_item_category_font' ), 'mobile' ) );
+		$css->add_property( 'letter-spacing', $this->render_font_spacing( kadence()->option( 'search_archive_item_category_font' ), 'mobile' ) );
+		$css->stop_media_query();
+		// Search Results item meta.
+		$css->set_selector( '.search-results .loop-entry .entry-meta' );
+		$css->render_font( kadence()->option( 'search_archive_item_meta_font' ), $css );
+		$css->set_selector( '.search-results .loop-entry .entry-meta' );
+		$css->add_property( 'color', $this->render_color( kadence()->sub_option( 'search_archive_item_meta_color', 'color' ) ) );
+		$css->set_selector( '.search-results .loop-entry .entry-meta a:hover' );
+		$css->add_property( 'color', $this->render_color( kadence()->sub_option( 'search_archive_item_meta_color', 'hover' ) ) );
+		$css->start_media_query( $media_query['tablet'] );
+		$css->set_selector( '.search-results .loop-entry .entry-meta' );
+		$css->add_property( 'font-size', $this->render_font_size( kadence()->option( 'search_archive_item_meta_font' ), 'tablet' ) );
+		$css->add_property( 'line-height', $this->render_font_height( kadence()->option( 'search_archive_item_meta_font' ), 'tablet' ) );
+		$css->add_property( 'letter-spacing', $this->render_font_spacing( kadence()->option( 'search_archive_item_meta_font' ), 'tablet' ) );
+		$css->stop_media_query();
+		$css->start_media_query( $media_query['mobile'] );
+		$css->set_selector( '.search-results .loop-entry .entry-meta' );
+		$css->add_property( 'font-size', $this->render_font_size( kadence()->option( 'search_archive_item_meta_font' ), 'mobile' ) );
+		$css->add_property( 'line-height', $this->render_font_height( kadence()->option( 'search_archive_item_meta_font' ), 'mobile' ) );
+		$css->add_property( 'letter-spacing', $this->render_font_spacing( kadence()->option( 'search_archive_item_meta_font' ), 'mobile' ) );
+		$css->stop_media_query();
 		if ( class_exists( 'woocommerce' ) ) {
 			// Shop Notice.
 			$css->set_selector( '.woocommerce-demo-store .woocommerce-store-notice' );
@@ -2092,6 +2213,23 @@ class Component implements Component_Interface, Templating_Component_Interface {
 			$css->add_property( 'font-size', $this->render_font_size( kadence()->option( 'product_single_category_font' ), 'mobile' ) );
 			$css->add_property( 'line-height', $this->render_font_height( kadence()->option( 'product_single_category_font' ), 'mobile' ) );
 			$css->add_property( 'letter-spacing', $this->render_font_spacing( kadence()->option( 'product_single_category_font' ), 'mobile' ) );
+			$css->stop_media_query();
+			// Product Single Backgrounds.
+			$css->set_selector( 'body.single-product' );
+			$css->render_background( kadence()->sub_option( 'product_background', 'desktop' ), $css );
+			$css->set_selector( 'body.single-product .content-bg, body.content-style-unboxed.single-product .site' );
+			$css->render_background( kadence()->sub_option( 'product_content_background', 'desktop' ), $css );
+			$css->start_media_query( $media_query['tablet'] );
+			$css->set_selector( 'body.single-product' );
+			$css->render_background( kadence()->sub_option( 'product_background', 'tablet' ), $css );
+			$css->set_selector( 'body.single-product .content-bg, body.content-style-unboxed.single-product .site' );
+			$css->render_background( kadence()->sub_option( 'product_content_background', 'tablet' ), $css );
+			$css->stop_media_query();
+			$css->start_media_query( $media_query['mobile'] );
+			$css->set_selector( 'body.single-product' );
+			$css->render_background( kadence()->sub_option( 'product_background', 'mobile' ), $css );
+			$css->set_selector( 'body.single-product .content-bg, body.content-style-unboxed.single-product .site' );
+			$css->render_background( kadence()->sub_option( 'product_content_background', 'mobile' ), $css );
 			$css->stop_media_query();
 			// Product Archive Backgrounds.
 			$css->set_selector( 'body.archive.tax-product_cat, body.post-type-archive-product' );
@@ -2235,6 +2373,122 @@ class Component implements Component_Interface, Templating_Component_Interface {
 			$css->add_property( 'border-bottom', $css->render_border( kadence()->sub_option( 'sfwd-courses_title_bottom_border', 'mobile' ) ) );
 			$css->set_selector( '.entry-hero.sfwd-courses-hero-section .entry-header' );
 			$css->add_property( 'min-height', $this->render_range( kadence()->option( 'sfwd-courses_title_height' ), 'mobile' ) );
+			$css->stop_media_query();
+			// Group Title.
+			$css->set_selector( '.groupe-title h1' );
+			$css->render_font( kadence()->option( 'groupe_title_font' ), $css );
+			$css->start_media_query( $media_query['tablet'] );
+			$css->set_selector( '.groupe-title h1' );
+			$css->add_property( 'font-size', $this->render_font_size( kadence()->option( 'groupe_title_font' ), 'tablet' ) );
+			$css->add_property( 'line-height', $this->render_font_height( kadence()->option( 'groupe_title_font' ), 'tablet' ) );
+			$css->add_property( 'letter-spacing', $this->render_font_spacing( kadence()->option( 'groupe_title_font' ), 'tablet' ) );
+			$css->stop_media_query();
+			$css->start_media_query( $media_query['mobile'] );
+			$css->set_selector( '.groupe-title h1' );
+			$css->add_property( 'font-size', $this->render_font_size( kadence()->option( 'groupe_title_font' ), 'mobile' ) );
+			$css->add_property( 'line-height', $this->render_font_height( kadence()->option( 'groupe_title_font' ), 'mobile' ) );
+			$css->add_property( 'letter-spacing', $this->render_font_spacing( kadence()->option( 'groupe_title_font' ), 'mobile' ) );
+			$css->stop_media_query();
+			// Essay Group Breadcrumbs.
+			$css->set_selector( '.groupe-title .kadence-breadcrumbs' );
+			$css->render_font( kadence()->option( 'groupe_title_breadcrumb_font' ), $css );
+			$css->add_property( 'color', $this->render_color( kadence()->sub_option( 'groupe_title_breadcrumb_color', 'color' ) ) );
+			$css->set_selector( '.groupe-title .kadence-breadcrumbs a:hover' );
+			$css->add_property( 'color', $this->render_color( kadence()->sub_option( 'groupe_title_breadcrumb_color', 'hover' ) ) );
+			$css->start_media_query( $media_query['tablet'] );
+			$css->set_selector( '.groupe-title .kadence-breadcrumbs' );
+			$css->add_property( 'font-size', $this->render_font_size( kadence()->option( 'groupe_title_breadcrumb_font' ), 'tablet' ) );
+			$css->add_property( 'line-height', $this->render_font_height( kadence()->option( 'groupe_title_breadcrumb_font' ), 'tablet' ) );
+			$css->add_property( 'letter-spacing', $this->render_font_spacing( kadence()->option( 'groupe_title_breadcrumb_font' ), 'tablet' ) );
+			$css->stop_media_query();
+			$css->start_media_query( $media_query['mobile'] );
+			$css->set_selector( '.groupe-title .kadence-breadcrumbs' );
+			$css->add_property( 'font-size', $this->render_font_size( kadence()->option( 'groupe_title_breadcrumb_font' ), 'mobile' ) );
+			$css->add_property( 'line-height', $this->render_font_height( kadence()->option( 'groupe_title_breadcrumb_font' ), 'mobile' ) );
+			$css->add_property( 'letter-spacing', $this->render_font_spacing( kadence()->option( 'groupe_title_breadcrumb_font' ), 'mobile' ) );
+			$css->stop_media_query();
+			// Above Group Title.
+			$css->set_selector( '.groupe-hero-section .entry-hero-container-inner' );
+			$css->render_background( kadence()->sub_option( 'groupe_title_background', 'desktop' ), $css );
+			$css->add_property( 'border-top', $css->render_border( kadence()->sub_option( 'groupe_title_top_border', 'desktop' ) ) );
+			$css->add_property( 'border-bottom', $css->render_border( kadence()->sub_option( 'groupe_title_bottom_border', 'desktop' ) ) );
+			$css->set_selector( '.entry-hero.groupe-hero-section .entry-header' );
+			$css->add_property( 'min-height', $this->render_range( kadence()->option( 'groupe_title_height' ), 'desktop' ) );
+			$css->set_selector( '.groupe-hero-section .hero-section-overlay' );
+			$css->add_property( 'background', $this->render_color( kadence()->sub_option( 'groupe_title_overlay_color', 'color' ) ) );
+			$css->start_media_query( $media_query['tablet'] );
+			$css->set_selector( '.groupe-hero-section .entry-hero-container-inner' );
+			$css->render_background( kadence()->sub_option( 'groupe_title_background', 'tablet' ), $css );
+			$css->add_property( 'border-top', $css->render_border( kadence()->sub_option( 'groupe_title_top_border', 'tablet' ) ) );
+			$css->add_property( 'border-bottom', $css->render_border( kadence()->sub_option( 'groupe_title_bottom_border', 'tablet' ) ) );
+			$css->set_selector( '.groupe-hero-section .entry-header' );
+			$css->add_property( 'min-height', $this->render_range( kadence()->option( 'groupe_title_height' ), 'tablet' ) );
+			$css->stop_media_query();
+			$css->start_media_query( $media_query['mobile'] );
+			$css->set_selector( '.groupe-hero-section .entry-hero-container-inner' );
+			$css->render_background( kadence()->sub_option( 'groupe_title_background', 'mobile' ), $css );
+			$css->add_property( 'border-top', $css->render_border( kadence()->sub_option( 'groupe_title_top_border', 'mobile' ) ) );
+			$css->add_property( 'border-bottom', $css->render_border( kadence()->sub_option( 'groupe_title_bottom_border', 'mobile' ) ) );
+			$css->set_selector( '.entry-hero.groupe-hero-section .entry-header' );
+			$css->add_property( 'min-height', $this->render_range( kadence()->option( 'groupe_title_height' ), 'mobile' ) );
+			$css->stop_media_query();
+			// Essay Title.
+			$css->set_selector( '.sfwd-essays-title h1' );
+			$css->render_font( kadence()->option( 'sfwd-essays_title_font' ), $css );
+			$css->start_media_query( $media_query['tablet'] );
+			$css->set_selector( '.sfwd-essays-title h1' );
+			$css->add_property( 'font-size', $this->render_font_size( kadence()->option( 'sfwd-essays_title_font' ), 'tablet' ) );
+			$css->add_property( 'line-height', $this->render_font_height( kadence()->option( 'sfwd-essays_title_font' ), 'tablet' ) );
+			$css->add_property( 'letter-spacing', $this->render_font_spacing( kadence()->option( 'sfwd-essays_title_font' ), 'tablet' ) );
+			$css->stop_media_query();
+			$css->start_media_query( $media_query['mobile'] );
+			$css->set_selector( '.sfwd-essays-title h1' );
+			$css->add_property( 'font-size', $this->render_font_size( kadence()->option( 'sfwd-essays_title_font' ), 'mobile' ) );
+			$css->add_property( 'line-height', $this->render_font_height( kadence()->option( 'sfwd-essays_title_font' ), 'mobile' ) );
+			$css->add_property( 'letter-spacing', $this->render_font_spacing( kadence()->option( 'sfwd-essays_title_font' ), 'mobile' ) );
+			$css->stop_media_query();
+			// Essay Title Breadcrumbs.
+			$css->set_selector( '.sfwd-essays-title .kadence-breadcrumbs' );
+			$css->render_font( kadence()->option( 'sfwd-essays_title_breadcrumb_font' ), $css );
+			$css->add_property( 'color', $this->render_color( kadence()->sub_option( 'sfwd-essays_title_breadcrumb_color', 'color' ) ) );
+			$css->set_selector( '.sfwd-essays-title .kadence-breadcrumbs a:hover' );
+			$css->add_property( 'color', $this->render_color( kadence()->sub_option( 'sfwd-essays_title_breadcrumb_color', 'hover' ) ) );
+			$css->start_media_query( $media_query['tablet'] );
+			$css->set_selector( '.sfwd-essays-title .kadence-breadcrumbs' );
+			$css->add_property( 'font-size', $this->render_font_size( kadence()->option( 'sfwd-essays_title_breadcrumb_font' ), 'tablet' ) );
+			$css->add_property( 'line-height', $this->render_font_height( kadence()->option( 'sfwd-essays_title_breadcrumb_font' ), 'tablet' ) );
+			$css->add_property( 'letter-spacing', $this->render_font_spacing( kadence()->option( 'sfwd-essays_title_breadcrumb_font' ), 'tablet' ) );
+			$css->stop_media_query();
+			$css->start_media_query( $media_query['mobile'] );
+			$css->set_selector( '.sfwd-essays-title .kadence-breadcrumbs' );
+			$css->add_property( 'font-size', $this->render_font_size( kadence()->option( 'sfwd-essays_title_breadcrumb_font' ), 'mobile' ) );
+			$css->add_property( 'line-height', $this->render_font_height( kadence()->option( 'sfwd-essays_title_breadcrumb_font' ), 'mobile' ) );
+			$css->add_property( 'letter-spacing', $this->render_font_spacing( kadence()->option( 'sfwd-essays_title_breadcrumb_font' ), 'mobile' ) );
+			$css->stop_media_query();
+			// Above Essay Title.
+			$css->set_selector( '.sfwd-essays-hero-section .entry-hero-container-inner' );
+			$css->render_background( kadence()->sub_option( 'sfwd-essays_title_background', 'desktop' ), $css );
+			$css->add_property( 'border-top', $css->render_border( kadence()->sub_option( 'sfwd-essays_title_top_border', 'desktop' ) ) );
+			$css->add_property( 'border-bottom', $css->render_border( kadence()->sub_option( 'sfwd-essays_title_bottom_border', 'desktop' ) ) );
+			$css->set_selector( '.entry-hero.sfwd-essays-hero-section .entry-header' );
+			$css->add_property( 'min-height', $this->render_range( kadence()->option( 'sfwd-essays_title_height' ), 'desktop' ) );
+			$css->set_selector( '.sfwd-essays-hero-section .hero-section-overlay' );
+			$css->add_property( 'background', $this->render_color( kadence()->sub_option( 'sfwd-essays_title_overlay_color', 'color' ) ) );
+			$css->start_media_query( $media_query['tablet'] );
+			$css->set_selector( '.sfwd-essays-hero-section .entry-hero-container-inner' );
+			$css->render_background( kadence()->sub_option( 'sfwd-essays_title_background', 'tablet' ), $css );
+			$css->add_property( 'border-top', $css->render_border( kadence()->sub_option( 'sfwd-essays_title_top_border', 'tablet' ) ) );
+			$css->add_property( 'border-bottom', $css->render_border( kadence()->sub_option( 'sfwd-essays_title_bottom_border', 'tablet' ) ) );
+			$css->set_selector( '.sfwd-essays-hero-section .entry-header' );
+			$css->add_property( 'min-height', $this->render_range( kadence()->option( 'sfwd-essays_title_height' ), 'tablet' ) );
+			$css->stop_media_query();
+			$css->start_media_query( $media_query['mobile'] );
+			$css->set_selector( '.sfwd-essays-hero-section .entry-hero-container-inner' );
+			$css->render_background( kadence()->sub_option( 'sfwd-essays_title_background', 'mobile' ), $css );
+			$css->add_property( 'border-top', $css->render_border( kadence()->sub_option( 'sfwd-essays_title_top_border', 'mobile' ) ) );
+			$css->add_property( 'border-bottom', $css->render_border( kadence()->sub_option( 'sfwd-essays_title_bottom_border', 'mobile' ) ) );
+			$css->set_selector( '.entry-hero.sfwd-essays-hero-section .entry-header' );
+			$css->add_property( 'min-height', $this->render_range( kadence()->option( 'sfwd-essays_title_height' ), 'mobile' ) );
 			$css->stop_media_query();
 		}
 		// Lifter CSS.
@@ -2494,6 +2748,26 @@ class Component implements Component_Interface, Templating_Component_Interface {
 			$css->set_selector( '.llms_membership-archive-title .archive-description a:hover' );
 			$css->add_property( 'color', $this->render_color( kadence()->sub_option( 'llms_membership_archive_title_description_color', 'hover' ) ) );
 		}
+		$all_post_types    = kadence()->get_post_types_objects();
+		$extras_post_types = array();
+		$add_extras        = false;
+		foreach ( $all_post_types as $post_type_item ) {
+			$post_type_name  = $post_type_item->name;
+			$post_type_label = $post_type_item->label;
+			$ignore_type     = kadence()->get_post_types_to_ignore();
+			if ( ! in_array( $post_type_name, $ignore_type, true ) ) {
+				$css->set_selector( '.entry-hero.' . $post_type_name . '-archive-hero-section .entry-header' );
+				$css->add_property( 'min-height', $this->render_range( kadence()->option( $post_type_name . '_archive_title_height' ), 'desktop' ) );
+				$css->start_media_query( $media_query['tablet'] );
+				$css->set_selector( '.entry-hero.' . $post_type_name . '-archive-hero-section .entry-header' );
+				$css->add_property( 'min-height', $this->render_range( kadence()->option( $post_type_name . '_archive_title_height' ), 'tablet' ) );
+				$css->stop_media_query();
+				$css->start_media_query( $media_query['mobile'] );
+				$css->set_selector( '.entry-hero.' . $post_type_name . '-archive-hero-section .entry-header' );
+				$css->add_property( 'min-height', $this->render_range( kadence()->option( $post_type_name . '_archive_title_height' ), 'mobile' ) );
+				$css->stop_media_query();
+			}
+		}
 		self::$google_fonts = $css->fonts_output();
 		return $css->css_output();
 	}
@@ -2684,7 +2958,7 @@ class Component implements Component_Interface, Templating_Component_Interface {
 		return $mce_init;
 	}
 	/**
-	 * Generates the inital hero padding.
+	 * Generates the Initial hero padding.
 	 *
 	 * @param string $device the target device.
 	 * @return string
@@ -3128,7 +3402,7 @@ class Component implements Component_Interface, Templating_Component_Interface {
 		if ( ! isset( $size['size'][ $device ] ) ) {
 			return false;
 		}
-		if ( empty( $size['size'][ $device ] ) ) {
+		if ( ! is_numeric( $size['size'][ $device ] ) ) {
 			return false;
 		}
 		$size_type   = ( isset( $size['unit'] ) && is_array( $size['unit'] ) && isset( $size['unit'][ $device ] ) && ! empty( $size['unit'][ $device ] ) ? $size['unit'][ $device ] : 'px' );
@@ -3310,6 +3584,10 @@ class Component implements Component_Interface, Templating_Component_Interface {
 			'kadence-global'     => array(
 				'file'   => 'global.min.css',
 				'global' => true,
+			),
+			'kadence-rtl'   => array(
+				'file'   => 'rtl.min.css',
+				'global' => is_rtl(),
 			),
 			'kadence-header'    => array(
 				'file'             => 'header.min.css',
@@ -3521,8 +3799,9 @@ class Component implements Component_Interface, Templating_Component_Interface {
 		if ( ! empty( $subsets ) ) {
 			$link .= '&amp;subset=' . implode( ',', $subsets );
 		}
-		$link .= '&amp;display=swap';
-
+		if ( apply_filters( 'kadence_display_swap_google_fonts', true ) ) {
+			$link .= '&amp;display=swap';
+		}
 		return 'https://fonts.googleapis.com/css?family=' . esc_attr( str_replace( '|', '%7C', $link ) );
 
 	}

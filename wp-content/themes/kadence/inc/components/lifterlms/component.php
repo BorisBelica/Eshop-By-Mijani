@@ -40,8 +40,8 @@ class Component implements Component_Interface {
 		add_filter( 'llms_get_theme_default_sidebar', array( $this, 'llms_sidebar_function' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'lifterlms_styles' ), 60 );
 		// Remove Content Wrappers.
-		remove_action( 'lifterlms_before_main_content', 'lifterlms_output_content_wrapper', 10 );
-		remove_action( 'lifterlms_after_main_content', 'lifterlms_output_content_wrapper_end', 10 );
+		remove_action( 'lifterlms_before_main_content', 'lifterlms_output_content_wrapper' );
+		remove_action( 'lifterlms_after_main_content', 'lifterlms_output_content_wrapper_end' );
 		// Remove Title.
 		add_filter( 'lifterlms_show_page_title', '__return_false' );
 		// Add Content wrappers.
@@ -49,20 +49,20 @@ class Component implements Component_Interface {
 		add_action( 'lifterlms_after_main_content', array( $this, 'output_content_wrapper_end' ) );
 
 		add_filter( 'post_class', array( $this, 'set_lifter_entry_class' ), 10, 3 );
-		add_filter( 'llms_get_loop_list_classes', array( $this, 'set_lifter_grid_class' ), 10 );
+		add_filter( 'llms_get_loop_list_classes', array( $this, 'set_lifter_grid_class' ) );
 		// Change Lifter Columns.
-		add_filter( 'lifterlms_loop_columns', array( $this, 'set_lifter_columns' ), 10 );
+		add_filter( 'lifterlms_loop_columns', array( $this, 'set_lifter_columns' ) );
 
 		// Remove normal archive Description.
-		remove_action( 'lifterlms_archive_description', 'lifterlms_archive_description', 10 );
+		remove_action( 'lifterlms_archive_description', 'lifterlms_archive_description' );
 
-		add_filter( 'llms_display_outline_thumbnails', array( $this, 'lifter_syllabus_thumbnails' ), 10 );
+		add_filter( 'llms_display_outline_thumbnails', array( $this, 'lifter_syllabus_thumbnails' ) );
 		// Add div with class for Navigation Position.
 		add_action( 'lifterlms_before_student_dashboard', array( $this, 'dashboard_wrapper_open' ), 5 );
 		// Close added div with class for Navigation Position.
 		add_action( 'lifterlms_after_student_dashboard', array( $this, 'dashboard_wrapper_close' ), 20 );
 		// Could use to move the nav out of the header area, absolute position seems to work just as well though.
-		// remove_action( 'lifterlms_student_dashboard_header', 'lifterlms_template_student_dashboard_navigation', 10 );
+		// remove_action( 'lifterlms_student_dashboard_header', 'lifterlms_template_student_dashboard_navigation' );
 		// add_action( 'lifterlms_before_student_dashboard_content', 'lifterlms_template_student_dashboard_navigation', 5 );
 	}
 	/**
@@ -153,7 +153,7 @@ class Component implements Component_Interface {
 		 * Hook for Hero Section
 		 */
 		do_action( 'kadence_hero_header' );
-		echo '<div id="primary" class="content-area"><div class="content-container site-container"><main id="main" class="site-main">';
+		echo '<div id="primary" class="content-area"><div class="content-container site-container"><main id="main" class="site-main" role="main">';
 		if ( is_archive() && kadence()->show_in_content_title() ) {
 			get_template_part( 'template-parts/content/archive_header' );
 		}

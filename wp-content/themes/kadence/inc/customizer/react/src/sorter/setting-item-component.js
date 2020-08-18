@@ -37,7 +37,7 @@ class ItemComponent extends Component {
 		return (
 			<div className="kadence-sorter-item" data-id={ this.props.item } key={ this.props.item }>
 				<div className={ `kadence-sorter-item-panel-header ${ ( this.state.item.enabled ? 'panel-item-is-visible' : 'panel-item-is-hidden' ) }` }>
-					<Tooltip text={ __( 'Toggle Item Visiblity', 'kadence' ) }>
+					<Tooltip text={ __( 'Toggle Item Visibility', 'kadence' ) }>
 						<Button
 							className={ `kadence-sorter-visiblity ${ ( this.state.item.enabled ? 'item-is-visible' : 'item-is-hidden' ) }`}
 							onClick={ () => {
@@ -137,6 +137,9 @@ class ItemComponent extends Component {
 								<span className="sorter-control-title">{ __( 'Choose a Divider', 'kadence' ) }</span>
 								<ButtonGroup className="kadence-radio-container-control">
 									{ Object.keys( this.props.controlParams.dividers ).map( ( item ) => {
+										if ( undefined !== this.state.item.style && item === 'customicon' ) {
+											return false;
+										}
 										return (
 											<Fragment>
 												<Button
@@ -167,7 +170,7 @@ class ItemComponent extends Component {
 							<div class="components-base-control">
 								<span className="sorter-control-title">{ __( 'Choose Button Size', 'kadence' ) }</span>
 								<ButtonGroup className="kadence-radio-container-control">
-									{ [ 'normal', 'large' ].map( ( item ) => {
+									{ [ 'normal', 'medium-large', 'large' ].map( ( item ) => {
 										return (
 											<Fragment>
 												<Button
@@ -464,7 +467,7 @@ class ItemComponent extends Component {
 											<div className="meta-label-control">
 												<span className="sorter-control-title">{ __( 'Author Label', 'kadence' ) }</span>
 												<div className={ `meta-label-input-control ${ ( this.state.item.authorEnableLabel ? 'label-is-visible' : 'label-is-hidden' ) }` }>
-													<Tooltip text={ __( 'Toggle Label Visiblity', 'kadence' ) }>
+													<Tooltip text={ __( 'Toggle Label Visibility', 'kadence' ) }>
 														<Button
 															className={ `kadence-label-visiblity ${ ( this.state.item.authorEnableLabel ? 'item-is-visible' : 'item-is-hidden' ) }`}
 															onClick={ () => {
@@ -502,7 +505,7 @@ class ItemComponent extends Component {
 									<div className="meta-label-control">
 										<span className="sorter-control-title">{ __( 'Date Label', 'kadence' ) }</span>
 										<div className={ `meta-label-input-control ${ ( this.state.item.dateEnableLabel ? 'label-is-visible' : 'label-is-hidden' ) }` }>
-											<Tooltip text={ __( 'Toggle Label Visiblity', 'kadence' ) }>
+											<Tooltip text={ __( 'Toggle Label Visibility', 'kadence' ) }>
 												<Button
 													className={ `kadence-label-visiblity ${ ( this.state.item.dateEnableLabel ? 'item-is-visible' : 'item-is-hidden' ) }`}
 													onClick={ () => {
@@ -538,7 +541,7 @@ class ItemComponent extends Component {
 									<div className="meta-label-control">
 										<span className="sorter-control-title">{ __( 'Updated Date Label', 'kadence' ) }</span>
 										<div className={ `meta-label-input-control ${ ( this.state.item.dateUpdatedEnableLabel ? 'label-is-visible' : 'label-is-hidden' ) }` }>
-											<Tooltip text={ __( 'Toggle Label Visiblity', 'kadence' ) }>
+											<Tooltip text={ __( 'Toggle Label Visibility', 'kadence' ) }>
 												<Button
 													className={ `kadence-label-visiblity ${ ( this.state.item.dateUpdatedEnableLabel ? 'item-is-visible' : 'item-is-hidden' ) }`}
 													onClick={ () => {
@@ -574,7 +577,7 @@ class ItemComponent extends Component {
 									<div className="meta-label-control">
 										<span className="sorter-control-title">{ __( 'Categories Label', 'kadence' ) }</span>
 										<div className={ `meta-label-input-control ${ ( this.state.item.categoriesEnableLabel ? 'label-is-visible' : 'label-is-hidden' ) }` }>
-											<Tooltip text={ __( 'Toggle Label Visiblity', 'kadence' ) }>
+											<Tooltip text={ __( 'Toggle Label Visibility', 'kadence' ) }>
 												<Button
 													className={ `kadence-label-visiblity ${ ( this.state.item.categoriesEnableLabel ? 'item-is-visible' : 'item-is-hidden' ) }`}
 													onClick={ () => {

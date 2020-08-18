@@ -553,3 +553,13 @@
 .select2-container--default .select2-search--dropdown .select2-search__field {
 	border-color: var(--global-gray-400);
 }
+// Cart Block
+.wc-block-components-totals-coupon.wc-blocks-components-panel .wc-blocks-components-panel__button {
+    margin: .375em 0;
+}
+.wc-block-components-sidebar .wc-block-components-totals-coupon.wc-blocks-components-panel>h2 {
+    font-size:1em;
+}
+.wc-block-components-checkout-form .wc-block-components-checkout-step__description {
+    margin-bottom: 16px;
+}

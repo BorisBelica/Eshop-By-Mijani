@@ -71,14 +71,17 @@ class Component implements Component_Interface {
 		if ( 'post' == $screen->base ) {
 			global $post;
 			$post_type  = get_post_type();
-			$boxed      = 'boxed';
-			$layout     = 'normal';
-			$feature    = 'hide';
-			$padding    = 'show';
-			$comments   = 'hide';
-			$navigation = 'hide';
-			$title      = 'normal';
-			$sidebar    = 'none';
+			$post_layout = array(
+				'layout'           => 'normal',
+				'boxed'            => 'boxed',
+				'feature'          => 'hide',
+				'comments'         => 'hide',
+				'navigation'       => 'hide',
+				'title'            => 'normal',
+				'sidebar'          => 'none',
+				'padding'         => 'show',
+			);
+			$post_layout = apply_filters( 'kadence_post_layout', $post_layout );
 
 			$postlayout   = get_post_meta( $post->ID, '_kad_post_layout', true );
 			$postboxed    = get_post_meta( $post->ID, '_kad_post_content_style', true );
@@ -88,71 +91,71 @@ class Component implements Component_Interface {
 			$posttitle    = get_post_meta( $post->ID, '_kad_post_title', true );
 			$postsidebar  = get_post_meta( $post->ID, '_kad_post_layout', true );
 			if ( isset( $postlayout ) && ( 'left' === $postsidebar || 'right' === $postsidebar ) ) {
-				$sidebar = $postlayout;
+				$post_layout['sidebar'] = $postlayout;
 			} elseif ( ( isset( $postlayout ) && 'default' === $postlayout ) || empty( $postlayout ) ) {
 				$option_layout = kadence()->option( $post_type . '_layout' );
 				if ( 'left' === $option_layout || 'right' === $option_layout ) {
-					$sidebar = $option_layout;
+					$post_layout['sidebar'] = $option_layout;
 				}
 			}
 			if ( isset( $posttitle ) && ( 'above' === $posttitle || 'normal' === $posttitle || 'hide' === $posttitle ) ) {
-				$title = $posttitle;
+				$post_layout['title'] = $posttitle;
 			} else {
 				$option_title = kadence()->option( $post_type . '_title' );
 				if ( false === $option_title ) {
-					$title = 'hide';
+					$post_layout['title'] = 'hide';
 				} else {
 					$option_title_layout = kadence()->option( $post_type . '_title_layout' );
 					if ( 'above' === $option_title_layout || 'normal' === $option_title_layout ) {
-						$title = $option_title_layout;
+						$post_layout['title'] = $option_title_layout;
 					}
 				}
 			}
 			if ( isset( $postnav ) && ( 'show' === $postnav || 'hide' === $postnav ) ) {
-				$navigation = $postnav;
+				$post_layout['navigation'] = $postnav;
 			} else {
 				$option_nav = kadence()->option( $post_type . '_navigation' );
 				if ( $option_nav ) {
-					$navigation = 'show';
+					$post_layout['navigation'] = 'show';
 				}
 			}
 			if ( isset( $vpadding ) && ( 'show' === $vpadding || 'hide' === $vpadding ) ) {
-				$padding = $vpadding;
+				$post_layout['padding'] = $vpadding;
 			} else {
 				$option_padding = kadence()->option( $post_type . '_vertical_padding' );
 				if ( $option_padding ) {
-					$padding = 'show';
+					$post_layout['padding'] = 'show';
 				}
 			}
 			if ( isset( $postboxed ) && ( 'unboxed' === $postboxed || 'boxed' === $postboxed ) ) {
-				$boxed = $postboxed;
+				$post_layout['boxed'] = $postboxed;
 			} else {
 				$option_boxed = kadence()->option( $post_type . '_content_style' );
 				if ( 'unboxed' === $option_boxed || 'boxed' === $option_boxed ) {
-					$boxed = $option_boxed;
+					$post_layout['boxed'] = $option_boxed;
 				}
 			}
 			if ( isset( $postfeature ) && ( 'show' === $postfeature || 'hide' === $postfeature ) ) {
-				$feature = $postfeature;
+				$post_layout['feature'] = $postfeature;
 			} else {
 				$option_feature = kadence()->option( $post_type . '_feature' );
 				if ( $option_feature ) {
-					$feature = 'show';
+					$post_layout['feature'] = 'show';
 				}
 			}
 			if ( isset( $postlayout ) && ( 'narrow' === $postlayout || 'fullwidth' === $postlayout ) ) {
-				$layout = $postlayout;
+				$post_layout['layout'] = $postlayout;
 			} else if ( isset( $postlayout ) && ( 'left' === $postlayout || 'right' === $postlayout ) ) {
-				$layout = 'narrow';
+				$post_layout['layout'] = 'narrow';
 			} elseif ( ( isset( $postlayout ) && 'default' === $postlayout ) || empty( $postlayout ) ) {
 				$option_layout = kadence()->option( $post_type . '_layout' );
 				if ( 'narrow' === $option_layout || 'fullwidth' === $option_layout ) {
-					$layout = $option_layout;
+					$post_layout['layout'] = $option_layout;
 				} else if ( 'left' === $option_layout || 'right' === $option_layout ) {
-					$layout = 'narrow';
+					$post_layout['layout'] = 'narrow';
 				}
 			}
-			$classes .= ' post-content-width-' . esc_attr( $layout ) . '  post-content-style-' . esc_attr( $boxed ) . '  post-content-vertical-padding-' . esc_attr( $padding ) . ' post-content-title-' . esc_attr( $title ) . '  post-content-sidebar-' . esc_attr( $sidebar) . ' ';
+			$classes .= ' post-content-width-' . esc_attr( $post_layout['layout'] ) . '  post-content-style-' . esc_attr( $post_layout['boxed'] ) . '  post-content-vertical-padding-' . esc_attr( $post_layout['padding'] ) . ' post-content-title-' . esc_attr( $post_layout['title'] ) . '  post-content-sidebar-' . esc_attr( $post_layout['sidebar'] ) . ' ';
 		}
 		return $classes;
 	}

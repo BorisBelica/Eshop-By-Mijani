@@ -32,7 +32,7 @@ $settings        = array(
 	'footer_html_content' => array(
 		'control_type' => 'kadence_editor_control',
 		'section'      => 'footer_html',
-		'description'  => esc_html__( 'Availbile Placeholders: {copyright} {year} {site-title} {theme-credit}', 'kadence' ),
+		'description'  => esc_html__( 'Available Placeholders: {copyright} {year} {site-title} {theme-credit}', 'kadence' ),
 		'priority'     => 4,
 		'default'      => kadence()->default( 'footer_html_content' ),
 		'context'      => array(
@@ -192,7 +192,7 @@ $settings        = array(
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(

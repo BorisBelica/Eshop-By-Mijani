@@ -26,8 +26,8 @@ namespace Kadence;
 	do_action( 'kadence_after_footer' );
 	?>
 </div><!-- #wrapper -->
+<?php do_action( 'kadence_after_wrapper' ); ?>
 
 <?php wp_footer(); ?>
-
 </body>
 </html>

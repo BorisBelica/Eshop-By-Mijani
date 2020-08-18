@@ -102,6 +102,11 @@ class CheckIconComponent extends Component {
 												{ <Dashicon icon={this.controlParams.options[ item ].icon}/> }
 											</span>
 										) }
+										{ ! this.controlParams.options[ item ].icon && (
+											<span className="kadence-radio-name">
+												{ this.controlParams.options[ item ].name }
+											</span>
+										) }
 									</Button>
 								</Tooltip>
 							</Fragment>

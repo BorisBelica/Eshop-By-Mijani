@@ -13,7 +13,6 @@ use function Kadence\kadence;
 use function add_action;
 use function add_filter;
 use function register_sidebar;
-use function esc_html__;
 use function is_active_sidebar;
 use function dynamic_sidebar;
 
@@ -133,7 +132,7 @@ class Component implements Component_Interface, Templating_Component_Interface {
 			'mobile_transparent_header' => array( $this, 'mobile_transparent_header' ),
 			'has_header'                => array( $this, 'has_header' ),
 			'has_footer'                => array( $this, 'has_footer' ),
-			'has_content'                => array( $this, 'has_content' ),
+			'has_content'               => array( $this, 'has_content' ),
 		);
 	}
 
@@ -507,6 +506,11 @@ class Component implements Component_Interface, Templating_Component_Interface {
 			// Title.
 			if ( isset( $posttitle ) && ( 'above' === $posttitle || 'normal' === $posttitle || 'hide' === $posttitle ) ) {
 				$title = $posttitle;
+			} elseif ( isset( $posttitle ) && 'show' === $posttitle ) {
+				$option_title_layout = kadence()->option( $post_type . '_title_layout' );
+				if ( 'above' === $option_title_layout || 'normal' === $option_title_layout ) {
+					$title = $option_title_layout;
+				}
 			} else {
 				$option_title = kadence()->option( $post_type . '_title' );
 				if ( false === $option_title ) {
@@ -667,7 +671,7 @@ class Component implements Component_Interface, Templating_Component_Interface {
 				$archive_type = 'ht_kb_archive';
 				$trans_type   = 'archive';
 			} elseif ( is_search() ) {
-				$archive_type = 'search';
+				$archive_type = 'search_archive';
 				$trans_type = 'archive';
 			} elseif ( is_404() ) {
 				$archive_type = '404';
@@ -676,7 +680,8 @@ class Component implements Component_Interface, Templating_Component_Interface {
 				$archive_type = 'post_archive';
 				$trans_type = 'archive';
 			} else {
-				$archive_type = 'post_archive';
+				$post_type  = get_post_type();
+				$archive_type = $post_type . '_archive';
 				$trans_type = 'archive';
 			}
 			// Sidebar ID.
@@ -703,6 +708,9 @@ class Component implements Component_Interface, Templating_Component_Interface {
 					$title = 'hide';
 				} else {
 					$option_title_layout = kadence()->option( $archive_type . '_title_layout' );
+					if ( empty( $option_title_layout ) ) {
+						$option_title_layout = kadence()->option( 'post_archive_title_layout' );
+					}
 					if ( 'above' === $option_title_layout || 'normal' === $option_title_layout ) {
 						$title = $option_title_layout;
 					}
@@ -724,6 +732,9 @@ class Component implements Component_Interface, Templating_Component_Interface {
 				$boxed = $archiveboxed;
 			} else {
 				$option_boxed = kadence()->option( $archive_type . '_content_style' );
+				if ( empty( $option_boxed ) ) {
+					$option_boxed = kadence()->option( 'post_archive_content_style' );
+				}
 				if ( 'unboxed' === $option_boxed || 'boxed' === $option_boxed ) {
 					$boxed = $option_boxed;
 				}
@@ -733,6 +744,9 @@ class Component implements Component_Interface, Templating_Component_Interface {
 				$vpadding = $archivevpadding;
 			} else {
 				$option_vpadding = kadence()->option( $archive_type . '_vertical_padding' );
+				if ( empty( $option_vpadding ) ) {
+					$option_vpadding = kadence()->option( 'post_archive_vertical_padding' );
+				}
 				if ( $option_vpadding ) {
 					$vpadding = 'hide';
 				}
@@ -742,6 +756,9 @@ class Component implements Component_Interface, Templating_Component_Interface {
 				$layout = $archivelayout;
 			} elseif ( ( isset( $archivelayout ) && 'default' === $archivelayout ) || empty( $archivelayout ) ) {
 				$option_layout = kadence()->option( $archive_type . '_layout' );
+				if ( empty( $option_layout ) ) {
+					$option_layout = kadence()->option( 'post_archive_layout' );
+				}
 				if ( 'narrow' === $option_layout || 'fullwidth' === $option_layout ) {
 					$layout = $option_layout;
 				}
@@ -752,6 +769,9 @@ class Component implements Component_Interface, Templating_Component_Interface {
 				$sidebar = 'enable';
 			} elseif ( ( isset( $archivelayout ) && 'default' === $archivelayout ) || empty( $archivelayout ) ) {
 				$option_layout = kadence()->option( $archive_type . '_layout' );
+				if ( empty( $option_layout ) ) {
+					$option_layout = kadence()->option( 'post_archive_layout' );
+				}
 				if ( 'left' === $option_layout || 'right' === $option_layout ) {
 					$side    = $option_layout;
 					$sidebar = 'enable';

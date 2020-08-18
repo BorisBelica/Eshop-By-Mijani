@@ -50,8 +50,9 @@ class Component implements Component_Interface {
 		add_theme_support(
 			'infinite-scroll',
 			array(
-				'container' => 'primary',
-				'footer'    => 'page',
+				'container' => 'archive-container',
+				'footer'    => false,
+				'wrapper'   => false,
 				'render'    => function() {
 					while ( have_posts() ) {
 						the_post();

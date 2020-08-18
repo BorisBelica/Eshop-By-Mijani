@@ -162,3 +162,12 @@ body:not(.mce-content-body):before {
     left: 50%;
     transform: translate(-50%, 0);
 }
+.kt-post-grid-item .kt-blocks-post-excerpt p {
+	margin-bottom: 0;
+}
+.kadence-inner-column-inner > .block-editor-inner-blocks > .block-editor-block-list__layout > .wp-block[data-type="kadence/advancedheading"]:first-child .wp-block-kadence-advancedheading {
+    margin-top: 0;
+}
+.product-details.content-bg {
+	background: var( --global-palette9 );
+}

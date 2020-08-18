@@ -1,4 +1,4 @@
-.customize-control:not(.customize-control-kadence_blank_control) + .customize-control {
+.customize-control:not(.customize-control-kadence_blank_control):not(.customize-control-kadence_tab_control) + .customize-control {
     border-top: 1px solid #ddd;
     padding-top: 10px;
 }
@@ -44,7 +44,8 @@
     }
 }
 .kadence-compontent-tabs {
-    display: flex;
+	display: flex;
+	width:auto;
     margin-top: -15px;
     margin-left: -24px;
     margin-right: -24px;

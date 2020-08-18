@@ -91,12 +91,12 @@ class ColorControl extends Component {
 									tabs={ [
 										{
 											name: 'color',
-											title: __( 'Color', 'kadence-blocks' ),
+											title: __( 'Color', 'kadence' ),
 											className: 'kadence-color-background',
 										},
 										{
 											name: 'gradient',
-											title: __( 'Gradient', 'kadence-blocks' ),
+											title: __( 'Gradient', 'kadence' ),
 											className: 'kadence-gradient-background',
 										}
 									] }>

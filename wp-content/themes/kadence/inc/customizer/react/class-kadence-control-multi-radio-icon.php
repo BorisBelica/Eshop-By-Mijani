@@ -45,5 +45,10 @@ class Kadence_Control_Multi_Radio_Icon extends WP_Customize_Control {
 		$this->json['default']     = $this->default;
 		$this->json['input_attrs'] = $this->input_attrs;
 	}
+	/**
+	 * Empty Render Function to prevent errors.
+	 */
+	public function render_content() {
+	}
 }
 $wp_customize->register_control_type( 'Kadence_Control_Multi_Radio_Icon' );

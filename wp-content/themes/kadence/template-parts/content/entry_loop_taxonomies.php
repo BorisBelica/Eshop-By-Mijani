@@ -7,7 +7,8 @@
 
 namespace Kadence;
 
-$elements = kadence()->option( 'post_archive_element_categories' );
+$slug     = ( is_search() ? 'search' : 'post' );
+$elements = kadence()->option( $slug . '_archive_element_categories' );
 if ( isset( $elements ) && is_array( $elements ) && true === $elements['enabled'] ) {
 	$divider  = ( isset( $elements['divider'] ) && ! empty( $elements['divider'] ) ? $elements['divider'] : 'vline' );
 	$style    = ( isset( $elements['style'] ) && ! empty( $elements['style'] ) ? $elements['style'] : 'normal' );

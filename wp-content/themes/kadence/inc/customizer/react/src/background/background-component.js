@@ -15,8 +15,9 @@ const {
 	TabPanel,
 	__experimentalGradientPicker,
 } = wp.components;
-import { SketchPicker } from 'react-color';
-import ColorControl from '../common/color.js';
+// import { SketchPicker } from 'react-color';
+// import ColorControl from '../common/color.js';
+import KadenceGradientPicker from './gradient-component.js';
 import KadenceColorPicker from '../common/color-picker';
 import ResponsiveControl from '../common/responsive';
 import SwatchesControl from '../common/swatches';
@@ -475,17 +476,17 @@ class BackgroundComponent extends Component {
 			tab_options = [
 				{
 					name: 'color',
-					title: __( 'Color', 'kadence-blocks' ),
+					title: __( 'Color', 'kadence' ),
 					className: 'kadence-color-background',
 				},
 				{
 					name: 'gradient',
-					title: __( 'Gradient', 'kadence-blocks' ),
+					title: __( 'Gradient', 'kadence' ),
 					className: 'kadence-gradient-background',
 				},
 				{
 					name: 'image',
-					title: __( 'Image', 'kadence-blocks' ),
+					title: __( 'Image', 'kadence' ),
 					className: 'kadence-image-background',
 				},
 			];
@@ -493,12 +494,12 @@ class BackgroundComponent extends Component {
 			tab_options = [
 				{
 					name: 'color',
-					title: __( 'Color', 'kadence-blocks' ),
+					title: __( 'Color', 'kadence' ),
 					className: 'kadence-color-background',
 				},
 				{
 					name: 'image',
-					title: __( 'Image', 'kadence-blocks' ),
+					title: __( 'Image', 'kadence' ),
 					className: 'kadence-image-background',
 				},
 			];
@@ -652,9 +653,10 @@ class BackgroundComponent extends Component {
 												} else if ( 'gradient' === tab.name ) {
 														tabout = (
 															<Fragment>
-																<__experimentalGradientPicker
+																<KadenceGradientPicker
 																	value={ undefined !== this.state.value[ this.state.currentDevice ].gradient && '' !== this.state.value[ this.state.currentDevice ].gradient ? this.state.value[ this.state.currentDevice ].gradient : '' }
 																	onChange={ ( newGradient ) => this.onGradientChangeComplete( newGradient, this.state.currentDevice ) }
+																	activePalette={ ( this.state.colorPalette[ this.state.activePalette ] ? this.state.colorPalette[ this.state.activePalette ] : [] ) }
 																/>
 															</Fragment>
 														);

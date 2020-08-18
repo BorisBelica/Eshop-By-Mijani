@@ -45,6 +45,7 @@
 				controls: ( 'false' === sliderArrows ? false : true ),
 				nav: ( 'false' === sliderDots ? false : true ),
 				gutter: gutter,
+				textDirection: slideRtl,
 				responsive: {
 					543: {
 						items: xs

@@ -80,6 +80,27 @@ Theme_Customizer::add_settings(
 			'default'      => kadence()->default( 'header_button_target' ),
 			'label'        => esc_html__( 'Open in New Tab?', 'kadence' ),
 		),
+		'header_button_nofollow' => array(
+			'control_type' => 'kadence_switch_control',
+			'section'      => 'header_button',
+			'priority'     => 6,
+			'default'      => kadence()->default( 'header_button_nofollow' ),
+			'label'        => esc_html__( 'Set link to nofollow?', 'kadence' ),
+		),
+		'header_button_sponsored' => array(
+			'control_type' => 'kadence_switch_control',
+			'section'      => 'header_button',
+			'priority'     => 6,
+			'default'      => kadence()->default( 'header_button_sponsored' ),
+			'label'        => esc_html__( 'Set link attribute Sponsored?', 'kadence' ),
+		),
+		'header_button_download' => array(
+			'control_type' => 'kadence_switch_control',
+			'section'      => 'header_button',
+			'priority'     => 6,
+			'default'      => kadence()->default( 'header_button_download' ),
+			'label'        => esc_html__( 'Set link to Download?', 'kadence' ),
+		),
 		'header_button_style' => array(
 			'control_type' => 'kadence_radio_icon_control',
 			'section'      => 'header_button',
@@ -102,6 +123,32 @@ Theme_Customizer::add_settings(
 					'outline' => array(
 						'name'    => __( 'Outline', 'kadence' ),
 						'icon'    => '',
+					),
+				),
+				'responsive' => false,
+			),
+		),
+		'header_button_visibility' => array(
+			'control_type' => 'kadence_radio_icon_control',
+			'section'      => 'header_button',
+			'priority'     => 6,
+			'default'      => kadence()->default( 'header_button_visibility' ),
+			'label'        => esc_html__( 'Button Visibility', 'kadence' ),
+			'partial'      => array(
+				'selector'            => '.header-button-wrap',
+				'container_inclusive' => true,
+				'render_callback'     => 'Kadence\header_button',
+			),
+			'input_attrs'  => array(
+				'layout' => array(
+					'all' => array(
+						'name'    => __( 'Everyone', 'kadence' ),
+					),
+					'loggedout' => array(
+						'name'    => __( 'Logged Out Only', 'kadence' ),
+					),
+					'loggedin' => array(
+						'name'    => __( 'Logged In Only', 'kadence' ),
 					),
 				),
 				'responsive' => false,
@@ -192,7 +239,7 @@ Theme_Customizer::add_settings(
 			'input_attrs'  => array(
 				'colors' => array(
 					'color' => array(
-						'tooltip' => __( 'Inital Color', 'kadence' ),
+						'tooltip' => __( 'Initial Color', 'kadence' ),
 						'palette' => true,
 					),
 					'hover' => array(
@@ -233,7 +280,7 @@ Theme_Customizer::add_settings(
 			'input_attrs'  => array(
 				'colors' => array(
 					'color' => array(
-						'tooltip' => __( 'Inital Color', 'kadence' ),
+						'tooltip' => __( 'Initial Color', 'kadence' ),
 						'palette' => true,
 					),
 					'hover' => array(
@@ -267,7 +314,7 @@ Theme_Customizer::add_settings(
 			'input_attrs'  => array(
 				'colors' => array(
 					'color' => array(
-						'tooltip' => __( 'Inital Color', 'kadence' ),
+						'tooltip' => __( 'Initial Color', 'kadence' ),
 						'palette' => true,
 					),
 					'hover' => array(
@@ -347,7 +394,7 @@ Theme_Customizer::add_settings(
 			'live_method'     => array(
 				array(
 					'type'     => 'css',
-					'selector' => '#main-header .header-button-wrap',
+					'selector' => '#main-header .header-button',
 					'property' => 'margin',
 					'pattern'  => '$',
 					'key'      => 'measure',

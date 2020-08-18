@@ -133,7 +133,7 @@ $settings = array(
 			),
 		),
 		'partial'      => array(
-			'selector'            => '.header-button-wrap',
+			'selector'            => '.mobile-header-button-wrap',
 			'container_inclusive' => true,
 			'render_callback'     => 'Kadence\mobile_button',
 		),
@@ -149,6 +149,64 @@ $settings = array(
 				'setting' => '__current_tab',
 				'value'   => 'general',
 			),
+		),
+	),
+	'mobile_button_nofollow' => array(
+		'control_type' => 'kadence_switch_control',
+		'section'      => 'mobile_button',
+		'priority'     => 6,
+		'default'      => kadence()->default( 'mobile_button_nofollow' ),
+		'label'        => esc_html__( 'Set link to nofollow?', 'kadence' ),
+		'context'      => array(
+			array(
+				'setting' => '__current_tab',
+				'value'   => 'general',
+			),
+		),
+	),
+	'mobile_button_sponsored' => array(
+		'control_type' => 'kadence_switch_control',
+		'section'      => 'mobile_button',
+		'priority'     => 6,
+		'default'      => kadence()->default( 'mobile_button_sponsored' ),
+		'label'        => esc_html__( 'Set link attribute Sponsored?', 'kadence' ),
+		'context'      => array(
+			array(
+				'setting' => '__current_tab',
+				'value'   => 'general',
+			),
+		),
+	),
+	'mobile_button_visibility' => array(
+		'control_type' => 'kadence_radio_icon_control',
+		'section'      => 'mobile_button',
+		'priority'     => 4,
+		'default'      => kadence()->default( 'mobile_button_visibility' ),
+		'label'        => esc_html__( 'Button Visibility', 'kadence' ),
+		'context'      => array(
+			array(
+				'setting' => '__current_tab',
+				'value'   => 'general',
+			),
+		),
+		'partial'      => array(
+			'selector'            => '.mobile-header-button-wrap',
+			'container_inclusive' => true,
+			'render_callback'     => 'Kadence\mobile_button',
+		),
+		'input_attrs'  => array(
+			'layout' => array(
+				'all' => array(
+					'name'    => __( 'Everyone', 'kadence' ),
+				),
+				'loggedout' => array(
+					'name'    => __( 'Logged Out Only', 'kadence' ),
+				),
+				'loggedin' => array(
+					'name'    => __( 'Logged In Only', 'kadence' ),
+				),
+			),
+			'responsive' => false,
 		),
 	),
 	'mobile_button_color' => array(
@@ -181,7 +239,7 @@ $settings = array(
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(
@@ -226,7 +284,7 @@ $settings = array(
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(
@@ -266,7 +324,7 @@ $settings = array(
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(

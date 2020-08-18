@@ -15,6 +15,17 @@ if ( ! kadence()->has_sidebar() ) {
 kadence()->print_styles( 'kadence-sidebar' );
 
 ?>
-<aside id="secondary" class="primary-sidebar widget-area <?php echo esc_attr( kadence()->sidebar_id_class() ); ?>">
-	<?php kadence()->display_sidebar(); ?>
+<aside id="secondary" role="complementary" class="primary-sidebar widget-area <?php echo esc_attr( kadence()->sidebar_id_class() ); ?>">
+	<?php
+	/**
+	 * Hook for before sidebar.
+	 */
+	do_action( 'kadence_before_sidebar' );
+
+	kadence()->display_sidebar();
+	/**
+	 * Hook for after sidebar.
+	 */
+	do_action( 'kadence_after_sidebar' );
+	?>
 </aside><!-- #secondary -->

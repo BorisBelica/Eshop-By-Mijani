@@ -15,7 +15,6 @@ use WP_Query;
 use function add_action;
 use function add_filter;
 use function register_nav_menus;
-use function esc_html__;
 use function has_nav_menu;
 use function wp_nav_menu;
 
@@ -94,7 +93,7 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	 *
 	 * @param string   $title The menu item's title.
 	 * @param object   $item  The current menu item usually a post object.
-	 * @param stdClass $args  An object of wp_nav_menu() arguments.
+	 * @param stdClass $args  An object of wp_nav_menu arguments.
 	 * @param int      $depth Depth of menu item. Used for padding.
 	 */
 	public function filter_primary_nav_menu_dropdown_symbol( $title, $item, $args, int $depth ) {
@@ -121,7 +120,7 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	 * @param string $item_output The menu item's starting HTML output.
 	 * @param object $item        Menu item data object.
 	 * @param int    $depth       Depth of menu item. Used for padding.
-	 * @param object $args        An object of wp_nav_menu() arguments.
+	 * @param object $args        An object of wp_nav_menu.
 	 * @return string Modified nav menu HTML.
 	 */
 	public function filter_mobile_nav_menu_dropdown_symbol( $item_output, $item, int $depth, $args ) {
@@ -182,7 +181,7 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	/**
 	 * Displays the fallback page navigation menu.
 	 *
-	 * @param array $args Optional. Array of arguments. See `wp_page_menu()` documentation for a list of supported.
+	 * @param array $args Optional. Array of arguments. See wp page menu documentation for a list of supported.
 	 */
 	public function display_fallback_menu( array $args = array() ) {
 		$latest   = new WP_Query(
@@ -212,7 +211,7 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	/**
 	 * Displays the primary navigation menu.
 	 *
-	 * @param array $args Optional. Array of arguments. See `wp_nav_menu()` documentation for a list of supported arguments.
+	 * @param array $args Optional. Array of arguments. See wp nav menu documentation for a list of supported arguments.
 	 */
 	public function display_mobile_nav_menu( array $args = array() ) {
 		if ( ! isset( $args['container'] ) ) {
@@ -227,7 +226,7 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	/**
 	 * Displays the primary navigation menu.
 	 *
-	 * @param array $args Optional. Array of arguments. See `wp_nav_menu()` documentation for a list of supported arguments.
+	 * @param array $args Optional. Array of arguments. See wp nav menu documentation for a list of supported arguments.
 	 */
 	public function display_primary_nav_menu( array $args = array() ) {
 		if ( ! isset( $args['container'] ) ) {
@@ -240,7 +239,7 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	/**
 	 * Displays the Secondary navigation menu.
 	 *
-	 * @param array $args Optional. Array of arguments. See `wp_nav_menu()` documentation for a list of supported arguments.
+	 * @param array $args Optional. Array of arguments. See wp nav menu documentation for a list of supported arguments.
 	 */
 	public function display_secondary_nav_menu( array $args = array() ) {
 		if ( ! isset( $args['container'] ) ) {
@@ -253,7 +252,7 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	/**
 	 * Displays the footer navigation menu.
 	 *
-	 * @param array $args Optional. Array of arguments. See `wp_nav_menu()` documentation for a list of supported arguments.
+	 * @param array $args Optional. Array of arguments. See wp nav menu documentation for a list of supported arguments.
 	 */
 	public function display_footer_nav_menu( array $args = array() ) {
 		if ( ! isset( $args['container'] ) ) {

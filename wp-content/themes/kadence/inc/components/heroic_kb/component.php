@@ -36,9 +36,9 @@ class Component implements Component_Interface {
 	 */
 	public function initialize() {
 		// Heroic Knowledge Base.
-		//add_filter( 'hkb_locate_template', array( $this, 'output_edited_search' ), 10 );
-		add_filter( 'hkb_show_knowledgebase_search', array( $this, 'override_search_location' ), 10 );
-		add_filter( 'hkb_show_knowledgebase_breadcrumbs', array( $this, 'override_search_location' ), 10 );
+		//add_filter( 'hkb_locate_template', array( $this, 'output_edited_search' ) );
+		add_filter( 'hkb_show_knowledgebase_search', array( $this, 'override_search_location' ) );
+		add_filter( 'hkb_show_knowledgebase_breadcrumbs', array( $this, 'override_search_location' ) );
 		add_action( 'kadence_entry_archive_hero', array( $this, 'ht_knowledge_base_breadcrumb_in_title' ), 5 );
 		add_action( 'kadence_entry_archive_header', array( $this, 'ht_knowledge_base_breadcrumb_in_title' ), 5 );
 		//add_action( 'kadence_entry_header', array( $this, 'ht_knowledge_base_breadcrumb_in_title' ), 5 );

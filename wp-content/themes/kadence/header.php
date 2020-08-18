@@ -32,6 +32,12 @@ namespace Kadence;
 
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
+<?php
+/**
+ * Kadence before wrapper hook.
+ */
+do_action( 'kadence_before_wrapper' );
+?>
 <div id="wrapper" class="site">
 	<?php
 	/**

@@ -9,7 +9,7 @@ namespace Kadence;
 
 $row = get_query_var( 'row' );
 ?>
-<div class="site-<?php echo esc_attr( $row ); ?>-header-wrap site-header-row-container site-header-focus-item site-header-row-layout-<?php echo esc_attr( kadence()->sub_option( 'header_' . $row . '_layout', 'desktop' ) ); ?><?php echo esc_attr( kadence()->option( 'header_sticky' ) === $row ? ' kadence-sticky-header' : '' ); ?>" data-section="kadence_customizer_header_<?php echo esc_attr( $row ); ?>"<?php
+<div class="<?php echo esc_attr( header_row_class( $row ) ); ?>" data-section="kadence_customizer_header_<?php echo esc_attr( $row ); ?>"<?php
 if ( 'main' === $row && 'main' === kadence()->option( 'header_sticky' ) ) {
 	echo ' data-shrink="' . ( kadence()->option( 'header_sticky_shrink' ) ? 'true' : 'false' ) . '"';
 	if ( kadence()->option( 'header_sticky_shrink' ) ) {
@@ -18,11 +18,7 @@ if ( 'main' === $row && 'main' === kadence()->option( 'header_sticky' ) ) {
 }
 ?>>
 	<div class="site-header-row-container-inner">
-		<?php if ( is_customize_preview() ) { ?>
-			<div class="customize-partial-edit-shortcut kadence-custom-partial-edit-shortcut">
-				<button aria-label="<?php esc_attr_e( 'Click to edit this element.', 'kadence' ); ?>" title="<?php esc_attr_e( 'Click to edit this element.', 'kadence' ); ?>" class="customize-partial-edit-shortcut-button item-customizer-focus"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13.89 3.39l2.71 2.72c.46.46.42 1.24.03 1.64l-8.01 8.02-5.56 1.16 1.16-5.58s7.6-7.63 7.99-8.03c.39-.39 1.22-.39 1.68.07zm-2.73 2.79l-5.59 5.61 1.11 1.11 5.54-5.65zm-2.97 8.23l5.58-5.6-1.07-1.08-5.59 5.6z"></path></svg></button>
-			</div>
-		<?php } ?>
+		<?php kadence()->customizer_quick_link(); ?>
 		<div class="site-container">
 			<div class="site-<?php echo esc_attr( $row ); ?>-header-inner-wrap site-header-row <?php echo ( kadence()->has_side_columns( $row ) ? 'site-header-row-has-sides' : 'site-header-row-only-center-column' ); ?> <?php echo ( kadence()->has_center_column( $row ) ? 'site-header-row-center-column' : 'site-header-row-no-center' ); ?>">
 				<?php if ( kadence()->has_side_columns( $row ) ) { ?>

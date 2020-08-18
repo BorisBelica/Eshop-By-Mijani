@@ -37,5 +37,10 @@ class Kadence_Control_Switch extends WP_Customize_Control {
 		parent::to_json();
 		$this->json['default'] = $this->default;
 	}
+	/**
+	 * Empty Render Function to prevent errors.
+	 */
+	public function render_content() {
+	}
 }
 $wp_customize->register_control_type( 'Kadence_Control_Switch' );

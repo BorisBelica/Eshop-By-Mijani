@@ -164,8 +164,8 @@ class ThemeUpdateChecker {
     ?>
         <div class="notice notice-error">
             <p>
-                <strong><?= $themeName; ?>:  </strong>
-                <?= $this->licenseErrorMessage; ?>
+                <strong><?php $themeName; ?>:  </strong>
+                <?php $this->licenseErrorMessage; ?>
             </p>
         </div>
     <?php

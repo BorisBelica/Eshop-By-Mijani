@@ -10,11 +10,9 @@ namespace Kadence;
 kadence()->print_styles( 'kadence-header' );
 //delete_option('kadence_global_palette');
 //delete_option('theme_mods_kadence');
-//print_r( get_option('kadence_global_palette') );
-//print_r( get_option('theme_mods_kadence') );
 
 ?>
-<header id="masthead" class="site-header" <?php kadence()->print_microdata( 'header' ); ?>>
+<header id="masthead" class="site-header" role="banner" <?php kadence()->print_microdata( 'header' ); ?>>
 	<div id="main-header" class="site-header-wrap">
 		<div class="site-header-inner-wrap<?php echo esc_attr( 'top_main_bottom' === kadence()->option( 'header_sticky' ) ? ' kadence-sticky-header' : '' ); ?>"<?php
 		if ( 'top_main_bottom' === kadence()->option( 'header_sticky' ) ) {

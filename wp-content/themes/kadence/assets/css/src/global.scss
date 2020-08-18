@@ -28,7 +28,9 @@
 .body {
 	overflow-x: hidden;
 }
-
+.scroll a *, a.scroll * {
+	pointer-events: none;
+}
 .content-width-fullwidth .content-container.site-container {
     max-width: none;
     padding: 0;
@@ -145,7 +147,12 @@
 		display:none !important;
 	}
 }
-
+body.logged-in .vs-logged-in-false {
+	display:none !important;
+}
+body:not(.logged-in) .vs-logged-out-false {
+	display:none !important;
+}
 /*--------------------------------------------------------------
 # Infinite scroll
 --------------------------------------------------------------*/

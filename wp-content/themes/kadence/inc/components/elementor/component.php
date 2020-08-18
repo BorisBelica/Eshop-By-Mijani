@@ -103,13 +103,13 @@ class Component implements Component_Interface {
 		add_theme_support( 'header-footer-elementor' );
 		if ( function_exists( 'hfe_header_enabled' ) ) {
 			if ( hfe_header_enabled() ) {
-				add_action( 'template_redirect', array( $this, 'remove_theme_header' ), 10 );
+				add_action( 'template_redirect', array( $this, 'remove_theme_header' ) );
 				add_action( 'kadence_header', 'hfe_render_header' );
 			}
 		}
 		if ( function_exists( 'hfe_footer_enabled' ) ) {
 			if ( hfe_footer_enabled() ) {
-				add_action( 'template_redirect', array( $this, 'remove_theme_footer' ), 10 );
+				add_action( 'template_redirect', array( $this, 'remove_theme_footer' ) );
 				add_action( 'kadence_footer', 'hfe_render_footer' );
 			}
 		}

@@ -110,7 +110,7 @@ class AvailableComponent extends Component {
 				{ Object.keys( this.choices ).map( ( item ) => {
 					return renderItem( item, 'links' );
 				} ) }
-				<div className="kadence-availbile-items-title">
+				<div className="kadence-available-items-title">
 					<span className="customize-control-title">{ __( 'Available Items', 'kadence' ) }</span>
 				</div>
 				<div className="kadence-available-items-pool">

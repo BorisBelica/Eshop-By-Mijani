@@ -55,7 +55,7 @@ $settings = array(
 		'section'      => 'header_search',
 		'priority'     => 10,
 		'default'      => kadence()->default( 'header_search_label_visiblity' ),
-		'label'        => esc_html__( 'Search Label Visiblity', 'kadence' ),
+		'label'        => esc_html__( 'Search Label Visibility', 'kadence' ),
 		'context'      => array(
 			array(
 				'setting' => '__current_tab',
@@ -253,7 +253,7 @@ $settings = array(
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(
@@ -293,7 +293,7 @@ $settings = array(
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Background', 'kadence' ),
+					'tooltip' => __( 'Initial Background', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(
@@ -377,7 +377,7 @@ $settings = array(
 		'live_method'     => array(
 			array(
 				'type'     => 'css',
-				'selector' => '.search-toggle-open-container',
+				'selector' => '.search-toggle-open-container .search-toggle-open',
 				'property' => 'margin',
 				'pattern'  => '$',
 				'key'      => 'measure',
@@ -431,7 +431,7 @@ $settings = array(
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(

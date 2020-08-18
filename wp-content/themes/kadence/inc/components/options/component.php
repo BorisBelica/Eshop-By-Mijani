@@ -204,6 +204,19 @@ class Component implements Component_Interface, Templating_Component_Interface {
 							'desktop' => 'rem',
 						),
 					),
+					'boxed_shadow' => array(
+						'color'   => 'rgba(0,0,0,0.05)',
+						'hOffset' => 0,
+						'vOffset' => 15,
+						'blur'    => 15,
+						'spread'  => -10,
+						'inset'   => false,
+					),
+					'boxed_border_radius' => array(
+						'size'   => array( '', '', '', '' ),
+						'unit'   => 'px',
+						'locked' => true,
+					),
 					'boxed_grid_spacing'   => array(
 						'size' => array(
 							'mobile'  => 1.5,
@@ -215,6 +228,19 @@ class Component implements Component_Interface, Templating_Component_Interface {
 							'tablet'  => 'rem',
 							'desktop' => 'rem',
 						),
+					),
+					'boxed_grid_shadow' => array(
+						'color'   => 'rgba(0,0,0,0.05)',
+						'hOffset' => 0,
+						'vOffset' => 15,
+						'blur'    => 15,
+						'spread'  => -10,
+						'inset'   => false,
+					),
+					'boxed_grid_border_radius' => array(
+						'size'   => array( '', '', '', '' ),
+						'unit'   => 'px',
+						'locked' => true,
 					),
 					'site_background'                => array(
 						'desktop' => array(
@@ -543,6 +569,25 @@ class Component implements Component_Interface, Templating_Component_Interface {
 						'variant' => '',
 						'color'   => '',
 					),
+					'google_subsets' => array(
+						'latin-ext' => false,
+						'cyrillic' => false,
+						'cyrillic-ext' => false,
+						'greek' => false,
+						'greek-ext' => false,
+						'vietnamese' => false,
+						'arabic' => false,
+						'khmer' => false,
+						'chinese' => false,
+						'chinese-simplified' => false,
+						'tamil' => false,
+						'bengali' => false,
+						'devanagari' => false,
+						'hebrew' => false,
+						'korean' => false,
+						'thai' => false,
+						'telugu' => false,
+					),
 					// Header.
 					'header_desktop_items'       => array(
 						'top' => array(
@@ -727,6 +772,17 @@ class Component implements Component_Interface, Templating_Component_Interface {
 						'variant' => '700',
 						'color'   => 'palette5',
 					),
+					'header_logo_padding' => array(
+						'size'   => array( 
+							'desktop' => array( '', '', '', '' ),
+						),
+						'unit'   => array(
+							'desktop' => 'px',
+						),
+						'locked' => array(
+							'desktop' => false,
+						),
+					),
 					// Navigation.
 					'primary_navigation_typography'            => array(
 						'size' => array(
@@ -820,6 +876,14 @@ class Component implements Component_Interface, Templating_Component_Interface {
 						'unit'  => 'px',
 						'style' => 'solid',
 						'color' => 'rgba(255,255,255,0.1)',
+					),
+					'dropdown_navigation_shadow'              => array(
+						'color'   => 'rgba(0,0,0,0.1)',
+						'hOffset' => 0,
+						'vOffset' => 2,
+						'blur'    => 13,
+						'spread'  => 0,
+						'inset'   => false,
 					),
 					'dropdown_navigation_typography'            => array(
 						'size' => array(
@@ -952,7 +1016,8 @@ class Component implements Component_Interface, Templating_Component_Interface {
 					'header_button_link'      => '',
 					'header_button_style'      => 'filled',
 					'header_button_size'       => 'medium',
-					'header_button_padding' => array(
+					'header_button_visibility' => 'all',
+					'header_button_padding'   => array(
 						'size'   => array( '', '', '', '' ),
 						'unit'   => 'px',
 						'locked' => false,
@@ -1236,6 +1301,7 @@ class Component implements Component_Interface, Templating_Component_Interface {
 					'mobile_button_label'      => __( 'Button', 'kadence' ),
 					'mobile_button_style'      => 'filled',
 					'mobile_button_size'       => 'medium',
+					'mobile_button_visibility' => 'all',
 					'mobile_button_typography' => array(
 						'size' => array(
 							'desktop' => '',
@@ -1359,11 +1425,7 @@ class Component implements Component_Interface, Templating_Component_Interface {
 							'color' => '',
 						),
 					),
-					'transparent_header_bottom_border'   => array(
-						'width' => 1,
-						'unit'  => 'px',
-						'style' => 'none',
-					),
+					'transparent_header_bottom_border'   => array(),
 					// Sticky Header.
 					'header_sticky'             => 'no',
 					'header_sticky_shrink'      => false,
@@ -1432,11 +1494,7 @@ class Component implements Component_Interface, Templating_Component_Interface {
 							'color' => '',
 						),
 					),
-					'header_sticky_bottom_border'   => array(
-						'width' => 1,
-						'unit'  => 'px',
-						'style' => 'none',
-					),
+					'header_sticky_bottom_border'   => array(),
 					// Footer.
 					'footer_items'       => array(
 						'top' => array(
@@ -2416,11 +2474,147 @@ class Component implements Component_Interface, Templating_Component_Interface {
 					'post_archive_background'         => '',
 					'post_archive_content_background' => '',
 					'post_archive_column_layout'      => 'grid',
+					// Search Results.
+					'search_archive_title'              => true,
+					'search_archive_title_layout'       => 'normal',
+					'search_archive_title_inner_layout' => 'standard',
+					'search_archive_title_height'       => array(
+						'size' => array(
+							'mobile'  => '',
+							'tablet'  => '',
+							'desktop' => '',
+						),
+						'unit' => array(
+							'mobile'  => 'px',
+							'tablet'  => 'px',
+							'desktop' => 'px',
+						),
+					),
+					'search_archive_title_background'    => array(
+						'desktop' => array(
+							'color' => '',
+						),
+					),
+					'search_archive_title_align'        => array(
+						'mobile'  => '',
+						'tablet'  => '',
+						'desktop' => '',
+					),
+					'search_archive_title_overlay_color'              => array(
+						'color' => '',
+					),
+					'search_archive_title_breadcrumb_color' => array(
+						'color' => '',
+						'hover' => '',
+					),
+					'search_archive_title_color' => array(
+						'color' => '',
+					),
+					'search_archive_description_color' => array(
+						'color' => '',
+						'hover' => '',
+					),
+					'search_archive_layout'               => 'normal',
+					'search_archive_content_style'        => 'boxed',
+					'search_archive_columns'              => '3',
+					'search_archive_item_image_placement' => 'above',
+					'search_archive_sidebar_id'           => 'sidebar-primary',
+					'search_archive_elements'             => array( 'feature', 'categories', 'title', 'meta', 'excerpt', 'readmore' ),
+					'search_archive_element_categories'   => array(
+						'enabled' => true,
+						'style'   => 'normal',
+						'divider' => 'vline',
+					),
+					'search_archive_element_title' => array(
+						'enabled' => true,
+					),
+					'search_archive_element_meta' => array(
+						'id'                     => 'meta',
+						'enabled'                => true,
+						'divider'                => 'dot',
+						'author'                 => true,
+						'authorLink'             => true,
+						'authorImage'            => true,
+						'authorImageSize'        => 25,
+						'authorEnableLabel'      => true,
+						'authorLabel'            => '',
+						'date'                   => true,
+						'dateEnableLabel'        => false,
+						'dateLabel'              => '',
+						'dateUpdated'            => false,
+						'dateUpdatedEnableLabel' => false,
+						'dateUpdatedLabel'       => '',
+						'categories'             => false,
+						'categoriesEnableLabel'  => false,
+						'categoriesLabel'        => '',
+						'comments'               => false,
+					),
+					'search_archive_element_feature' => array(
+						'enabled' => true,
+						'ratio'   => '2-3',
+						'size'    => 'medium_large',
+					),
+					'search_archive_element_excerpt' => array(
+						'enabled'     => true,
+						'words'       => 55,
+						'fullContent' => false,
+					),
+					'search_archive_element_readmore' => array(
+						'enabled' => true,
+					),
+					'search_archive_item_title_font'   => array(
+						'size' => array(
+							'desktop' => '',
+						),
+						'lineHeight' => array(
+							'desktop' => '',
+						),
+						'family'  => '',
+						'google'  => false,
+						'weight'  => '',
+						'variant' => '',
+					),
+					'search_archive_item_category_color' => array(
+						'color' => '',
+						'hover' => '',
+					),
+					'search_archive_item_category_font'   => array(
+						'size' => array(
+							'desktop' => '',
+						),
+						'lineHeight' => array(
+							'desktop' => '',
+						),
+						'family'  => 'inherit',
+						'google'  => false,
+						'weight'  => '',
+						'variant' => '',
+					),
+					'search_archive_item_meta_color' => array(
+						'color' => '',
+						'hover' => '',
+					),
+					'search_archive_item_meta_font'   => array(
+						'size' => array(
+							'desktop' => '',
+						),
+						'lineHeight' => array(
+							'desktop' => '',
+						),
+						'family'  => 'inherit',
+						'google'  => false,
+						'weight'  => '',
+						'variant' => '',
+					),
+					'search_archive_background'         => '',
+					'search_archive_content_background' => '',
+					'search_archive_column_layout'      => 'grid',
 					// Product Archive Controls.
 					'product_archive_toggle' => true,
 					'product_archive_show_order' => true,
 					'product_archive_show_results_count' => true,
 					'product_archive_style'  => 'action-on-hover',
+					'product_archive_button_style'       => 'text',
 					'product_archive_title'              => true,
 					'product_archive_title_layout'       => 'above',
 					'product_archive_title_inner_layout' => 'standard',
@@ -3153,6 +3347,161 @@ class Component implements Component_Interface, Templating_Component_Interface {
 					'sfwd-courses_title_element_breadcrumb' => array(
 						'enabled' => false,
 					),
+					// Learn Dash Groups
+					'groups_layout'             => 'normal',
+					'groups_content_style'      => 'boxed',
+					'groups_vertical_padding'   => 'show',
+					'groups_sidebar_id'         => 'sidebar-primary',
+					'groups_feature'            => false,
+					'groups_feature_position'   => 'behind',
+					'groups_feature_ratio'      => '2-3',
+					'groups_background'         => '',
+					'groups_content_background' => '',
+					'groups_title'              => true,
+					'groups_title_layout'       => 'normal',
+					'groups_title_height'       => array(
+						'size' => array(
+							'mobile'  => '',
+							'tablet'  => '',
+							'desktop' => '',
+						),
+						'unit' => array(
+							'mobile'  => 'px',
+							'tablet'  => 'px',
+							'desktop' => 'px',
+						),
+					),
+					'groups_title_inner_layout' => 'standard',
+					'groups_title_background'   => array(
+						'desktop' => array(
+							'color' => '',
+						),
+					),
+					'groups_title_featured_image' => false,
+					'groups_title_overlay_color'  => array(
+						'color' => '',
+					),
+					'groups_title_top_border'    => array(),
+					'groups_title_bottom_border' => array(),
+					'groups_title_align'         => array(
+						'mobile'  => '',
+						'tablet'  => '',
+						'desktop' => '',
+					),
+					'groups_title_font'   => array(
+						'size' => array(
+							'desktop' => '',
+						),
+						'lineHeight' => array(
+							'desktop' => '',
+						),
+						'family'  => 'inherit',
+						'google'  => false,
+						'weight'  => '',
+						'variant' => '',
+						'color'   => '',
+					),
+					'groups_title_breadcrumb_color' => array(
+						'color' => '',
+						'hover' => '',
+					),
+					'groups_title_breadcrumb_font'   => array(
+						'size' => array(
+							'desktop' => '',
+						),
+						'lineHeight' => array(
+							'desktop' => '',
+						),
+						'family'  => 'inherit',
+						'google'  => false,
+						'weight'  => '',
+						'variant' => '',
+					),
+					'groups_title_elements'           => array( 'breadcrumb', 'title' ),
+					'groups_title_element_title' => array(
+						'enabled' => true,
+					),
+					'groups_title_element_breadcrumb' => array(
+						'enabled' => false,
+					),
+					// Learn Dash essays
+					'sfwd-essays_layout'             => 'normal',
+					'sfwd-essays_content_style'      => 'boxed',
+					'sfwd-essays_vertical_padding'   => 'show',
+					'sfwd-essays_sidebar_id'         => 'sidebar-primary',
+					'sfwd-essays_comments'           => true,
+					'sfwd-essays_feature'            => false,
+					'sfwd-essays_feature_position'   => 'behind',
+					'sfwd-essays_feature_ratio'      => '2-3',
+					'sfwd-essays_background'         => '',
+					'sfwd-essays_content_background' => '',
+					'sfwd-essays_title'              => true,
+					'sfwd-essays_title_layout'       => 'normal',
+					'sfwd-essays_title_height'       => array(
+						'size' => array(
+							'mobile'  => '',
+							'tablet'  => '',
+							'desktop' => '',
+						),
+						'unit' => array(
+							'mobile'  => 'px',
+							'tablet'  => 'px',
+							'desktop' => 'px',
+						),
+					),
+					'sfwd-essays_title_inner_layout' => 'standard',
+					'sfwd-essays_title_background'   => array(
+						'desktop' => array(
+							'color' => '',
+						),
+					),
+					'sfwd-essays_title_featured_image' => false,
+					'sfwd-essays_title_overlay_color'  => array(
+						'color' => '',
+					),
+					'sfwd-essays_title_top_border'    => array(),
+					'sfwd-essays_title_bottom_border' => array(),
+					'sfwd-essays_title_align'         => array(
+						'mobile'  => '',
+						'tablet'  => '',
+						'desktop' => '',
+					),
+					'sfwd-essays_title_font'   => array(
+						'size' => array(
+							'desktop' => '',
+						),
+						'lineHeight' => array(
+							'desktop' => '',
+						),
+						'family'  => 'inherit',
+						'google'  => false,
+						'weight'  => '',
+						'variant' => '',
+						'color'   => '',
+					),
+					'sfwd-essays_title_breadcrumb_color' => array(
+						'color' => '',
+						'hover' => '',
+					),
+					'sfwd-essays_title_breadcrumb_font'   => array(
+						'size' => array(
+							'desktop' => '',
+						),
+						'lineHeight' => array(
+							'desktop' => '',
+						),
+						'family'  => 'inherit',
+						'google'  => false,
+						'weight'  => '',
+						'variant' => '',
+					),
+					'sfwd-essays_title_elements'           => array( 'breadcrumb', 'title' ),
+					'sfwd-essays_title_element_title' => array(
+						'enabled' => true,
+					),
+					'sfwd-essays_title_element_breadcrumb' => array(
+						'enabled' => false,
+					),
 					// MISC
 					'ie11_basic_support' => false,
 				)
@@ -3294,7 +3643,7 @@ class Component implements Component_Interface, Templating_Component_Interface {
 			}
 		}
 
-		return $value;
+		return apply_filters( 'kadence_palette_option', $value, $subkey );
 	}
 
 	/**

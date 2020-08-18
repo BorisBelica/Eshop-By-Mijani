@@ -1,6 +1,7 @@
 .customize-control:not(.customize-control-kadence_blank_control):not(.customize-control-kadence_tab_control) + .customize-control {
   border-top: 1px solid #ddd;
   padding-top: 10px; }
+
 .kadence-builder-hide .customize-control-kadence_blank_control .kadence-builder-show-button.kadence-builder-tab-toggle {
   visibility: visible;
   opacity: 1; }
@@ -16,10 +17,8 @@
   right: 10px;
   top: 5px;
   z-index: 1000;
-  display: -webkit-box;
   display: flex;
-  -webkit-box-align: center;
-          align-items: center; }
+  align-items: center; }
   .customize-control-kadence_blank_control .kadence-builder-tab-toggle span.dashicons {
     font-size: 12px;
     vertical-align: middle;
@@ -39,8 +38,8 @@
     padding: 0 20px; }
 
 .kadence-compontent-tabs {
-  display: -webkit-box;
   display: flex;
+  width: auto;
   margin-top: -15px;
   margin-left: -24px;
   margin-right: -24px;
@@ -48,13 +47,9 @@
   margin-bottom: 0;
   border-bottom: 1px solid #ccc; }
   .kadence-compontent-tabs .kadence-compontent-tabs-button {
-    -webkit-box-flex: 1;
-            flex: 1 1 0;
-    display: -webkit-box;
+    flex: 1 1 0;
     display: flex;
-    -webkit-box-align: center;
     align-items: center;
-    -webkit-box-pack: center;
     justify-content: center;
     font-size: 11px;
     font-weight: 600;

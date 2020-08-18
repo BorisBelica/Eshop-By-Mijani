@@ -39,7 +39,7 @@
 }
 .llms-access-plan-title {
 	background: var(--global-palette-highlight);
-	color: var(--global-palette9);
+	color: var(--global-palette-btn);
 }
 .llms-access-plan .llms-access-plan-footer, .llms-access-plan .llms-access-plan-content {
 	background: var(--global-palette8);
@@ -315,7 +315,6 @@
     background: transparent;
     margin: 0;
     padding-bottom: 0;
-	height: auto !important;
 	&:hover {
 		background: transparent;
 	}
@@ -350,6 +349,9 @@
 			top: 0;
 		}
 	}
+}
+body:not( .elementor-page ) .llms-loop-item-content {
+	height: auto !important;
 }
 .llms-question-wrapper ol.llms-question-choices li.llms-choice label {
     display: flex;
@@ -523,4 +525,18 @@
 }
 .llms-notification {
 	border-top-color: var(--global-palette-highlight);
+}
+// Elementor Fixes
+.elementor-widget-le-course-list .llms-loop .llms-loop-list {
+    margin-left: -10px;
+    margin-right: -10px;
+    grid-gap: 0;
+}
+.elementor-widget-le-course-list .llms-loop .llms-loop-list .llms-loop-item {
+    background:transparent;
+    border-radius:0;
+    box-shadow:none;
+}
+.elementor-widget-le-course-list .llms-loop .llms-loop-list .llms-loop-item-content {
+    margin: 10px;
 }

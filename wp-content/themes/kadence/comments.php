@@ -20,9 +20,6 @@ namespace Kadence;
 if ( post_password_required() ) {
 	return;
 }
-
-kadence()->print_styles( 'kadence-comments' );
-
 ?>
 <div id="comments" class="comments-area">
 	<?php

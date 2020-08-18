@@ -553,6 +553,9 @@ class Theme_Meta {
 	 */
 	public function script_enqueue() {
 		$post_type        = get_post_type();
+		if ( 'kadence_element' === $post_type ) {
+			return;
+		}
 		$boxed            = 'boxed';
 		$layout           = 'normal';
 		$title            = 'normal';

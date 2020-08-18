@@ -169,7 +169,7 @@
 // }
 .grid-cols {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     column-gap: 2.5rem;
     row-gap: 2.5rem;
 }
@@ -177,26 +177,26 @@
     display: none;
 }
 .grid-xs-col-1 {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
 }
 .grid-xs-col-2 {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr) );
 }
 .grid-xs-col-3 {
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr) );
 }
 .grid-xs-col-4 {
     grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 @media screen and (min-width: $landscape-phone-plus-query) {
 	.grid-sm-col-1 {
-	    grid-template-columns: 1fr;
+	    grid-template-columns: minmax(0, 1fr);
 	}
 	.grid-sm-col-2 {
-	    grid-template-columns: 1fr 1fr;
+	    grid-template-columns: repeat(2, minmax(0, 1fr) );
 	}
 	.grid-sm-col-3 {
-	    grid-template-columns: 1fr 1fr 1fr;
+	    grid-template-columns: repeat(3, minmax(0, 1fr) );
 	}
 	.grid-sm-col-4 {
 	    grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -204,13 +204,13 @@
 }
 @media screen and (min-width: $tablet-plus-query) {
 	.grid-md-col-1 {
-	    grid-template-columns: 1fr;
+	    grid-template-columns: minmax(0, 1fr);
 	}
 	.grid-md-col-2 {
-	    grid-template-columns: 1fr 1fr;
+	    grid-template-columns: repeat(2, minmax(0, 1fr) );
 	}
 	.grid-md-col-3 {
-	    grid-template-columns: 1fr 1fr 1fr;
+	    grid-template-columns: repeat(3, minmax(0, 1fr) );
 	}
 	.grid-md-col-4 {
 	    grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -218,13 +218,13 @@
 }
 @media screen and (min-width: $laptop-plus-query) {
 	.grid-lg-col-1 {
-	    grid-template-columns: 1fr;
+	    grid-template-columns: minmax(0, 1fr);
 	}
 	.grid-lg-col-2 {
-	    grid-template-columns: 1fr 1fr;
+	    grid-template-columns: repeat(2, minmax(0, 1fr) );
 	}
 	.grid-lg-col-3 {
-	    grid-template-columns: 1fr 1fr 1fr;
+	    grid-template-columns: repeat(3, minmax(0, 1fr) );
 	}
 	.grid-lg-col-4 {
 	    grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -238,13 +238,13 @@
 }
 @media screen and (min-width: $desktop-plus-query) {
 	.grid-xl-col-1 {
-	    grid-template-columns: 1fr;
+	    grid-template-columns: minmax(0, 1fr);
 	}
 	.grid-xl-col-2 {
-	    grid-template-columns: 1fr 1fr;
+	    grid-template-columns: repeat(2, minmax(0, 1fr) );
 	}
 	.grid-xl-col-3 {
-	    grid-template-columns: 1fr 1fr 1fr;
+	    grid-template-columns: repeat(3, minmax(0, 1fr) );
 	}
 	.grid-xl-col-4 {
 	    grid-template-columns: 1fr 1fr 1fr 1fr;

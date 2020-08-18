@@ -10,7 +10,8 @@ namespace Kadence;
 if ( post_password_required() || ! post_type_supports( get_post_type(), 'thumbnail' ) || ! has_post_thumbnail() ) {
 	return;
 }
-$feature_element = kadence()->option( 'post_archive_element_feature' );
+$slug            = ( is_search() ? 'search' : 'post' );
+$feature_element = kadence()->option( $slug . '_archive_element_feature' );
 if ( isset( $feature_element ) && is_array( $feature_element ) && true === $feature_element['enabled'] ) {
 	$ratio = ( isset( $feature_element['ratio'] ) && ! empty( $feature_element['ratio'] ) ? $feature_element['ratio'] : '2-3' );
 	$size  = ( isset( $feature_element['size'] ) && ! empty( $feature_element['size'] ) ? $feature_element['size'] : 'medium_large' );

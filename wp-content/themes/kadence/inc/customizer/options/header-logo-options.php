@@ -146,7 +146,7 @@ $settings = array(
 	'brand_typography' => array(
 		'control_type' => 'kadence_typography_control',
 		'section'      => 'title_tagline',
-		'label'        => esc_html__( 'Site Tite Font', 'kadence' ),
+		'label'        => esc_html__( 'Site Title Font', 'kadence' ),
 		'context'      => array(
 			array(
 				'setting' => '__current_tab',
@@ -185,7 +185,7 @@ $settings = array(
 	'brand_typography_color' => array(
 		'control_type' => 'kadence_color_control',
 		'section'      => 'title_tagline',
-		'label'        => esc_html__( 'Site Tite Hover and Active Colors', 'kadence' ),
+		'label'        => esc_html__( 'Site Title Hover and Active Colors', 'kadence' ),
 		'default'      => kadence()->default( 'brand_typography_color' ),
 		'live_method'     => array(
 			array(
@@ -274,6 +274,67 @@ $settings = array(
 		),
 		'input_attrs'  => array(
 			'id' => 'brand_tag_typography',
+		),
+	),
+	'header_logo_padding' => array(
+		'control_type' => 'kadence_measure_control',
+		'section'      => 'title_tagline',
+		'priority'     => 15,
+		'default'      => kadence()->default( 'header_logo_padding' ),
+		'label'        => esc_html__( 'Padding', 'kadence' ),
+		'context'      => array(
+			array(
+				'setting' => '__current_tab',
+				'value'   => 'design',
+			),
+		),
+		'live_method'     => array(
+			array(
+				'type'     => 'css',
+				'selector' => '.site-branding',
+				'property' => 'padding',
+				'pattern'  => '$',
+				'key'      => 'measure',
+			),
+		),
+		'input_attrs'  => array(
+			'min'        => array(
+				'px'  => 0,
+				'em'  => 0,
+				'rem' => 0,
+			),
+			'max'        => array(
+				'px'  => 100,
+				'em'  => 6,
+				'rem' => 6,
+			),
+			'step'       => array(
+				'px'  => 1,
+				'em'  => 0.01,
+				'rem' => 0.01,
+			),
+			'units'      => array( 'px', 'em', 'rem' ),
+			'responsive' => true,
+		),
+	),
+	'logo_link_to_site_icon' => array(
+		'control_type' => 'kadence_focus_button_control',
+		'section'      => 'title_tagline',
+		'settings'     => false,
+		'priority'     => 25,
+		'label'        => esc_html__( 'Site Icon', 'kadence' ),
+		'input_attrs'  => array(
+			'section' => 'kadence_customizer_site_identity',
+		),
+	),
+	'site_logo_link' => array(
+		'control_type' => 'kadence_focus_button_control',
+		'section'      => 'site_identity',
+		'settings'     => false,
+		'priority'     => 5,
+		'label'        => esc_html__( 'Site Title and Logo Control', 'kadence' ),
+		'input_attrs'  => array(
+			'section' => 'title_tagline',
 		),
 	),
 );

@@ -163,6 +163,7 @@ class Theme_Customizer {
 		'post-layout',
 		'post-archive-layout',
 		'custom-layout',
+		'search-layout',
 	);
 	/**
 	 * Instance Control.
@@ -197,6 +198,9 @@ class Theme_Customizer {
 		add_action( 'customize_preview_init', array( $this, 'action_enqueue_customize_preview_scripts' ) );
 
 		add_filter( 'customizer_widgets_section_args', array( $this, 'customizer_custom_widget_areas' ), 10, 3 );
+
+		// Ajax handler for reset.
+		add_action( 'wp_ajax_kadence_theme_reset', array( $this, 'ajax_reset' ) );
 
 	}
 	/**
@@ -254,6 +258,8 @@ class Theme_Customizer {
 		}
 		if ( class_exists( 'SFWD_LMS' ) ) {
 			require_once get_template_directory() . '/inc/customizer/options/learndash-course-layout-options.php'; // phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
+			require_once get_template_directory() . '/inc/customizer/options/learndash-groups-layout-options.php'; // phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
+			require_once get_template_directory() . '/inc/customizer/options/learndash-essays-layout-options.php'; // phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
 		}
 		if ( class_exists( 'LifterLMS' ) ) {
 			require_once get_template_directory() . '/inc/customizer/options/lifter-course-layout-options.php'; // phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
@@ -267,6 +273,8 @@ class Theme_Customizer {
 		if ( class_exists( 'TUTOR\Tutor' ) ) {
 			require_once get_template_directory() . '/inc/customizer/options/tutor-course-layout-options.php'; // phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
 		}
+		// Import/Export/Reset.
+		require_once get_template_directory() . '/inc/customizer/options/options-import-export.php'; // phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
 	}
 	/**
 	 * Overide default settings
@@ -281,6 +289,11 @@ class Theme_Customizer {
 		 */
 		$wp_customize->get_setting( 'blogname' )->transport        = 'postMessage';
 		$wp_customize->get_setting( 'blogdescription' )->transport = 'postMessage';
+
+		/**
+		 * Move Site Identity
+		 */
+		$wp_customize->get_control( 'site_icon' )->section = 'kadence_customizer_site_identity';
 
 		/**
 		 * Override Controls Priority
@@ -337,7 +350,6 @@ class Theme_Customizer {
 		self::$contexts['custom_logo']     = $general_tab;
 		self::$contexts['blogname']        = $general_tab;
 		self::$contexts['blogdescription'] = $general_tab;
-		self::$contexts['site_icon']       = $general_tab;
 
 		$palette_live = array(
 			array(
@@ -364,6 +376,7 @@ class Theme_Customizer {
 		$react_path = get_template_directory() . '/inc/customizer/react/';
 		// Register the custom control type.
 		require_once $path . 'class-kadence-control-blank.php'; // phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
+		require_once $path . 'class-kadence-control-import-export.php'; // phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
 		require_once $react_path . 'class-kadence-control-color.php'; // phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
 		require_once $react_path . 'class-kadence-control-range.php'; // phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
 		require_once $react_path . 'class-kadence-control-switch.php'; // phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
@@ -384,10 +397,12 @@ class Theme_Customizer {
 		require_once $react_path . 'class-kadence-control-editor.php'; // phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
 		require_once $react_path . 'class-kadence-control-sorter.php'; // phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
 		require_once $react_path . 'class-kadence-control-social.php'; // phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
+		require_once $react_path . 'class-kadence-control-contact.php'; // phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
 		require_once $react_path . 'class-kadence-control-check-icon.php'; // phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
 		require_once $react_path . 'class-kadence-control-select.php'; // phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
 		require_once $react_path . 'class-kadence-control-row.php'; // phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
 		require_once $react_path . 'class-kadence-control-tab.php'; // phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
+		require_once $react_path . 'class-kadence-control-shadow.php'; // phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
 	}
 
 	/**
@@ -423,11 +438,11 @@ class Theme_Customizer {
 				),
 				'blog_posts' => array(
 					'title'    => __( 'Blog Posts', 'kadence' ),
-					'priority' => 24,
+					'priority' => 23,
 				),
 				'custom_post' => array(
 					'title'    => __( 'Custom Post Types', 'kadence' ),
-					'priority' => 28,
+					'priority' => 24,
 				),
 			);
 			if ( class_exists( 'SFWD_LMS' ) ) {
@@ -477,6 +492,10 @@ class Theme_Customizer {
 		// Define sections.
 		if ( is_null( self::$sections ) ) {
 			$sections = array(
+				'site_identity' => array(
+					'title'    => __( 'Site Identity', 'kadence' ),
+					'priority' => 25,
+				),
 				'general_layout' => array(
 					'title'    => __( 'Layout', 'kadence' ),
 					'panel'    => 'general',
@@ -582,6 +601,11 @@ class Theme_Customizer {
 					'panel'    => 'header',
 					'priority' => 20,
 				),
+				'dropdown_navigation_design' => array(
+					'title'    => __( 'Dropdown Navigation', 'kadence' ),
+					'panel'    => 'header',
+					'priority' => 20,
+				),
 				'mobile_trigger' => array(
 					'title'    => __( 'Mobile Trigger', 'kadence' ),
 					'panel'    => 'header',
@@ -643,6 +667,11 @@ class Theme_Customizer {
 					'priority' => 20,
 				),
 				'header_social' => array(
+					'title'    => __( 'Header Social', 'kadence' ),
+					'panel'    => 'header',
+					'priority' => 20,
+				),
+				'header_social_design' => array(
 					'title'    => __( 'Header Social', 'kadence' ),
 					'panel'    => 'header',
 					'priority' => 20,
@@ -717,6 +746,11 @@ class Theme_Customizer {
 					'panel'    => 'footer',
 					'priority' => 10,
 				),
+				'footer_social_design' => array(
+					'title'    => __( 'Footer Social', 'kadence' ),
+					'panel'    => 'footer',
+					'priority' => 10,
+				),
 				'footer_navigation' => array(
 					'title'    => __( 'Footer Navigation', 'kadence' ),
 					'panel'    => 'footer',
@@ -725,7 +759,15 @@ class Theme_Customizer {
 				'page_layout' => array(
 					'title'    => __( 'Page Layout', 'kadence' ),
 					//'panel'    => 'pages',
-					'priority' => 23,
+					'priority' => 22,
+				),
+				'search' => array(
+					'title'    => __( 'Search Results', 'kadence' ),
+					'priority' => 24,
+				),
+				'search_design' => array(
+					'title'    => __( 'Search Results', 'kadence' ),
+					'priority' => 24,
 				),
 				'post_layout' => array(
 					'title'    => __( 'Single Post Layout', 'kadence' ),
@@ -747,11 +789,10 @@ class Theme_Customizer {
 					'panel'    => 'blog_posts',
 					'priority' => 25,
 				),
-				// 'page_title' => array(
-				// 	'title'    => __( 'Page Title', 'kadence' ),
-				// 	'panel'    => 'pages',
-				// 	'priority' => 10,
-				// ),
+				'import_export' => array(
+					'title'    => __( 'Import/Export', 'kadence' ),
+					'priority' => 999,
+				),
 			);
 			if ( class_exists( 'woocommerce' ) ) {
 				$extra_woo['woocommerce_product_catalog'] = array(
@@ -790,6 +831,7 @@ class Theme_Customizer {
 				);
 			}
 			if ( class_exists( 'SFWD_LMS' ) ) {
+				$extra_learn = array();
 				$extra_learn['sfwd_courses_layout'] = array(
 					'title'    => __( 'Course Layout', 'kadence' ),
 					'panel'    => 'learndash',
@@ -799,6 +841,26 @@ class Theme_Customizer {
 					'title'    => __( 'Course Layout', 'kadence' ),
 					'panel'    => 'learndash',
 					'priority' => 10,
+				);
+				$extra_learn['sfwd_groups_layout'] = array(
+					'title'    => __( 'Groups Layout', 'kadence' ),
+					'panel'    => 'learndash',
+					'priority' => 11,
+				);
+				$extra_learn['sfwd_groups_layout_design'] = array(
+					'title'    => __( 'Groups Layout', 'kadence' ),
+					'panel'    => 'learndash',
+					'priority' => 11,
+				);
+				$extra_learn['sfwd_essays_layout'] = array(
+					'title'    => __( 'Essay Layout', 'kadence' ),
+					'panel'    => 'learndash',
+					'priority' => 11,
+				);
+				$extra_learn['sfwd_essays_layout_design'] = array(
+					'title'    => __( 'Essay Layout', 'kadence' ),
+					'panel'    => 'learndash',
+					'priority' => 11,
 				);
 				$sections = array_merge(
 					$sections,
@@ -893,6 +955,21 @@ class Theme_Customizer {
 					$add_extras = true;
 					$extras_post_types[ $post_type_name . '_layout' ] = array(
 						'title'    => $post_type_label . ' ' . __( 'Layout', 'kadence' ),
+						'panel'    => 'custom_post',
+						'priority' => 10,
+					);
+					$extras_post_types[ $post_type_name . '_layout_design' ] = array(
+						'title'    => $post_type_label . ' ' . __( 'Layout', 'kadence' ),
+						'panel'    => 'custom_post',
+						'priority' => 10,
+					);
+					$extras_post_types[ $post_type_name . '_archive' ] = array(
+						'title'    => $post_type_label . ' ' . __( 'Archive', 'kadence' ),
+						'panel'    => 'custom_post',
+						'priority' => 10,
+					);
+					$extras_post_types[ $post_type_name . '_archive_design' ] = array(
+						'title'    => $post_type_label . ' ' . __( 'Archive', 'kadence' ),
 						'panel'    => 'custom_post',
 						'priority' => 10,
 					);
@@ -1029,7 +1106,7 @@ class Theme_Customizer {
 						$section_config['panel'] = 'kadence_customizer_' . $section['panel'];
 					}
 				}
-				$section_id = 'title_tagline' === $section_key || 'sidebar-widgets-footer1' === $section_key || 'sidebar-widgets-footer2' === $section_key || 'sidebar-widgets-footer3' === $section_key || 'sidebar-widgets-footer4' === $section_key || 'sidebar-widgets-footer5' === $section_key || 'sidebar-widgets-footer6' === $section_key || 'woocommerce_product_catalog_design' === $section_key || 'woocommerce_product_catalog' === $section_key || 'woocommerce_store_notice' === $section_key || 'woocommerce_store_notice_design' === $section_key ? $section_key : 'kadence_customizer_' . $section_key;
+				$section_id = 'title_tagline' === $section_key || 'sidebar-widgets-header1' === $section_key || 'sidebar-widgets-header2' === $section_key || 'sidebar-widgets-footer1' === $section_key || 'sidebar-widgets-footer2' === $section_key || 'sidebar-widgets-footer3' === $section_key || 'sidebar-widgets-footer4' === $section_key || 'sidebar-widgets-footer5' === $section_key || 'sidebar-widgets-footer6' === $section_key || 'woocommerce_product_catalog_design' === $section_key || 'woocommerce_product_catalog' === $section_key || 'woocommerce_store_notice' === $section_key || 'woocommerce_store_notice_design' === $section_key ? $section_key : 'kadence_customizer_' . $section_key;
 				// Register section.
 				$wp_customize->add_section( $section_id, $section_config );
 
@@ -1158,7 +1235,7 @@ class Theme_Customizer {
 			}
 			// Add control to section.
 			if ( ! empty( $setting['section'] ) ) {
-				$control_config['section'] = ( 'title_tagline' === $setting['section'] || 'sidebar-widgets-footer1' === $setting['section'] || 'sidebar-widgets-footer2' === $setting['section'] || 'sidebar-widgets-footer3' === $setting['section'] || 'sidebar-widgets-footer4' === $setting['section'] || 'sidebar-widgets-footer5' === $setting['section'] || 'sidebar-widgets-footer6' === $setting['section'] || 'woocommerce_product_catalog' === $setting['section'] || 'woocommerce_product_catalog_design' === $setting['section'] || 'woocommerce_store_notice' === $setting['section'] || 'woocommerce_store_notice_design' === $setting['section'] ? $setting['section'] : 'kadence_customizer_' . $setting['section'] );
+				$control_config['section'] = ( 'title_tagline' === $setting['section'] || 'sidebar-widgets-header1' === $setting['section'] || 'sidebar-widgets-header2' === $setting['section'] || 'sidebar-widgets-footer1' === $setting['section'] || 'sidebar-widgets-footer2' === $setting['section'] || 'sidebar-widgets-footer3' === $setting['section'] || 'sidebar-widgets-footer4' === $setting['section'] || 'sidebar-widgets-footer5' === $setting['section'] || 'sidebar-widgets-footer6' === $setting['section'] || 'woocommerce_product_catalog' === $setting['section'] || 'woocommerce_product_catalog_design' === $setting['section'] || 'woocommerce_store_notice' === $setting['section'] || 'woocommerce_store_notice_design' === $setting['section'] ? $setting['section'] : 'kadence_customizer_' . $setting['section'] );
 			}
 			// Add control to panel.
 			if ( ! empty( $setting['panel'] ) ) {
@@ -1296,9 +1373,13 @@ class Theme_Customizer {
 	 * @return void
 	 */
 	public function enqueue_customizer_scripts() {
+		$palette_presets = '{"basic":[{"color":"#2B6CB0"},{"color":"#265E9A"},{"color":"#222222"},{"color":"#3B3B3B"},{"color":"#515151"},{"color":"#626262"},{"color":"#E1E1E1"},{"color":"#F7F7F7"},{"color":"#ffffff"}],"palette":[{"color":"#255FDD"},{"color":"#00F2FF"},{"color":"#1A202C"},{"color":"#2D3748"},{"color":"#4A5568"},{"color":"#718096"},{"color":"#EDF2F7"},{"color":"#F7FAFC"},{"color":"#ffffff"}],"first-palette":[{"color":"#3296ff"},{"color":"#003174"},{"color":"#ffffff"},{"color":"#f7fafc"},{"color":"#edf2f7"},{"color":"#cbd2d9"},{"color":"#2d3748"},{"color":"#252c39"},{"color":"#1a202c"}],"orange":[{"color":"#e47b02"},{"color":"#ed8f0c"},{"color":"#1f2933"},{"color":"#3e4c59"},{"color":"#52606d"},{"color":"#7b8794"},{"color":"#f3f4f7"},{"color":"#f9f9fb"},{"color":"#ffffff"}],"third-palette":[{"color":"#E21E51"},{"color":"#4d40ff"},{"color":"#040037"},{"color":"#032075"},{"color":"#514d7c"},{"color":"#666699"},{"color":"#deddeb"},{"color":"#efeff5"},{"color":"#f8f9fa"}],"forth-palette":[{"color":"#E21E51"},{"color":"#4d40ff"},{"color":"#f8f9fa"},{"color":"#efeff5"},{"color":"#deddeb"},{"color":"#c3c2d6"},{"color":"#514d7c"},{"color":"#221e5b"},{"color":"#040037"}],"fifth-palette":[{"color":"#049f82"},{"color":"#008f72"},{"color":"#222222"},{"color":"#353535"},{"color":"#454545"},{"color":"#676767"},{"color":"#eeeeee"},{"color":"#f7f7f7"},{"color":"#ffffff"}],"sixth-palette":[{"color":"#dd6b20"},{"color":"#cf3033"},{"color":"#27241d"},{"color":"#423d33"},{"color":"#504a40"},{"color":"#625d52"},{"color":"#e8e6e1"},{"color":"#faf9f7"},{"color":"#ffffff"}]}';
 		$path     = get_template_directory_uri() . '/inc/customizer/';
 		$dir_path = get_template_directory() . '/inc/customizer/';
 		wp_enqueue_style( 'kadence-customizer-styles', $path . 'css/kadence-customizer.css', false, KADENCE_VERSION );
+		if ( is_rtl() ) {
+			wp_enqueue_style( 'kadence-customizer-rtl', $path . 'css/rtl-kadence-customizer.css', false, KADENCE_VERSION );
+		}
 		// Enqueue Customizer script.
 		$google_font_variants = include $dir_path . 'google-font-variants.php';
 		$editor_dependencies = array(
@@ -1317,11 +1398,19 @@ class Theme_Customizer {
 			'kadence-customizer-controls',
 			'kadenceCustomizerControlsData',
 			array(
-				'contexts'  => self::get_control_contexts(),
-				'choices'   => self::get_builder_choices(),
-				'palette'   => kadence()->get_palette(),
-				'gfontvars' => $google_font_variants,
-				'cfontvars' => apply_filters( 'kadence_theme_custom_fonts', array() ),
+				'contexts'       => self::get_control_contexts(),
+				'choices'        => self::get_builder_choices(),
+				'palette'        => kadence()->get_palette(),
+				'gfontvars'      => $google_font_variants,
+				'cfontvars'      => apply_filters( 'kadence_theme_custom_fonts', array() ),
+				'palettePresets' => apply_filters( 'kadence_theme_palette_presets', $palette_presets ),
+				'resetConfirm'   => __( "Attention! This will remove all customizations to this theme!\n\nThis action is irreversible!", 'kadence' ),
+				'emptyImport'	 => __( 'Please choose a file to import.', 'kadence' ),
+				'customizerURL'	 => admin_url( 'customize.php' ),
+				'nonce'          => array(
+					'reset'  => wp_create_nonce( 'kadence-theme-reseting' ),
+					'export' => wp_create_nonce( 'kadence-theme-exporting' ),
+				),
 			)
 		);
 		$css = ':root {
@@ -1481,6 +1570,28 @@ class Theme_Customizer {
 		}
 
 		return $active;
+	}
+	/**
+	 * Reset to default values via Ajax request
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function ajax_reset() {
+		// Check request.
+		if ( ! check_ajax_referer( 'kadence-theme-reseting', 'nonce', false ) ) {
+			wp_send_json_error( 'invalid_nonce' );
+		}
+
+		// Check if user is allowed to reset values.
+		if ( ! current_user_can( 'edit_theme_options' ) ) {
+			wp_send_json_error( 'invalid_permissions' );
+		}
+
+		// Reset to default values.
+		delete_option( 'theme_mods_' . get_option( 'stylesheet' ) );
+		delete_option( 'kadence_global_palette' );
+		wp_send_json_success();
 	}
 
 }

@@ -14,7 +14,7 @@ $settings = array(
 	'buttons_color' => array(
 		'control_type' => 'kadence_color_control',
 		'section'      => 'general_buttons',
-		'label'        => esc_html__( 'Colors', 'kadence' ),
+		'label'        => esc_html__( 'Text Colors', 'kadence' ),
 		'default'      => kadence()->default( 'buttons_color' ),
 		'live_method'     => array(
 			array(
@@ -35,7 +35,7 @@ $settings = array(
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(
@@ -69,7 +69,7 @@ $settings = array(
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(
@@ -104,7 +104,7 @@ $settings = array(
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(

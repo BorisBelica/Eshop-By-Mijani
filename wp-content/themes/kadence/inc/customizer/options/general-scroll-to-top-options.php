@@ -256,7 +256,7 @@ Theme_Customizer::add_settings(
 			'control_type' => 'kadence_check_icon_control',
 			'section'      => 'scroll_up',
 			'default'      => kadence()->default( 'scroll_up_visiblity' ),
-			'label'        => esc_html__( 'Visiblity', 'kadence' ),
+			'label'        => esc_html__( 'Visibility', 'kadence' ),
 			'context'      => array(
 				array(
 					'setting'  => 'scroll_up',
@@ -350,7 +350,7 @@ Theme_Customizer::add_settings(
 			'input_attrs'  => array(
 				'colors' => array(
 					'color' => array(
-						'tooltip' => __( 'Inital Color', 'kadence' ),
+						'tooltip' => __( 'Initial Color', 'kadence' ),
 						'palette' => true,
 					),
 					'hover' => array(
@@ -396,7 +396,7 @@ Theme_Customizer::add_settings(
 			'input_attrs'  => array(
 				'colors' => array(
 					'color' => array(
-						'tooltip' => __( 'Inital Color', 'kadence' ),
+						'tooltip' => __( 'Initial Color', 'kadence' ),
 						'palette' => true,
 					),
 					'hover' => array(
@@ -437,7 +437,7 @@ Theme_Customizer::add_settings(
 			'input_attrs'  => array(
 				'colors' => array(
 					'color' => array(
-						'tooltip' => __( 'Inital Color', 'kadence' ),
+						'tooltip' => __( 'Initial Color', 'kadence' ),
 						'palette' => true,
 					),
 					'hover' => array(

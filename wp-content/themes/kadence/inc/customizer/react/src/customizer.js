@@ -276,47 +276,49 @@
 		 * Init Header & Footer Builder
 		 */
 		var initHeaderBuilderPanel = function( panel ) {
-			var section =  wp.customize.section( 'kadence_customizer_header_builder' ),
-				$section = section.contentContainer,
+			var section =  wp.customize.section( 'kadence_customizer_header_builder' );
+			if ( section ) {
+				var $section = section.contentContainer,
 				section_layout =  wp.customize.section( 'kadence_customizer_header_layout' );
-			// If Header panel is expanded, add class to the body tag (for CSS styling).
-			panel.expanded.bind(function( isExpanded ) {
-				_.each(section.controls(), function( control ) {
-					if ( 'resolved' === control.deferred.embedded.state() ) {
-						return;
-					}
-					control.renderContent();
-					control.deferred.embedded.resolve(); // This triggers control.ready().
-					
-					// Fire event after control is initialized.
-					control.container.trigger( 'init' );
-				});
+				// If Header panel is expanded, add class to the body tag (for CSS styling).
+				panel.expanded.bind(function( isExpanded ) {
+					_.each(section.controls(), function( control ) {
+						if ( 'resolved' === control.deferred.embedded.state() ) {
+							return;
+						}
+						control.renderContent();
+						control.deferred.embedded.resolve(); // This triggers control.ready().
+						
+						// Fire event after control is initialized.
+						control.container.trigger( 'init' );
+					});
 
-				if ( isExpanded ) {
-					$body.addClass( 'kadence-builder-is-active' );
-					$section.addClass( 'kadence-builder-active' );
-				} else {
-					$body.removeClass( 'kadence-builder-is-active' );
-					$section.removeClass( 'kadence-builder-active' );
-				}
-				_.each(section_layout.controls(), function( control ) {
-					if ( 'resolved' === control.deferred.embedded.state() ) {
-						return;
+					if ( isExpanded ) {
+						$body.addClass( 'kadence-builder-is-active' );
+						$section.addClass( 'kadence-builder-active' );
+					} else {
+						$body.removeClass( 'kadence-builder-is-active' );
+						$section.removeClass( 'kadence-builder-active' );
 					}
-					control.renderContent();
-					control.deferred.embedded.resolve(); // This triggers control.ready().
-					
-					// Fire event after control is initialized.
-					control.container.trigger( 'init' );
+					_.each(section_layout.controls(), function( control ) {
+						if ( 'resolved' === control.deferred.embedded.state() ) {
+							return;
+						}
+						control.renderContent();
+						control.deferred.embedded.resolve(); // This triggers control.ready().
+						
+						// Fire event after control is initialized.
+						control.container.trigger( 'init' );
+					});
+					resizePreviewer();
 				});
-				resizePreviewer();
-			});
-			// Attach callback to builder toggle.
-			$section.on( 'click', '.kadence-builder-tab-toggle', function( e ) {
-				e.preventDefault();
-				$section.toggleClass( 'kadence-builder-hide' );
-				resizePreviewer();
-			});
+				// Attach callback to builder toggle.
+				$section.on( 'click', '.kadence-builder-tab-toggle', function( e ) {
+					e.preventDefault();
+					$section.toggleClass( 'kadence-builder-hide' );
+					resizePreviewer();
+				});
+			}
 
 		};
 		wp.customize.panel( 'kadence_customizer_header', initHeaderBuilderPanel );
@@ -324,50 +326,105 @@
 		 * Init Header & Footer Builder
 		 */
 		var initFooterBuilderPanel = function( panel ) {
-			var section =  wp.customize.section( 'kadence_customizer_footer_builder' ),
-				$section = section.contentContainer,
+			var section =  wp.customize.section( 'kadence_customizer_footer_builder' );
+			if ( section ) {
+				var $section = section.contentContainer,
 				section_layout =  wp.customize.section( 'kadence_customizer_footer_layout' );
-			// If Header panel is expanded, add class to the body tag (for CSS styling).
-			panel.expanded.bind(function( isExpanded ) {
-				_.each(section.controls(), function( control ) {
-					if ( 'resolved' === control.deferred.embedded.state() ) {
-						return;
-					}
-					control.renderContent();
-					control.deferred.embedded.resolve(); // This triggers control.ready().
-					
-					// Fire event after control is initialized.
-					control.container.trigger( 'init' );
-				});
+				// If Header panel is expanded, add class to the body tag (for CSS styling).
+				panel.expanded.bind(function( isExpanded ) {
+					_.each(section.controls(), function( control ) {
+						if ( 'resolved' === control.deferred.embedded.state() ) {
+							return;
+						}
+						control.renderContent();
+						control.deferred.embedded.resolve(); // This triggers control.ready().
+						
+						// Fire event after control is initialized.
+						control.container.trigger( 'init' );
+					});
 
-				if ( isExpanded ) {
-					$body.addClass( 'kadence-footer-builder-is-active' );
-					$section.addClass( 'kadence-footer-builder-active' );
-				} else {
-					$body.removeClass( 'kadence-footer-builder-is-active' );
-					$section.removeClass( 'kadence-footer-builder-active' );
-				}
-				_.each(section_layout.controls(), function( control ) {
-					if ( 'resolved' === control.deferred.embedded.state() ) {
-						return;
+					if ( isExpanded ) {
+						$body.addClass( 'kadence-footer-builder-is-active' );
+						$section.addClass( 'kadence-footer-builder-active' );
+					} else {
+						$body.removeClass( 'kadence-footer-builder-is-active' );
+						$section.removeClass( 'kadence-footer-builder-active' );
 					}
-					control.renderContent();
-					control.deferred.embedded.resolve(); // This triggers control.ready().
-					
-					// Fire event after control is initialized.
-					control.container.trigger( 'init' );
+					_.each(section_layout.controls(), function( control ) {
+						if ( 'resolved' === control.deferred.embedded.state() ) {
+							return;
+						}
+						control.renderContent();
+						control.deferred.embedded.resolve(); // This triggers control.ready().
+						
+						// Fire event after control is initialized.
+						control.container.trigger( 'init' );
+					});
+					resizePreviewer();
 				});
-				resizePreviewer();
-			});
-			// Attach callback to builder toggle.
-			$section.on( 'click', '.kadence-builder-tab-toggle', function( e ) {
-				e.preventDefault();
-				$section.toggleClass( 'kadence-builder-hide' );
-				resizePreviewer();
-			});
+				// Attach callback to builder toggle.
+				$section.on( 'click', '.kadence-builder-tab-toggle', function( e ) {
+					e.preventDefault();
+					$section.toggleClass( 'kadence-builder-hide' );
+					resizePreviewer();
+				} );
+			}
 
 		};
 		wp.customize.panel( 'kadence_customizer_footer', initFooterBuilderPanel );
+		/**
+		 * Init import export.
+		 */
+		var importExport = {
+			init: function() {
+				$( 'input[name=kadence-theme-export-button]' ).on( 'click', importExport.export );
+				$( 'input[name=kadence-theme-import-button]' ).on( 'click', importExport.import );
+				$( 'input[name=kadence-theme-reset-button]' ).on( 'click', importExport.reset );
+			},
+		
+			export: function() {
+				window.location.href = kadenceCustomizerControlsData.customizerURL + '?kadence-theme-export=' + kadenceCustomizerControlsData.nonce.export;
+			},
+			import: function() {
+				var win			= $( window ),
+					body		= $( 'body' ),
+					form		= $( '<form class="kadence-theme-import-form" method="POST" enctype="multipart/form-data"></form>' ),
+					controls	= $( '.kadence-theme-import-controls' ),
+					file		= $( 'input[name=kadence-theme-import-file]' ),
+					message		= $( '.kadence-theme-uploading' );
+				
+				if ( '' == file.val() ) {
+					alert( kadenceCustomizerControlsData.emptyImport );
+				}
+				else {
+					win.off( 'beforeunload' );
+					body.append( form );
+					form.append( controls );
+					message.show();
+					form.submit();
+				}
+			},
+			reset: function() {
+				var data = {
+					wp_customize: 'on',
+					action: 'kadence_theme_reset',
+					nonce: kadenceCustomizerControlsData.nonce.reset
+				};
+		
+				var r = confirm( kadenceCustomizerControlsData.resetConfirm );
+		
+				if (!r) return;
+		
+				$( 'input[name=kadence-theme-reset-button]' ).attr('disabled', 'disabled');
+		
+				$.post( ajaxurl, data, function () {
+					wp.customize.state('saved').set( true );
+					location.reload();
+				});
+			}
+		};
+		
+		$( importExport.init );
 	});
 
 } )( jQuery, wp );

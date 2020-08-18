@@ -41,6 +41,9 @@
 			}
 		}
 	}
+	button[data-action="start"], button[data-action="stop"] {
+	    display: none;
+	}
 	.tns-controls {
 		button {
 			position: absolute;
@@ -194,24 +197,20 @@
   }
   
   // *** Detecting browser capability ***
-  $width: 310px;
-  $height: 10px;
-  $count: 70;
-  $perpage: 3;
   
   .tns-t {
 	&-subp2 {
 	  margin: 0 auto;
-	  width: $width;
+	  width: 310px;
 	  position: relative;
-	  height: $height;
+	  height: 10px;
 	  overflow: hidden;
 	}
 	&-ct {
-	  width: (100% * $count / $perpage);
-	  width: -webkit-calc(100% * #{$count} / #{$perpage});
-	  width: -moz-calc(100% * #{$count} / #{$perpage});
-	  width: calc(100% * #{$count} / #{$perpage});
+	  width: (100% * 70 / 3);
+	  width: -webkit-calc(100% * 70 / 3);
+	  width: -moz-calc(100% * 70 / 3);
+	  width: calc(100% * 70 / 3);
 	  position: absolute;
 	  right: 0;
 	  &:after {
@@ -220,11 +219,11 @@
 		clear: both;
 	  }
 	  > div {
-		width: (100% / $count);
-		width: -webkit-calc(100% / #{$count});
-		width: -moz-calc(100% / #{$count});
-		width: calc(100% / #{$count});
-		height: $height;
+		width: (100% / 70);
+		width: -webkit-calc(100% / 70);
+		width: -moz-calc(100% / 70);
+		width: calc(100% / 70);
+		height: 10px;
 		float: left;
 	  }
 	}

@@ -1,10 +1,10 @@
 === Kadence ===
 Contributors: britner
-Tags:
-Requires at least: 4.8
-Tested up to: 5.4.2
+Tags: accessibility-ready, translation-ready, two-columns, right-sidebar, left-sidebar, footer-widgets, blog, custom-logo, custom-background, custom-menu, rtl-language-support, editor-style, threaded-comments, custom-colors, featured-images, wide-blocks, full-width-template, theme-options, e-commerce.
+Requires at least: 5.2
+Tested up to: 5.5.0
 Requires PHP: 7.0
-Stable tag: 0.7.6
+Stable tag: 0.8.1
 License: GNU General Public License v3.0 (or later)
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -19,8 +19,117 @@ Kadence is released under GNU General Public License v3.0 (or later)
 
 = Changelog =
 
+== 0.8.1 | 13th August 2020 ==
+* Fix: Woocommerce filter css styling.
+* Add: CSS for archive support for TI WooCommerce Wishlist.
+* Fix: Issue builder popup offset.
+* Fix: CSS content spacing styling.
+* Fix: Yoast FAQ block styling.
+
+== 0.8.0 | 7th August 2020 ==
+* Add: Easier onboarding of starter sites.
+* Update: Add check for class for possible issue with elementor pro.
+* Fix: issue with top margin and headings.
+* Update: Gradients in customizer to work better.
+* Fix: Footer html spacing issue.
+* Add: Import/Export/Reset.
+* Add: Options for Custom post type archive settings.
+* Update: Remove "archive:" from custom post archive titles.
+
+
+== 0.7.16 | 1st August 2020 ==
+* Add: Product catalog option for standard buttons on products.
+* Sync: Product Blocks with archive settings.
+* Add: Global Colors Import/Export.
+* Add: Global Colors Preset Imports.
+* Fix: Footer collapse issue.
+* Fix: Issue with some web safe fonts.
+* Fix: lifter grid issue with Elementor plugin.
+
+== 0.7.15 | 24th July 2020 ==
+* Fix: Page title issue.
+* Fix: Full width issue.
+* Update: Change header button nofollow logic.
+
+== 0.7.13 | 24th July 2020 ==
+* Add: Initial RTL support
+* Add: Search Results Styling.
+* Add: Box-shadow control for entry elements.
+* Add: Border radius control for entry elements.
+* Add: Nav Menu Dropdown Box shadow.
+* Add: ARIA Landmark Roles.
+* Add: Header Button Logged in or Logged out only visibility.
+* Add: Rel nofollow for header button.
+* Add: Title option for footer social media.
+* Add: Tags to related posts carousel query for better "related".
+* Add: Medium-Large button option for products.
+* Tweak: Post header title overlay when contained to match image.
+* Update: Better styling for Woo Tabs on mobile.
+* Update: Better styling for Woo Reviews on mobile.
+* Update: Move Groups, Essays for Learndash to Learndash area in customizer.
+* Update: Better support for Kadence Galleries.
+* Update: Better Woocommerce Blocks Support.
+* Update: Better support for Real estate plugins.
+* Update: Support line breaks in author bio.
+* Update: Code changes for WP.org review guidelines.
+* Fix: Issue border radius set to 0.
+* Fix: Padding/Margin Controls, they were hard to type in.
+* Fix: Single list beside image for posts with no image.
+* Fix: Issue with ratio labels.
+* Fix: Issue with Elementor Basic Gallery.
+* Fix: Social media spacing not showing correctly in the customizer.
+* Fix: Font family issue with font names that have a space, like exo 2.
+* Fix: Blocks Wooocomerce Rating css.
+* Fix: Safari product thumbnail issue.
+* Fix: Yoast Scheme Block Issue.
+* Fix: Issue with page title not showing when set to show in the meta.
+* Fix: 0 not working for vertical padding.
+* Fix: Qubely Demo content not working.
+* Fix: issue with some grids overflowing.
+* Fix: Margin top issue with some plugins.
+* Fix: Site identity not showing under "design" state.
+* Fix: Header Button margin not showing in live customizer
+
+== 0.7.11 | 26th June 2020 ==
+* Tweak: global palette into Elementor Pro dynamic colors.
+* Fix: Customizer css.
+
+== 0.7.10 | 26th June 2020 ==
+* Add: telegram to social links
+* Fix: Issue with elementor and product archives.
+* Fix: tooltip with palette.
+* Fix: possible issue with shop toggle.
+* Fix: Header design tab not working.
+* Fix: Possible styling issue if elementor used.
+* Fix: Jetpack Infinite scroll.
+
+== 0.7.9 | 24th June 2020 ==
+* Add: global palette into Elementor Pro dynamic colors.
+* Add: Option to add padding around the logo area. 
+* Update: CSS for better mobile cart with other languages.
+* Update: Sticky header to support boom bar.
+* Fix: Styling when Lazy Load for comments is used.
+* Fix: Initial live preview of Bottom Border for transparent and sticky header.
+
+== 0.7.8 | 18th June 2020 ==
+* Fix: Issue with scroll class.
+* Fix: Footer issue.
+
+== 0.7.7 | 17th June 2020 ==
+* Fix: Issue with mobile anchor scroll.
+* Fix: Typo in options.
+* Fix: Toggle Search Margin.
+* Fix: Product single background color.
+* Fix: issue with meta comments showing in post loop.
+* Fix: issue with WooCommerce Print Invoices/Packing Lists by SkyVerge.
+* Add: Another Facebook Icon option.
+* Update: css for issue with sticky topbar on mobile. 
+* Add: support for 'scroll' class for scroll to id.
+* Update: Meta options icon divider.
+* Update: WPML support.
+
 == 0.7.6 | 10th June 2020 ==
-* Add: Inital Admin Menu page.
+* Add: Initial Admin Menu page.
 * Fix: Customizer preview of icon size for search.
 * Fix: Beaver Margin top issue.
 * Add: IMDB to social.
@@ -30,12 +139,12 @@ Kadence is released under GNU General Public License v3.0 (or later)
 == 0.7.5 | 5th June 2020 ==
 * Fix: Align image css when elementor template is used.
 * Fix: Issue with comments in firefox. 
-* Add: Inital Tutor LMS support for courses.
+* Add: Initial Tutor LMS support for courses.
 
 == 0.7.4 | 3rd June 2020 ==
 * Add: Footer link style.
 * Add: Option for site title color hover/active.
-* Update: Change comment form to show asterisk for required feilds
+* Update: Change comment form to show asterisk for required fields
 * Update: tweak CSS load order as a workaround for some servers having issues with combining css. 
 * Fix: Editor width if sidebar width is changed.
 * Fix: Issue with behind featured image not showing in some instances.
@@ -71,7 +180,7 @@ Kadence is released under GNU General Public License v3.0 (or later)
 * Add: AMP first navigation settings.
 * Add: Fullwidth option for featured image behind post.
 * Add: Scroll To Top.
-* Add: Performace Setting for preload (better compatablity with optimization plugins).
+* Add: Performance Setting for preload (better compatibility with optimization plugins).
 * Add: Styling options for post loop, title font, meta font, categories font.
 * Add: Option to remove link from author meta.
 * Add: Option to change author image size.
@@ -103,12 +212,12 @@ Kadence is released under GNU General Public License v3.0 (or later)
 * Update: Even better product grid block support.
 * Fix: Related posts slightly offpage with certain settings, certain screen sizes.
 * Fix: Aria label in cart icon.
-* Fix: Footer markeup.
+* Fix: Footer markup.
 * Fix: Issue with Accessibility and tabindex.
 
 == 0.6.0 | 30th April 2020 ==
 * Add: More Store notice design options.
-* Add: Single Product content visiblity control.
+* Add: Single Product content visibility control.
 * Add: Single Product option to show accepted payments.
 * Add: Single Product category in content area.
 * Add: Single Product price shipping excerpt.
@@ -127,7 +236,7 @@ Kadence is released under GNU General Public License v3.0 (or later)
 * Add: Better classic editor visual support.
 * Fix: Issue with builder showing even after hide controls clicked.
 * Fix: Bug with mobile toggle in customizer.
-* Fix: Bug where scrolling was extended byond controls in customizer.
+* Fix: Bug where scrolling was extended beyond controls in customizer.
 * Fix: Context showing in read more translation that shouldn't.
 * Fix: Sticky header issue when no logo is added.
 
@@ -143,7 +252,7 @@ Kadence is released under GNU General Public License v3.0 (or later)
 == 0.5.5 | 17th April 2020 ==
 * Fix: Mobile navigation overflow issue on safari.
 * Add: Header html link style.
-* Fix: Few css tweeks.
+* Fix: Few css tweaks.
 * Fix: Site Tagline font live customizer settings.
 * Update: Start adding better learndash support.
 * Add: Cart slide out direction.
@@ -161,7 +270,7 @@ Kadence is released under GNU General Public License v3.0 (or later)
 
 == 0.5.2 | 15th April 2020 ==
 * Fix: Product Single page Sale mark alignment.
-* Update: Theme updater to work more consistantly.
+* Update: Theme updater to work more consistently.
 
 == 0.5.1 | 14th April 2020 ==
 * Add: Styling for latest posts grid block.
@@ -196,7 +305,7 @@ Kadence is released under GNU General Public License v3.0 (or later)
 * Update: meta js had console log running.
 
 == 0.4.6 | 10th April 2020 ==
-* Update: Intergration with Lifter LMS.
+* Update: Integration with Lifter LMS.
 * Update: Woo Account CSS.
 
 == 0.4.5 | 9th April 2020 ==
@@ -269,20 +378,5 @@ Source: https://github.com/jhildenbiddle/css-vars-ponyfill
 
 == Notes ==
 This theme does not support legacy browsers.
-
-Project Todos:
-
-Customizer - Button controls
-Customizer - Form Controls
-Customizer - Sidebar Controls (Boxed widgets, sticky)
-Customizer - Archive controls ( Content Columns )
-Customizer - Search controls ( Content Columns, sidebar )
-Customizer - Nav Menu Dropdown Boxshadow (need to create a box shadow control)
-Customizer - Typography Subset selection.
-Woocommerce Support
- - Classic Editor Metaboxes for products.
- - Product Archive Layout, Title controls.
- - QuickView (pro)
-Add Header Elements ( Item Dividers, Search Bar (Pro), Account(pro), Wishlist(pro) )
 
 

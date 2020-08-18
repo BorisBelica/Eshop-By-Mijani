@@ -10,24 +10,52 @@ namespace Kadence;
 use Kadence\Theme_Customizer;
 use function Kadence\kadence;
 
-ob_start(); ?>
-<div class="kadence-compontent-tabs nav-tab-wrapper wp-clearfix">
-	<a href="#" class="nav-tab kadence-general-tab kadence-compontent-tabs-button nav-tab-active" data-tab="general">
-		<span><?php esc_html_e( 'General', 'kadence' ); ?></span>
-	</a>
-	<a href="#" class="nav-tab kadence-design-tab kadence-compontent-tabs-button" data-tab="design">
-		<span><?php esc_html_e( 'Design', 'kadence' ); ?></span>
-	</a>
-</div>
-<?php
-$compontent_tabs = ob_get_clean();
 $settings = array(
 	'footer_social_tabs' => array(
-		'control_type' => 'kadence_blank_control',
+		'control_type' => 'kadence_tab_control',
 		'section'      => 'footer_social',
 		'settings'     => false,
 		'priority'     => 1,
-		'description'  => $compontent_tabs,
+		'input_attrs'  => array(
+			'general' => array(
+				'label'  => __( 'General', 'kadence' ),
+				'target' => 'footer_social',
+			),
+			'design' => array(
+				'label'  => __( 'Design', 'kadence' ),
+				'target' => 'footer_social_design',
+			),
+			'active' => 'general',
+		),
+	),
+	'footer_social_tabs_design' => array(
+		'control_type' => 'kadence_tab_control',
+		'section'      => 'footer_social_design',
+		'settings'     => false,
+		'priority'     => 1,
+		'input_attrs'  => array(
+			'general' => array(
+				'label'  => __( 'General', 'kadence' ),
+				'target' => 'footer_social',
+			),
+			'design' => array(
+				'label'  => __( 'Design', 'kadence' ),
+				'target' => 'footer_social_design',
+			),
+			'active' => 'design',
+		),
+	),
+	'footer_social_title' => array(
+		'control_type' => 'kadence_text_control',
+		'section'      => 'footer_social',
+		'priority'     => 4,
+		'label'        => esc_html__( 'Title', 'kadence' ),
+		'default'      => kadence()->default( 'footer_social_title' ),
+		'partial'      => array(
+			'selector'            => '.footer-social-wrap',
+			'container_inclusive' => true,
+			'render_callback'     => 'Kadence\footer_social',
+		),
 	),
 	'footer_social_items' => array(
 		'control_type' => 'kadence_social_control',
@@ -35,12 +63,6 @@ $settings = array(
 		'priority'     => 6,
 		'default'      => kadence()->default( 'footer_social_items' ),
 		'label'        => esc_html__( 'Social Items', 'kadence' ),
-		'context'      => array(
-			array(
-				'setting' => '__current_tab',
-				'value'   => 'general',
-			),
-		),
 		'partial'      => array(
 			'selector'            => '.footer-social-wrap',
 			'container_inclusive' => true,
@@ -53,12 +75,6 @@ $settings = array(
 		'priority'     => 8,
 		'default'      => kadence()->default( 'footer_social_show_label' ),
 		'label'        => esc_html__( 'Show Icon Label?', 'kadence' ),
-		'context'      => array(
-			array(
-				'setting' => '__current_tab',
-				'value'   => 'general',
-			),
-		),
 		'partial'      => array(
 			'selector'            => '.footer-social-wrap',
 			'container_inclusive' => true,
@@ -69,12 +85,6 @@ $settings = array(
 		'control_type' => 'kadence_range_control',
 		'section'      => 'footer_social',
 		'label'        => esc_html__( 'Item Spacing', 'kadence' ),
-		'context'      => array(
-			array(
-				'setting' => '__current_tab',
-				'value'   => 'general',
-			),
-		),
 		'default'      => kadence()->default( 'footer_social_item_spacing' ),
 		'live_method'     => array(
 			array(
@@ -146,12 +156,6 @@ $settings = array(
 		'label'        => esc_html__( 'Content Align', 'kadence' ),
 		'priority'     => 10,
 		'default'      => kadence()->default( 'footer_social_align' ),
-		'context'      => array(
-			array(
-				'setting' => '__current_tab',
-				'value'   => 'general',
-			),
-		),
 		'live_method'     => array(
 			array(
 				'type'     => 'class',
@@ -188,12 +192,6 @@ $settings = array(
 		'label'        => esc_html__( 'Content Vertical Align', 'kadence' ),
 		'priority'     => 10,
 		'default'      => kadence()->default( 'footer_social_vertical_align' ),
-		'context'      => array(
-			array(
-				'setting' => '__current_tab',
-				'value'   => 'general',
-			),
-		),
 		'live_method'  => array(
 			array(
 				'type'     => 'class',
@@ -226,16 +224,10 @@ $settings = array(
 	),
 	'footer_social_style' => array(
 		'control_type' => 'kadence_radio_icon_control',
-		'section'      => 'footer_social',
+		'section'      => 'footer_social_design',
 		'priority'     => 10,
 		'default'      => kadence()->default( 'footer_social_style' ),
 		'label'        => esc_html__( 'Social Style', 'kadence' ),
-		'context'      => array(
-			array(
-				'setting' => '__current_tab',
-				'value'   => 'design',
-			),
-		),
 		'live_method'     => array(
 			array(
 				'type'     => 'class',
@@ -258,14 +250,8 @@ $settings = array(
 	),
 	'footer_social_icon_size' => array(
 		'control_type' => 'kadence_range_control',
-		'section'      => 'footer_social',
+		'section'      => 'footer_social_design',
 		'label'        => esc_html__( 'Icon Size', 'kadence' ),
-		'context'      => array(
-			array(
-				'setting' => '__current_tab',
-				'value'   => 'design',
-			),
-		),
 		'live_method'     => array(
 			array(
 				'type'     => 'css',
@@ -298,7 +284,7 @@ $settings = array(
 	),
 	'footer_social_color' => array(
 		'control_type' => 'kadence_color_control',
-		'section'      => 'footer_social',
+		'section'      => 'footer_social_design',
 		'label'        => esc_html__( 'Colors', 'kadence' ),
 		'default'      => kadence()->default( 'footer_social_color' ),
 		'live_method'     => array(
@@ -317,16 +303,10 @@ $settings = array(
 				'key'      => 'hover',
 			),
 		),
-		'context'      => array(
-			array(
-				'setting' => '__current_tab',
-				'value'   => 'design',
-			),
-		),
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(
@@ -338,7 +318,7 @@ $settings = array(
 	),
 	'footer_social_background' => array(
 		'control_type' => 'kadence_color_control',
-		'section'      => 'footer_social',
+		'section'      => 'footer_social_design',
 		'label'        => esc_html__( 'Background Colors', 'kadence' ),
 		'default'      => kadence()->default( 'footer_social_background' ),
 		'live_method'     => array(
@@ -359,10 +339,6 @@ $settings = array(
 		),
 		'context'      => array(
 			array(
-				'setting' => '__current_tab',
-				'value'   => 'design',
-			),
-			array(
 				'setting'  => 'footer_social_style',
 				'operator' => '=',
 				'value'    => 'filled',
@@ -371,7 +347,7 @@ $settings = array(
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(
@@ -383,7 +359,7 @@ $settings = array(
 	),
 	'footer_social_border_colors' => array(
 		'control_type' => 'kadence_color_control',
-		'section'      => 'footer_social',
+		'section'      => 'footer_social_design',
 		'label'        => esc_html__( 'Border Colors', 'kadence' ),
 		'default'      => kadence()->default( 'footer_social_border' ),
 		'live_method'     => array(
@@ -402,16 +378,10 @@ $settings = array(
 				'key'      => 'hover',
 			),
 		),
-		'context'      => array(
-			array(
-				'setting' => '__current_tab',
-				'value'   => 'design',
-			),
-		),
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(
@@ -423,15 +393,9 @@ $settings = array(
 	),
 	'footer_social_border' => array(
 		'control_type' => 'kadence_border_control',
-		'section'      => 'footer_social',
+		'section'      => 'footer_social_design',
 		'label'        => esc_html__( 'Border', 'kadence' ),
 		'default'      => kadence()->default( 'footer_social_border' ),
-		'context'      => array(
-			array(
-				'setting' => '__current_tab',
-				'value'   => 'design',
-			),
-		),
 		'live_method'     => array(
 			array(
 				'type'     => 'css_border',
@@ -448,14 +412,8 @@ $settings = array(
 	),
 	'footer_social_border_radius' => array(
 		'control_type' => 'kadence_range_control',
-		'section'      => 'footer_social',
+		'section'      => 'footer_social_design',
 		'label'        => esc_html__( 'Border Radius', 'kadence' ),
-		'context'      => array(
-			array(
-				'setting' => '__current_tab',
-				'value'   => 'design',
-			),
-		),
 		'live_method'     => array(
 			array(
 				'type'     => 'css',
@@ -491,13 +449,9 @@ $settings = array(
 	),
 	'footer_social_typography' => array(
 		'control_type' => 'kadence_typography_control',
-		'section'      => 'footer_social',
+		'section'      => 'footer_social_design',
 		'label'        => esc_html__( 'Font', 'kadence' ),
 		'context'      => array(
-			array(
-				'setting' => '__current_tab',
-				'value'   => 'design',
-			),
 			array(
 				'setting'  => 'footer_social_show_label',
 				'operator' => '=',
@@ -525,16 +479,10 @@ $settings = array(
 	),
 	'footer_social_margin' => array(
 		'control_type' => 'kadence_measure_control',
-		'section'      => 'footer_social',
+		'section'      => 'footer_social_design',
 		'priority'     => 10,
 		'default'      => kadence()->default( 'footer_social_margin' ),
 		'label'        => esc_html__( 'Margin', 'kadence' ),
-		'context'      => array(
-			array(
-				'setting' => '__current_tab',
-				'value'   => 'design',
-			),
-		),
 		'live_method'     => array(
 			array(
 				'type'     => 'css',
@@ -546,6 +494,16 @@ $settings = array(
 		),
 		'input_attrs'  => array(
 			'responsive' => false,
+		),
+	),
+	'footer_social_link_to_social_links' => array(
+		'control_type' => 'kadence_focus_button_control',
+		'section'      => 'footer_social',
+		'settings'     => false,
+		'priority'     => 25,
+		'label'        => esc_html__( 'Set Social Links', 'kadence' ),
+		'input_attrs'  => array(
+			'section' => 'kadence_customizer_general_social',
 		),
 	),
 );

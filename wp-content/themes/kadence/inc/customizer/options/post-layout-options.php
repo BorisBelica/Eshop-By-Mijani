@@ -257,6 +257,23 @@ $kadence_post_settings = array(
 				'meta'       => kadence()->default( 'post_title_element_meta' ),
 				'excerpt'    => kadence()->default( 'post_title_element_excerpt' ),
 			),
+			'dividers' => array(
+				'dot' => array(
+					'icon' => 'dot',
+				),
+				'slash' => array(
+					'icon' => 'slash',
+				),
+				'dash' => array(
+					'icon' => 'dash',
+				),
+				'vline' => array(
+					'icon' => 'vline',
+				),
+				'customicon' => array(
+					'icon' => 'hours',
+				),
+			),
 		),
 	),
 	'post_title_font' => array(
@@ -315,7 +332,7 @@ $kadence_post_settings = array(
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(
@@ -367,7 +384,7 @@ $kadence_post_settings = array(
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(
@@ -419,7 +436,7 @@ $kadence_post_settings = array(
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(
@@ -471,7 +488,7 @@ $kadence_post_settings = array(
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(
@@ -484,7 +501,7 @@ $kadence_post_settings = array(
 	'post_title_excerpt_font' => array(
 		'control_type' => 'kadence_typography_control',
 		'section'      => 'post_layout_design',
-		'label'        => esc_html__( 'Excert Font', 'kadence' ),
+		'label'        => esc_html__( 'Excerpt Font', 'kadence' ),
 		'default'      => kadence()->default( 'post_title_excerpt_font' ),
 		'live_method'     => array(
 			array(
@@ -838,16 +855,16 @@ $kadence_post_settings = array(
 					'name' => __( '1:1', 'kadence' ),
 				),
 				'3-4' => array(
-					'name' => __( '3:4', 'kadence' ),
+					'name' => __( '4:3', 'kadence' ),
 				),
 				'2-3' => array(
-					'name' => __( '2:3', 'kadence' ),
+					'name' => __( '3:2', 'kadence' ),
 				),
 				'9-16' => array(
-					'name' => __( '9:16', 'kadence' ),
+					'name' => __( '16:9', 'kadence' ),
 				),
 				'1-2' => array(
-					'name' => __( '1:2', 'kadence' ),
+					'name' => __( '2:1', 'kadence' ),
 				),
 			),
 			'responsive' => false,

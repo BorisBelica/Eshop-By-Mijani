@@ -46,7 +46,7 @@ class Component implements Component_Interface {
 	 */
 	public function initialize() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'tutorlms_styles' ), 60 );
-		add_filter( 'kadence_theme_options_defaults', array( $this, 'add_option_defaults' ), 10 );
+		add_filter( 'kadence_theme_options_defaults', array( $this, 'add_option_defaults' ) );
 		add_filter( 'kadence_dynamic_css', array( $this, 'dynamic_css' ), 20 );
 		add_action( 'wp_head', array( $this, 'frontend_gfonts' ), 80 );
 		add_filter( 'body_class', array( $this, 'filter_body_classes' ) );
@@ -136,7 +136,7 @@ class Component implements Component_Interface {
 		 * Hook for Hero Section
 		 */
 		do_action( 'kadence_hero_header' );
-		echo '<div id="primary" class="content-area"><div class="content-container site-container"><main id="main" class="site-main">';
+		echo '<div id="primary" class="content-area"><div class="content-container site-container"><main id="main" class="site-main" role="main">';
 	}
 	/**
 	 * Adds theme output Wrapper.
@@ -149,7 +149,7 @@ class Component implements Component_Interface {
 		 * Hook for Hero Section
 		 */
 		do_action( 'kadence_hero_header' );
-		echo '<div id="primary" class="content-area"><div class="content-container site-container"><main id="main" class="site-main">';
+		echo '<div id="primary" class="content-area"><div class="content-container site-container"><main id="main" class="site-main" role="main">';
 	}
 	/**
 	 * Adds theme end output Wrapper.
@@ -168,7 +168,7 @@ class Component implements Component_Interface {
 			 */
 			do_action( 'kadence_hero_header' );
 		}
-		echo '<div id="primary" class="content-area"><div class="content-container site-container"><main id="main" class="site-main">';
+		echo '<div id="primary" class="content-area"><div class="content-container site-container"><main id="main" class="site-main" role="main">';
 		if ( is_archive() && kadence()->show_in_content_title() ) {
 			get_template_part( 'template-parts/content/archive_header' );
 		}

@@ -13,7 +13,6 @@ use function Kadence\kadence;
 use function add_action;
 use function add_filter;
 use function do_action;
-use function esc_html__;
 use function is_active_sidebar;
 use function dynamic_sidebar;
 

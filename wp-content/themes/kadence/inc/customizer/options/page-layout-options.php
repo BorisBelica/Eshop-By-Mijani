@@ -326,7 +326,7 @@ $settings = array(
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(
@@ -390,7 +390,7 @@ $settings = array(
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(
@@ -779,16 +779,16 @@ $settings = array(
 					'name' => __( '1:1', 'kadence' ),
 				),
 				'3-4' => array(
-					'name' => __( '3:4', 'kadence' ),
+					'name' => __( '4:3', 'kadence' ),
 				),
 				'2-3' => array(
-					'name' => __( '2:3', 'kadence' ),
+					'name' => __( '3:2', 'kadence' ),
 				),
 				'9-16' => array(
-					'name' => __( '9:16', 'kadence' ),
+					'name' => __( '16:9', 'kadence' ),
 				),
 				'1-2' => array(
-					'name' => __( '1:2', 'kadence' ),
+					'name' => __( '2:1', 'kadence' ),
 				),
 			),
 			'responsive' => false,

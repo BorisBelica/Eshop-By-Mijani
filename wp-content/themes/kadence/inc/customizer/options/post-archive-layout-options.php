@@ -146,7 +146,7 @@ $settings = array(
 	'post_archive_title_align' => array(
 		'control_type' => 'kadence_radio_icon_control',
 		'section'      => 'post_archive',
-		'label'        => esc_html__( 'Post Title Align', 'kadence' ),
+		'label'        => esc_html__( 'Post Archive Title Align', 'kadence' ),
 		'priority'     => 4,
 		'default'      => kadence()->default( 'post_archive_title_align' ),
 		'context'      => array(
@@ -296,7 +296,7 @@ $settings = array(
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(
@@ -330,7 +330,7 @@ $settings = array(
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(
@@ -633,6 +633,23 @@ $settings = array(
 				'excerpt'    => kadence()->default( 'post_archive_element_excerpt' ),
 				'readmore'   => kadence()->default( 'post_archive_element_readmore' ),
 			),
+			'dividers' => array(
+				'dot' => array(
+					'icon' => 'dot',
+				),
+				'slash' => array(
+					'icon' => 'slash',
+				),
+				'dash' => array(
+					'icon' => 'dash',
+				),
+				'vline' => array(
+					'icon' => 'vline',
+				),
+				'customicon' => array(
+					'icon' => 'hours',
+				),
+			),
 		),
 	),
 	'post_archive_item_title_font' => array(
@@ -691,7 +708,7 @@ $settings = array(
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(
@@ -743,7 +760,7 @@ $settings = array(
 		'input_attrs'  => array(
 			'colors' => array(
 				'color' => array(
-					'tooltip' => __( 'Inital Color', 'kadence' ),
+					'tooltip' => __( 'Initial Color', 'kadence' ),
 					'palette' => true,
 				),
 				'hover' => array(

@@ -88,6 +88,7 @@ class SocialComponent extends Component {
 				{ value: 'phone', label: __( 'Phone', 'kadence' ) },
 				{ value: 'whatsapp', label: __( 'WhatsApp', 'kadence' ) },
 				{ value: 'google_reviews', label: __( 'Google Reviews', 'kadence' ) },
+				{ value: 'telegram', label: __( 'Telegram', 'kadence' ) },
 				{ value: 'yelp', label: __( 'Yelp', 'kadence' ) },
 				{ value: 'trip_advisor', label: __( 'Trip Advisor', 'kadence' ) },
 				{ value: 'imdb', label: __( 'IMDB', 'kadence' ) },

@@ -49,10 +49,11 @@ class Component implements Component_Interface {
 		$wp_customize->add_setting(
 			'kadence_global_palette',
 			array(
-				'transport'  => 'postMessage',
-				'type'       => 'option',
-				'default'    => kadence()->get_palette(),
-				'capability' => apply_filters( 'kadence_palette_customizer_capability', 'manage_options' ),
+				'transport'         => 'postMessage',
+				'type'              => 'option',
+				'default'           => kadence()->get_palette(),
+				'capability'        => apply_filters( 'kadence_palette_customizer_capability', 'manage_options' ),
+				'sanitize_callback' => 'wp_kses',
 			)
 		);
 		$wp_customize->add_control(

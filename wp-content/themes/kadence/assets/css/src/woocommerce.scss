@@ -99,13 +99,13 @@
      padding: 1em;
      text-align: center;
      background-color: var(--global-palette-highlight);
-     color: var(--global-palette9);
+     color: var(--global-palette-btn);
      z-index: 99998;
      box-shadow: 0 1px 1em rgba(0, 0, 0, 0.2);
      display: none;
  
      a {
-         color: var(--global-palette9);
+         color: var(--global-palette-btn);
          text-decoration: underline;
      }
      a.woocommerce-store-notice__dismiss-link {
@@ -321,6 +321,7 @@
                  background: none;
                  list-style: none;
                  padding-left: 0;
+                 margin-left: 0;
  
                  li {
                      padding: 0;
@@ -506,7 +507,6 @@
                  left: 0;
                  width: 1em;
                  height: 1em;
-                 line-height: 1;
                  line-height: 1;
                  content: "\2606";
                  text-indent: 0;
@@ -932,13 +932,35 @@
              a,
              span {
                  padding: 1px 0;
+                 text-decoration: none;
              }
+             .count {
+                font-size: 80%;
+            }
          }
+         a::before {
+            content: "";
+            position: relative;
+            top: -0.15em;
+            display: inline-block;
+            width: 1.5em;
+            height: 1.5em;
+            margin-right: 0.6em;
+            font-size: .5em;
+            line-height: 1.4;
+            text-align: center;
+            vertical-align: middle;
+            border: 1px solid currentColor;
+            border-radius: 0.25rem;
+            opacity: 0.4;
+        }
  
          .woocommerce-widget-layered-nav-list__item--chosen a::before {
- 
-             @include iconbefore( "\e013" );
-             color: $red;
+             content: '\2713';
+             color: white;
+             opacity: 1;
+             border-color:var(--global-palette-highlight);
+             background: var(--global-palette-highlight);
          }
      }
  
@@ -960,14 +982,24 @@
              list-style: none;
  
              a {
-                 text-decoration: none;
- 
+                text-decoration: none;
+                background: var(--global-palette9);
+                color:var(--global-palette5);
+                padding:.6em;
+                font-size:80%;
+                transition: all 0.3s ease-in-out;
+                &:hover, &:focus {
+                    text-decoration:none;
+                    color:initial;
+                    &::before {
+                        color: $red;
+                        content: "\2716";
+                    }
+                }
                  &::before {
- 
-                     @include iconbefore( "\e013" );
-                     color: $red;
-                     vertical-align: inherit;
-                     margin-right: 0.5em;
+                    @include htmliconbefore( "\2715" );
+                    vertical-align: inherit;
+                    margin-right: 0.5em;
                  }
              }
          }
@@ -1154,18 +1186,42 @@
              a {
                  padding: 1px 0;
                  text-decoration: none;
+                 &:hover, &:focus {
+                     text-decoration: none;
+                 }
+                 &:before {
+                    content: "";
+                    position: relative;
+                    top: -0.15em;
+                    display: inline-block;
+                    width: 1.5em;
+                    height: 1.5em;
+                    margin-right: 0.6em;
+                    font-size: .5rem;
+                    line-height: 1.4;
+                    text-align: center;
+                    vertical-align: middle;
+                    border: 1px solid currentColor;
+                    border-radius: 0.25rem;
+                    opacity: 0.4;
+                 }
+                 font-size: 80%;
              }
  
              .star-rating {
                  float: none;
+                 margin-bottom: -0.1em;
+                 font-size: 1rem;
                  display: inline-block;
              }
          }
  
          li.chosen a::before {
- 
-             @include iconbefore( "\e013" );
-             color: $red;
+            content: '\2713';
+            color: white;
+            opacity: 1;
+            border-color:var(--global-palette-highlight);
+            background: var(--global-palette-highlight);
          }
      }
  

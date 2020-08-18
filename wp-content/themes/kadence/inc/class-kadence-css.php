@@ -59,7 +59,6 @@ class Kadence_CSS {
 		'border-top-right-radius',
 		'border-bottom-left-radius',
 		'border-bottom-right-radius',
-		'box-shadow',
 		'transition',
 		'transition-delay',
 		'transition-duration',
@@ -438,10 +437,13 @@ class Kadence_CSS {
 		if ( isset( $font['google'] ) && true === $font['google'] ) {
 			$this->maybe_add_google_font( $font, $area );
 		}
+		if ( strpos( $font_string, '"') === false && strpos( $font_string, ',') === false && strpos( $font_string, ' ' ) !== false ) {
+			$font_string = "'" . $font_string . "'";
+		}
 
-		return $font_string;
+		return apply_filters( 'kadence_theme_font_family_string', $font_string );
 	}
-	
+
 	/**
 	 * Generates the font output.
 	 *
@@ -478,7 +480,10 @@ class Kadence_CSS {
 		}
 		$family = ( isset( $font['family'] ) && ! empty( $font['family'] ) && 'inherit' !== $font['family'] ? $font['family'] : '' );
 		if ( ! empty( $family ) ) {
-			$css->add_property( 'font-family', $family );
+			if ( strpos( $family, '"') === false && strpos( $family, ',') === false && strpos( $family, ' ' ) !== false ) {
+				$family = "'" . $family . "'";
+			}
+			$css->add_property( 'font-family', apply_filters( 'kadence_theme_font_family_string', $family ) );
 			if ( isset( $font['google'] ) && true === $font['google'] ) {
 				if ( ! empty( $inherit ) && 'body' === $inherit ) {
 					$this->maybe_add_google_font( $font, $inherit );
@@ -574,9 +579,10 @@ class Kadence_CSS {
 	 *
 	 * @param array  $size an array of size settings.
 	 * @param string $device the device this is showing on.
+	 * @param bool   $render_zero if 0 should be rendered or not.
 	 * @return string
 	 */
-	public function render_range( $size, $device ) {
+	public function render_range( $size, $device, $render_zero = true ) {
 		if ( empty( $size ) ) {
 			return false;
 		}
@@ -592,13 +598,62 @@ class Kadence_CSS {
 		if ( ! isset( $size['size'][ $device ] ) ) {
 			return false;
 		}
-		if ( empty( $size['size'][ $device ] ) ) {
-			return false;
+		if ( $render_zero ) {
+			if ( ! is_numeric( $size['size'][ $device ] ) ) {
+				return false;
+			}
+		} else {
+			if ( empty( $size['size'][ $device ] ) ) {
+				return false;
+			}
 		}
 		$size_type   = ( isset( $size['unit'] ) && is_array( $size['unit'] ) && isset( $size['unit'][ $device ] ) && ! empty( $size['unit'][ $device ] ) ? $size['unit'][ $device ] : 'px' );
 		$size_string = $size['size'][ $device ] . $size_type;
 
 		return $size_string;
+	}
+	/**
+	 * Generates the size output.
+	 *
+	 * @param array  $shadow an array of shadow settings.
+	 * @param string $default the default shadow settings.
+	 * @return string
+	 */
+	public function render_shadow( $shadow, $default = array() ) {
+		if ( $shadow === $default ) {
+			return false;
+		}
+		if ( empty( $shadow ) ) {
+			return false;
+		}
+		if ( ! is_array( $shadow ) ) {
+			return false;
+		}
+		if ( ! isset( $shadow['color'] ) ) {
+			return false;
+		}
+		if ( ! isset( $shadow['hOffset'] ) ) {
+			return false;
+		}
+		if ( ! isset( $shadow['vOffset'] ) ) {
+			return false;
+		}
+		if ( ! isset( $shadow['blur'] ) ) {
+			return false;
+		}
+		if ( ! isset( $shadow['spread'] ) ) {
+			return false;
+		}
+		if ( ! isset( $shadow['inset'] ) ) {
+			return false;
+		}
+		if ( $shadow['inset'] ) {
+			$shadow_string = 'inset ' . ( ! empty( $shadow['hOffset'] ) ? $shadow['hOffset'] : '0' ) . 'px ' . ( ! empty( $shadow['vOffset'] ) ? $shadow['vOffset'] : '0' ) . 'px ' . ( ! empty( $shadow['blur'] ) ? $shadow['blur'] : '0' ) . 'px ' . ( ! empty( $shadow['spread'] ) ? $shadow['spread'] : '0' ) . 'px ' . ( ! empty( $shadow['color'] ) ? $this->render_color( $shadow['color'] ) : 'rgba(0,0,0,0.0)' );
+		} else {
+			$shadow_string =  ( ! empty( $shadow['hOffset'] ) ? $shadow['hOffset'] : '0' ) . 'px ' . ( ! empty( $shadow['vOffset'] ) ? $shadow['vOffset'] : '0' ) . 'px ' . ( ! empty( $shadow['blur'] ) ? $shadow['blur'] : '0' ) . 'px ' . ( ! empty( $shadow['spread'] ) ? $shadow['spread'] : '0' ) . 'px ' . ( ! empty( $shadow['color'] ) ? $this->render_color( $shadow['color'] ) : 'rgba(0,0,0,0.0)' );
+		}
+
+		return $shadow_string;
 	}
 	/**
 	 * Generates the measure output.
@@ -733,6 +788,82 @@ class Kadence_CSS {
 		$border_string = $width . $unit . ' ' . $style . ' ' . $this->render_color( $color );
 
 		return $border_string;
+	}
+	/**
+	 * Generates the size output.
+	 *
+	 * @param array $size an array of size settings.
+	 * @return string
+	 */
+	public function render_half_size( $size ) {
+		if ( empty( $size ) ) {
+			return false;
+		}
+		if ( ! is_array( $size ) ) {
+			return false;
+		}
+		$size_number = ( isset( $size['size'] ) && ! empty( $size['size'] ) ? $size['size'] : '0' );
+		$size_unit   = ( isset( $size['unit'] ) && ! empty( $size['unit'] ) ? $size['unit'] : 'em' );
+
+		$size_string = 'calc(' . $size_number . $size_unit . ' / 2)';
+		return $size_string;
+	}
+	/**
+	 * Generates the size output.
+	 *
+	 * @param array $size an array of size settings.
+	 * @return string
+	 */
+	public function render_negative_size( $size ) {
+		if ( empty( $size ) ) {
+			return false;
+		}
+		if ( ! is_array( $size ) ) {
+			return false;
+		}
+		$size_number = ( isset( $size['size'] ) && ! empty( $size['size'] ) ? $size['size'] : '0' );
+		$size_unit   = ( isset( $size['unit'] ) && ! empty( $size['unit'] ) ? $size['unit'] : 'em' );
+
+		$size_string = '-' . $size_number . $size_unit;
+		return $size_string;
+	}
+	/**
+	 * Generates the size output.
+	 *
+	 * @param array $size an array of size settings.
+	 * @return string
+	 */
+	public function render_negative_half_size( $size ) {
+		if ( empty( $size ) ) {
+			return false;
+		}
+		if ( ! is_array( $size ) ) {
+			return false;
+		}
+		$size_number = ( isset( $size['size'] ) && ! empty( $size['size'] ) ? $size['size'] : '0' );
+		$size_unit   = ( isset( $size['unit'] ) && ! empty( $size['unit'] ) ? $size['unit'] : 'em' );
+
+		$size_string = 'calc(-' . $size_number . $size_unit . ' / 2)';
+		return $size_string;
+	}
+	/**
+	 * Generates the size output.
+	 *
+	 * @param array $size an array of size settings.
+	 * @return string
+	 */
+	public function render_size( $size ) {
+		if ( empty( $size ) ) {
+			return false;
+		}
+		if ( ! is_array( $size ) ) {
+			return false;
+		}
+		$size_number = ( isset( $size['size'] ) && ! empty( $size['size'] ) ? $size['size'] : '0' );
+		$size_unit   = ( isset( $size['unit'] ) && ! empty( $size['unit'] ) ? $size['unit'] : 'em' );
+
+		$size_string = $size_number . $size_unit;
+		return $size_string;
 	}
 	/**
 	 * Generates the border output.

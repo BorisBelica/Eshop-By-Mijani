@@ -23,13 +23,13 @@ do_action( 'kadence_hero_header' );
 ?>
 <div id="primary" class="content-area">
 	<div class="content-container site-container">
-		<main id="main" class="site-main">
+		<main id="main" class="site-main" role="main">
 			<?php
 			/**
 			 * Hook for anything before main content
 			 */
 			do_action( 'kadence_before_main_content' );
-			
+
 			get_template_part( 'template-parts/content/error', 'offline' );
 			/**
 			 * Hook for anything after main content.

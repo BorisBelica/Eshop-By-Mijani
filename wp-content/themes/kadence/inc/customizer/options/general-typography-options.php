@@ -202,6 +202,68 @@ $settings = array(
 			'id'      => 'title_above_breadcrumb_font',
 		),
 	),
+	'google_subsets' => array(
+		'control_type' => 'kadence_check_icon_control',
+		'section'      => 'general_typography',
+		'priority'     => 20,
+		'default'      => kadence()->default( 'google_subsets' ),
+		'label'        => esc_html__( 'Google Font Subsets', 'kadence' ),
+		'input_attrs'  => array(
+			'options' => array(
+				'latin-ext' => array(
+					'name' => __( 'Latin Extended', 'kadence' ),
+				),
+				'cyrillic' => array(
+					'name' => __( 'Cyrillic', 'kadence' ),
+				),
+				'cyrillic-ext' => array(
+					'name' => __( 'Cyrillic Extended', 'kadence' ),
+				),
+				'greek' => array(
+					'name' => __( 'Greek', 'kadence' ),
+				),
+				'greek-ext' => array(
+					'name' => __( 'Greek Extended', 'kadence' ),
+				),
+				'vietnamese' => array(
+					'name' => __( 'Vietnamese', 'kadence' ),
+				),
+				'arabic' => array(
+					'name' => __( 'Arabic', 'kadence' ),
+				),
+				'khmer' => array(
+					'name' => __( 'Khmer', 'kadence' ),
+				),
+				'chinese' => array(
+					'name' => __( 'Chinese', 'kadence' ),
+				),
+				'chinese-simplified' => array(
+					'name' => __( 'Chinese Simplified', 'kadence' ),
+				),
+				'tamil' => array(
+					'name' => __( 'Tamil', 'kadence' ),
+				),
+				'bengali' => array(
+					'name' => __( 'Bengali', 'kadence' ),
+				),
+				'devanagari' => array(
+					'name' => __( 'Devanagari', 'kadence' ),
+				),
+				'hebrew' => array(
+					'name' => __( 'Hebrew', 'kadence' ),
+				),
+				'korean' => array(
+					'name' => __( 'Korean', 'kadence' ),
+				),
+				'thai' => array(
+					'name' => __( 'Thai', 'kadence' ),
+				),
+				'telugu' => array(
+					'name' => __( 'Telugu', 'kadence' ),
+				),
+			),
+		),
+	),
 );
 
 Theme_Customizer::add_settings( $settings );

@@ -158,8 +158,14 @@ $settings = array(
 	'whatsapp_link' => array(
 		'control_type' => 'kadence_text_control',
 		'section'      => 'general_social',
-		'default'      => kadence()->default( 'rss_link' ),
+		'default'      => kadence()->default( 'whatsapp_link' ),
 		'label'        => esc_html__( 'WhatsApp', 'kadence' ),
+	),
+	'telegram_link' => array(
+		'control_type' => 'kadence_text_control',
+		'section'      => 'general_social',
+		'default'      => kadence()->default( 'telegram_link' ),
+		'label'        => esc_html__( 'Telegram', 'kadence' ),
 	),
 	'email_link' => array(
 		'control_type' => 'kadence_text_control',

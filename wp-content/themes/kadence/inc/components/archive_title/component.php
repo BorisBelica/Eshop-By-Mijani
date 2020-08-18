@@ -93,6 +93,8 @@ class Component implements Component_Interface, Templating_Component_Interface {
 			$title = get_the_title( llms_get_page_id( 'memberships' ) );
 		} elseif ( is_post_type_archive( 'ht_kb' ) ) {
 			$title = get_the_title();
+		} elseif ( is_post_type_archive() ) {
+			$title = post_type_archive_title( '', false );
 		}
 		return $title;
 	}

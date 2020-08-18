@@ -1,12 +1,4 @@
 
-
-# BEGIN rlrssslReallySimpleSSL rsssl_version[3.3.4]
-<IfModule mod_rewrite.c>
-RewriteEngine on
-RewriteCond %{HTTP:X-Forwarded-Proto} !https
-RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
-</IfModule>
-# END rlrssslReallySimpleSSL
 # BEGIN WordPress
 # Smernice (riadky) medzi  `BEGIN WordPress` a `END WordPress` sú
 # dynamicky generované a mali by byť upravené iba pomocou filtrov WordPress.

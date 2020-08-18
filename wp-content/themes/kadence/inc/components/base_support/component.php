@@ -9,6 +9,9 @@ namespace Kadence\Base_Support;
 
 use Kadence\Component_Interface;
 use Kadence\Templating_Component_Interface;
+use WP_Upgrader;
+use WP_Ajax_Upgrader_Skin;
+use Plugin_Upgrader;
 use function Kadence\kadence;
 use function add_action;
 use function add_filter;
@@ -20,6 +23,9 @@ use function get_bloginfo;
 use function wp_scripts;
 use function wp_get_theme;
 use function get_template;
+use function plugins_api;
+use function activate_plugin;
+use function get_site_option;
 
 /**
  * Class for adding basic theme support, most of which is mandatory to be implemented by all themes.
@@ -57,7 +63,21 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	 *
 	 * @var values of all the post types.
 	 */
+	protected static $public_ignore_post_types = null;
+
+	/**
+	 * Holds ignore post types.
+	 *
+	 * @var values of all the post types.
+	 */
 	protected static $transparent_ignore_post_types = null;
+
+	/**
+	 * Static var active plugins
+	 *
+	 * @var $active_plugins
+	 */
+	private static $active_plugins;
 
 	/**
 	 * Gets the unique identifier for the theme component.
@@ -73,6 +93,10 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	 */
 	public function initialize() {
 		add_action( 'after_setup_theme', array( $this, 'action_essential_theme_support' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'install_starter_script' ) );
+		add_action( 'admin_notices', array( $this, 'kadence_starter_templates_notice' ) );
+		add_action( 'wp_ajax_kadence_dismiss_notice', array( $this, 'ajax_dismiss_starter_notice' ) );
+		add_action( 'wp_ajax_kadence_install_starter', array( $this, 'install_plugin_ajax_callback' ) );
 		add_action( 'wp_head', array( $this, 'action_add_pingback_header' ) );
 		add_filter( 'body_class', array( $this, 'filter_body_classes_add_hfeed' ) );
 		add_filter( 'embed_defaults', array( $this, 'filter_embed_dimensions' ) );
@@ -82,7 +106,166 @@ class Component implements Component_Interface, Templating_Component_Interface {
 		add_filter( 'get_search_form', array( $this, 'add_search_icon' ), 99 );
 		add_filter( 'get_product_search_form', array( $this, 'add_search_icon' ), 99 );
 		add_filter( 'embed_oembed_html', array( $this, 'classic_embed_wrap' ), 90, 4 );
-		add_filter( 'excerpt_length', array( $this, 'custom_excerpt_length' ), 10 );
+		add_filter( 'excerpt_length', array( $this, 'custom_excerpt_length' ) );
+		add_filter( 'the_author_description', 'wpautop' );
+	}
+	/**
+	 * Add Notice for Kadence Starter templates
+	 */
+	public function kadence_starter_templates_notice() {
+		if ( defined( 'KADENCE_STARTER_TEMPLATES_VERSION' ) || get_option( 'kadence_starter_plugin_notice' ) || ! current_user_can( 'install_plugins' ) ) {
+			return;
+		}
+		$installed_plugins = get_plugins();
+		if ( ! isset( $installed_plugins['kadence-starter-templates/kadence-starter-templates.php'] ) ) {
+			$button_label = esc_html__( 'Install Kadence Starter Templates', 'kadence' );
+			$data_action  = 'install';
+		} elseif ( ! self::active_plugin_check( 'kadence-starter-templates/kadence-starter-templates.php' ) ) {
+			$button_label = esc_html__( 'Activate Kadence Starter Templates', 'kadence' );
+			$data_action  = 'activate';
+		} else {
+			return;
+		}
+		?>
+		<div id="kadence-notice-starter-templates" class="notice is-dismissible notice-info">
+			<h2 class="notice-title"><?php echo esc_html__( 'Thanks for choosing the Kadence Theme!', 'kadence' ); ?></h2>
+			<p class="kadence-notice-description"><?php /* translators: %s: <strong> <a> */ printf( esc_html__( 'Want to get started with a beautiful %1$sstarter template%2$s? Install the Kadence Starter Templates plugin to launch an optimized design in minutes.', 'kadence' ), '<a href="https://wordpress.org/plugins/kadence-starter-templates/" target="_blank">', '</a>', '<strong>', '</strong>' ); ?></p>
+			<p class="install-submit">
+				<button class="button button-primary kadence-install-starter-btn" data-redirect-url="<?php echo esc_url( admin_url( 'themes.php?page=kadence-starter-templates' ) ); ?>" data-activating-label="<?php echo esc_attr__( 'Activating...', 'kadence' ); ?>" data-activated-label="<?php echo esc_attr__( 'Activated', 'kadence' ); ?>" data-installing-label="<?php echo esc_attr__( 'Installing...', 'kadence' ); ?>" data-installed-label="<?php echo esc_attr__( 'Installed', 'kadence' ); ?>" data-action="<?php echo esc_attr( $data_action ); ?>"><?php echo esc_html( $button_label ); ?></button>
+			</p>
+		</div>
+		<?php
+		wp_enqueue_script( 'kadence-starter-install' );
+		wp_localize_script(
+			'kadence-starter-install',
+			'kadenceStarterInstall',
+			array(
+				'ajax_url'   => admin_url( 'admin-ajax.php' ),
+				'ajax_nonce' => wp_create_nonce( 'kadence-ajax-verification' ),
+				'status'     => $data_action,
+			)
+		);
+	}
+	/**
+	 * Run check to see if we need to dismiss the notice.
+	 * If all tests are successful then call the dismiss_notice() method.
+	 *
+	 * @access public
+	 * @since 1.0
+	 * @return void
+	 */
+	public function ajax_dismiss_starter_notice() {
+
+		// Sanity check: Early exit if we're not on a wptrt_dismiss_notice action.
+		if ( ! isset( $_POST['action'] ) || 'kadence_dismiss_notice' !== $_POST['action'] ) {
+			return;
+		}
+		// Security check: Make sure nonce is OK.
+		check_ajax_referer( 'kadence-ajax-verification', 'security', true );
+
+		// If we got this far, we need to dismiss the notice.
+		update_option( 'kadence_starter_plugin_notice', true, false );
+	}
+
+	/**
+	 * Option to Install Starter Templates
+	 */
+	public function install_starter_script() {
+		wp_register_script( 'kadence-starter-install', get_template_directory_uri() . '/assets/js/admin-activate.min.js', array( 'jquery' ), KADENCE_VERSION, false );
+	}
+	/**
+	 * Active Plugin Check
+	 *
+	 * @param string $plugin_base_name is plugin folder/filename.php.
+	 */
+	public static function active_plugin_check( $plugin_base_name ) {
+
+		if ( ! self::$active_plugins ) {
+			self::get_active_plugins();
+		}
+		return in_array( $plugin_base_name, self::$active_plugins, true ) || array_key_exists( $plugin_base_name, self::$active_plugins );
+	}
+	/**
+	 * Initialize getting the active plugins list.
+	 */
+	public static function get_active_plugins() {
+
+		self::$active_plugins = (array) get_option( 'active_plugins', array() );
+
+		if ( is_multisite() ) {
+			self::$active_plugins = array_merge( self::$active_plugins, get_site_option( 'active_sitewide_plugins', array() ) );
+		}
+	}
+	/**
+	 * AJAX callback to install a plugin.
+	 */
+	public function install_plugin_ajax_callback() {
+		if ( ! check_ajax_referer( 'kadence-ajax-verification', 'security', false ) ) {
+			wp_send_json_error( __( 'Security Error, Please reload the page.', 'kadence' ) );
+		}
+		if ( ! current_user_can( 'install_plugins' ) ) {
+			wp_send_json_error( __( 'Security Error, Need higher Permissions to install plugin.', 'kadence' ) );
+		}
+		// Get selected file index or set it to 0.
+		$status = empty( $_POST['status'] ) ? 'install' : sanitize_text_field( $_POST['status'] );
+		if ( ! function_exists( 'plugins_api' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+		}
+		if ( ! class_exists( 'WP_Upgrader' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+		}
+		$install = true;
+		if ( 'install' === $status ) {
+			$api = plugins_api(
+				'plugin_information',
+				array(
+					'slug' => 'kadence-starter-templates',
+					'fields' => array(
+						'short_description' => false,
+						'sections' => false,
+						'requires' => false,
+						'rating' => false,
+						'ratings' => false,
+						'downloaded' => false,
+						'last_updated' => false,
+						'added' => false,
+						'tags' => false,
+						'compatibility' => false,
+						'homepage' => false,
+						'donate_link' => false,
+					),
+				)
+			);
+			if ( ! is_wp_error( $api ) ) {
+
+				// Use AJAX upgrader skin instead of plugin installer skin.
+				// ref: function wp_ajax_install_plugin().
+				$upgrader = new \Plugin_Upgrader( new \WP_Ajax_Upgrader_Skin() );
+
+				$installed = $upgrader->install( $api->download_link );
+				if ( $installed ) {
+					$activate = activate_plugin( 'kadence-starter-templates/kadence-starter-templates.php', '', false, true );
+					if ( is_wp_error( $activate ) ) {
+						$install = false;
+					}
+				} else {
+					$install = false;
+				}
+			} else {
+				$install = false;
+			}
+		} elseif ( 'activate' === $status ) {
+			$activate = activate_plugin( 'kadence-starter-templates/kadence-starter-templates.php', '', false, true );
+			if ( is_wp_error( $activate ) ) {
+				$install = false;
+			}
+		}
+
+		if ( false === $install ) {
+			wp_send_json_error( __( 'Error, plugin could not be installed, please install manually.', 'kadence' ) );
+		} else {
+			wp_send_json_success();
+		}
 	}
 	/**
 	 * Filter the excerpt length to 30 words.
@@ -154,9 +337,22 @@ class Component implements Component_Interface, Templating_Component_Interface {
 			'get_post_types_objects'               => array( $this, 'get_post_types_objects' ),
 			'get_post_types_to_ignore'             => array( $this, 'get_post_types_to_ignore' ),
 			'get_transparent_post_types_to_ignore' => array( $this, 'get_transparent_post_types_to_ignore' ),
+			'get_public_post_types_to_ignore'      => array( $this, 'get_public_post_types_to_ignore' ),
+			'customizer_quick_link'                => array( $this, 'customizer_quick_link' ),
 		);
 	}
-
+	/**
+	 * If in customizer output the quicklink.
+	 */
+	public static function customizer_quick_link() {
+		if ( is_customize_preview() ) {
+			?>
+			<div class="customize-partial-edit-shortcut kadence-custom-partial-edit-shortcut">
+				<button aria-label="<?php esc_attr_e( 'Click to edit this element.', 'kadence' ); ?>" title="<?php esc_attr_e( 'Click to edit this element.', 'kadence' ); ?>" class="customize-partial-edit-shortcut-button item-customizer-focus"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13.89 3.39l2.71 2.72c.46.46.42 1.24.03 1.64l-8.01 8.02-5.56 1.16 1.16-5.58s7.6-7.63 7.99-8.03c.39-.39 1.22-.39 1.68.07zm-2.73 2.79l-5.59 5.61 1.11 1.11 5.54-5.65zm-2.97 8.23l5.58-5.6-1.07-1.08-5.59 5.6z"></path></svg></button>
+			</div>
+			<?php
+		}
+	}
 	/**
 	 * Get array of post types we want to exclude from use in customizer custom post type settings.
 	 *
@@ -171,6 +367,15 @@ class Component implements Component_Interface, Templating_Component_Interface {
 				'elementor_library',
 				'kt_size_chart',
 				'kt_reviews',
+				'ele-product-template',
+				'ele-p-arch-template',
+				'ele-p-loop-template',
+				'ele-check-template',
+				'jet-menu',
+				'jet-popup',
+				'jet-smart-filters',
+				'jet-theme-core',
+				'jet-engine',
 				'course',
 				'lesson',
 				'llms_quiz',
@@ -186,8 +391,9 @@ class Component implements Component_Interface, Templating_Component_Interface {
 				'sfwd-assignment',
 				'sfwd-courses',
 				'courses',
+				'groups',
 			);
-			self::$ignore_post_types = apply_filters( 'kadence_public_post_type_array', $ignore_post_types );
+			self::$ignore_post_types = apply_filters( 'kadence_customizer_post_type_ignore_array', $ignore_post_types );
 		}
 
 		return self::$ignore_post_types;
@@ -205,8 +411,18 @@ class Component implements Component_Interface, Templating_Component_Interface {
 				'page',
 				'product',
 				'elementor_library',
+				'fl-theme-layout',
 				'kt_size_chart',
 				'kt_reviews',
+				'ele-product-template',
+				'ele-p-arch-template',
+				'ele-p-loop-template',
+				'ele-check-template',
+				'jet-menu',
+				'jet-popup',
+				'jet-smart-filters',
+				'jet-theme-core',
+				'jet-engine',
 				'llms_certificate',
 				'llms_my_certificate',
 				'sfwd-quiz',
@@ -217,10 +433,42 @@ class Component implements Component_Interface, Templating_Component_Interface {
 				'sfwd-essays',
 				'sfwd-assignment',
 			);
-			self::$transparent_ignore_post_types = apply_filters( 'kadence_public_post_type_array', $transparent_ignore_post_types );
+			self::$transparent_ignore_post_types = apply_filters( 'kadence_transparent_post_type_ignore_array', $transparent_ignore_post_types );
 		}
 
 		return self::$transparent_ignore_post_types;
+	}
+
+	/**
+	 * Get array of post types we want to exclude from use in non public areas.
+	 *
+	 * @return array of post types.
+	 */
+	public static function get_public_post_types_to_ignore() {
+		if ( is_null( self::$public_ignore_post_types ) ) {
+			$public_ignore_post_types = array(
+				'elementor_library',
+				'fl-theme-layout',
+				'kt_size_chart',
+				'kt_reviews',
+				'ele-product-template',
+				'ele-p-arch-template',
+				'ele-p-loop-template',
+				'ele-check-template',
+				'jet-menu',
+				'jet-popup',
+				'jet-smart-filters',
+				'jet-theme-core',
+				'jet-engine',
+				'llms_certificate',
+				'llms_my_certificate',
+				'sfwd-certificates',
+				'sfwd-transactions',
+			);
+			self::$public_ignore_post_types = apply_filters( 'kadence_public_post_type_ignore_array', $public_ignore_post_types );
+		}
+
+		return self::$public_ignore_post_types;
 	}
 
 	/**
@@ -232,6 +480,7 @@ class Component implements Component_Interface, Templating_Component_Interface {
 		if ( is_null( self::$post_types ) ) {
 			$args             = array(
 				'public' => true,
+				'show_in_rest' => true,
 				'_builtin' => false,
 			);
 			$builtin = array(

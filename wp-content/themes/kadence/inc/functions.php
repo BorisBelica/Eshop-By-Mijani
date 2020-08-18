@@ -40,9 +40,12 @@ require get_template_directory() . '/inc/dashboard/class-theme-dashboard.php';
 // Load the Meta class.
 require get_template_directory() . '/inc/meta/class-theme-meta.php';
 
+// Load the template functions.
+require get_template_directory() . '/inc/template-functions/header-functions.php';
+require get_template_directory() . '/inc/template-functions/title-functions.php';
+require get_template_directory() . '/inc/template-functions/single-functions.php';
+require get_template_directory() . '/inc/template-functions/footer-functions.php';
+require get_template_directory() . '/inc/template-functions/archive-functions.php';
+
 // Load the template hooks.
-require get_template_directory() . '/inc/template-hooks/header-hooks.php';
-require get_template_directory() . '/inc/template-hooks/footer-hooks.php';
-require get_template_directory() . '/inc/template-hooks/title-hooks.php';
-require get_template_directory() . '/inc/template-hooks/single-hooks.php';
-require get_template_directory() . '/inc/template-hooks/archive-hooks.php';
+require get_template_directory() . '/inc/template-hooks.php';

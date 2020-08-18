@@ -7,10 +7,13 @@
 
 namespace Kadence;
 
+if ( kadence()->has_content() ) {
+	kadence()->print_styles( 'kadence-content' );
+}
 kadence()->print_styles( 'kadence-footer' );
 
 ?>
-<footer id="colophon" class="site-footer">
+<footer id="colophon" class="site-footer" role="contentinfo">
 	<div class="site-footer-wrap">
 		<?php
 		/**

@@ -148,7 +148,7 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	 * @param string $row the name of the row.
 	 */
 	public function has_mobile_side_columns( $row = 'main' ) {
-		if ( isset( self::$moible_sides[ $row ] ) ) {
+		if ( isset( self::$mobile_sides[ $row ] ) ) {
 			return self::$mobile_sides[ $row ];
 		}
 		$mobile_sides = false;
