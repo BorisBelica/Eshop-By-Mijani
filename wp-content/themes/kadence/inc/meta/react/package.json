@@ -6,7 +6,7 @@
 	"dependencies": {
 	},
 	"devDependencies": {
-	  "@wordpress/scripts": "^6.2.0"
+	  "@wordpress/scripts": "^26.8.0"
 	},
 	"scripts": {
 	  "build": "wp-scripts build",
